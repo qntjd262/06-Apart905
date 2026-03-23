@@ -44,8 +44,8 @@ public class PlayerMove : MonoBehaviour
 
         controller.Move(moveDir * currentSpeed * Time.deltaTime);
 
-        //velocity.y += gravity * Time.deltaTime;
-        //controller.Move(velocity * Time.deltaTime);
+        velocity.y += gravity * Time.deltaTime;
+        controller.Move(velocity * Time.deltaTime);
 
 
     }

@@ -6,15 +6,19 @@ public class PlayerController : MonoBehaviour
     [Header("플레이어 스크립트")]
     private PlayerMove playerMove;
     private PlayerLook playerLook;
+    private PlayerAttack playerAttack;
 
     [Header("플레이어 상태")]
     public bool isDead =false;
 
-    void Start()
+    void Awake()
     {
         playerMove = GetComponent<PlayerMove>();
         playerLook = GetComponent<PlayerLook>();
-
+        playerAttack = GetComponent<PlayerAttack>();
+    }
+    void Start()
+    {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -38,5 +42,12 @@ public class PlayerController : MonoBehaviour
         bool isCrouch = Input.GetKey(KeyCode.LeftControl);
 
         playerMove.Move(h, v, isRunning, isCrouch);
+
+        //플레이어 공격
+        if (Input.GetButtonDown("Fire1"))
+        {   
+            //TODO : 공격 애니메이션을 통해 해당 애니메이션 지점에서 Attack()함수 실행하기
+            playerAttack.Attack();
+        }
     }
 }
