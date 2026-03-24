@@ -1,18 +1,20 @@
 using System.Collections.Generic;
 
+/// <summary>
+/// 자식 노드 중 하나라도 성공하면 Success 반환, 모두 실패하면 Failure를 반환하는 노드
+/// </summary>
 public class SelectorNode : Node
 {
     private List<Node> _children = new List<Node>();
 
-    public SelectorNode(List<Node> children)
+    public SelectorNode(params Node[] children)
     {
-        _children = children;
+        _children.AddRange(children);
     }
 
     public override NodeState Evaluate()
     { 
-        foreach (Node child in _children
-)
+        foreach (Node child in _children)
         {
             switch (child.Evaluate())
             {

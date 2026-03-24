@@ -252,7 +252,7 @@ GameObject:
   - component: {fileID: 402609050}
   - component: {fileID: 402609049}
   - component: {fileID: 402609048}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -361,9 +361,8 @@ GameObject:
   - component: {fileID: 1275551620}
   - component: {fileID: 1275551619}
   - component: {fileID: 1275551618}
-  - component: {fileID: 1275551617}
   - component: {fileID: 1275551621}
-  - component: {fileID: 1275551622}
+  - component: {fileID: 1275551617}
   m_Layer: 0
   m_Name: Monster
   m_TagString: Untagged
@@ -471,38 +470,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1275551616}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f0038c16c34866b4f9e25c9c0dc0f7e6, type: 3}
+  m_Script: {fileID: 11500000, guid: b2d16a51fcd19474eac0cd4a5b9d8998, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Graph: {fileID: -3264019209772399109, guid: d9baee101e5def244aa8275c57d6f4cd, type: 2}
-  m_BlackboardVariableOverridesList:
-  - rid: 7415797436309832539
-  m_OriginalGraph: {fileID: -3264019209772399109, guid: d9baee101e5def244aa8275c57d6f4cd, type: 2}
-  m_IsInitialised: 0
-  m_IsStarted: 0
-  references:
-    version: 2
-    RefIds:
-    - rid: 7415797436309832539
-      type: {class: 'BlackboardVariable`1[[UnityEngine.GameObject, UnityEngine.CoreModule]]', ns: Unity.Behavior, asm: Unity.Behavior}
-      data:
-        GUID:
-          m_Value0: 1
-          m_Value1: 0
-        Name: Self
-        m_Value: {fileID: 1275551616}
---- !u!114 &1275551622
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1275551616}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0b7563a999a2eb439d2ad9915f3b90b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  _detectRadius: 5
+  _enemyLayer:
+    serializedVersion: 2
+    m_Bits: 128
 --- !u!1 &1644325001
 GameObject:
   m_ObjectHideFlags: 0

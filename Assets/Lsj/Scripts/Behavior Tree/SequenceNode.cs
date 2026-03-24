@@ -1,12 +1,15 @@
 using System.Collections.Generic;
 
+/// <summary>
+/// 자식 노드 중 하나라도 실패하면 Failure 반환, 모두 성공하면 Success를 반환하는 노드
+/// </summary>
 public class SequenceNode : Node
 {
     private List<Node> _children = new List<Node>();
 
-    public SequenceNode(List<Node> children)
+    public SequenceNode(params Node[] children)
     {
-        _children = children;
+        _children.AddRange(children);
     }
 
     public override NodeState Evaluate()
