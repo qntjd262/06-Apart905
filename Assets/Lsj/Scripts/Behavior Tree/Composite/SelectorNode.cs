@@ -1,16 +1,11 @@
 using System.Collections.Generic;
 
 /// <summary>
-/// 자식 노드 중 하나라도 성공하면 Success 반환, 모두 실패하면 Failure를 반환하는 노드
+/// 실패하면 다음 노드, 하나라도 성공하면 전체 성공 처리하는 노드
 /// </summary>
-public class SelectorNode : Node
+public class SelectorNode : CompositeNode
 {
-    private List<Node> _children = new List<Node>();
-
-    public SelectorNode(params Node[] children)
-    {
-        _children.AddRange(children);
-    }
+    public SelectorNode(params Node[] children) : base(children) { }
 
     public override NodeState Evaluate()
     { 
