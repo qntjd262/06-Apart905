@@ -12,6 +12,9 @@ public class PlayerLook : MonoBehaviour
     [SerializeField] private float upDownRange = 80f;
     //현재 카메라 상하각도 저장 변수
     private float currentVerticalRotation = 0f;
+    private float standHeight;
+    private float crouchHeight = 2.3f;
+    private float cameraForwardOffset = 0.35f;
 
 
     void Start()
@@ -26,6 +29,8 @@ public class PlayerLook : MonoBehaviour
             //카메라 위치, 회전값 cameraPos 오브젝트와 동일하게 맞추기
             mainCam.transform.localPosition = Vector3.zero;
             mainCam.transform.localRotation = Quaternion.identity;
+
+            standHeight = cameraPos.localPosition.y;
         }
     }
     public void Look(float mouseX, float mouseY)
@@ -39,6 +44,17 @@ public class PlayerLook : MonoBehaviour
         if(cameraPos != null)
         {
             cameraPos.localEulerAngles = new Vector3(currentVerticalRotation, 0f, 0f);
+        }
+    }
+
+    public void SetCameraHeight(bool isCrouch)
+    {
+        if(cameraPos != null)
+        {
+            Vector3 newPos = cameraPos.localPosition;
+            newPos.y = isCrouch ? crouchHeight : standHeight;
+            newPos.z = isCrouch ? cameraForwardOffset : 0f;
+            cameraPos.localPosition = newPos;
         }
     }
 }

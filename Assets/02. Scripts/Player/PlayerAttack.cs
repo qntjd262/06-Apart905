@@ -1,20 +1,63 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour
 {
     [Header("공격 설정")]
+    //TODO : 무기 개발 완료 후 공격 범위 가져오기
     [SerializeField] private float attackRange = 2f;
-    //추후 playerstat.cs 추가 후 수정 예정 임시 공격력
+    //TODO : playerstat.cs 추가 후 수정 예정 임시 공격력
     [SerializeField] private float attackPower = 4f;
 
     [SerializeField] private Transform cameraPos;
 
+    [Header("공격 쿨 + 애니메이션 적용 타임")]
+    //TODO : 애니메이션 적용 할 때 타임 맞추기
+    private float attackDelay = 0.25f;
+    private float attackCoolDown = 1.45f;
+    public bool isAttacking {get; private set;}
+
+    private Animator anim;
+
+    void Start()
+    {
+        anim = GetComponentInChildren<Animator>();
+    }
+
+
     void Awake()
     {
-        //playerstat.cs에서 캐릭터 스탯 가져오기
+        //TODO : playerstat.cs에서 캐릭터 스탯 가져오기
     }
 
     public void Attack()
+    {
+
+        if(isAttacking) return;
+
+        StartCoroutine(AttackRoutine());
+
+    }
+
+    //공격 코루틴
+    IEnumerator AttackRoutine()
+    {
+        if(anim != null) anim.SetTrigger("IsAttack");
+        isAttacking = true;
+
+        //attackDelay = 애니메이션 동작 타임 제어
+        yield return new WaitForSeconds(attackDelay);
+
+        AttackRayCast();
+
+        //attackCoolDown = 공격 쿨타임
+        yield return new WaitForSeconds(attackCoolDown);
+
+        isAttacking = false;
+    }
+
+    //공격 판정 + 데미지 적용
+    private void AttackRayCast()
     {
         if(cameraPos == null) return;
 
@@ -45,6 +88,7 @@ public class PlayerAttack : MonoBehaviour
         }
     }
 
+    //사거리를 보기 위함
     private void OnDrawGizmos()
     {
         if(cameraPos != null)

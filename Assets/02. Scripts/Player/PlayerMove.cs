@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerMove : MonoBehaviour
@@ -17,9 +18,13 @@ public class PlayerMove : MonoBehaviour
     private float gravity = -9f;
     private Vector3 velocity;
 
+    [Header("플레이어 애니메이션")]
+    private Animator playerAnim;
+
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        playerAnim = GetComponentInChildren<Animator>();
     }
 
     public void Move(float h, float v, bool isRunning, bool isCrouch)
@@ -46,6 +51,14 @@ public class PlayerMove : MonoBehaviour
 
         velocity.y += gravity * Time.deltaTime;
         controller.Move(velocity * Time.deltaTime);
+
+        if(playerAnim != null)
+        {
+            float playerSpeed = moveDir.magnitude * currentSpeed;
+
+            playerAnim.SetFloat("Speed", playerSpeed, 0.1f, Time.deltaTime);
+            playerAnim.SetBool("IsCrouch", isCrouch);
+        }
 
 
     }

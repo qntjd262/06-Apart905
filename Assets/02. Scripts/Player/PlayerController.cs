@@ -41,10 +41,19 @@ public class PlayerController : MonoBehaviour
         bool isRunning = Input.GetKey(KeyCode.LeftShift);
         bool isCrouch = Input.GetKey(KeyCode.LeftControl);
 
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+        {
+            playerLook.SetCameraHeight(true);
+        }
+        else if (Input.GetKeyUp(KeyCode.LeftControl))
+        {
+            playerLook.SetCameraHeight(false);
+        }
+
         playerMove.Move(h, v, isRunning, isCrouch);
 
         //플레이어 공격
-        if (Input.GetButtonDown("Fire1"))
+        if (Input.GetMouseButtonDown(0))
         {   
             //TODO : 공격 애니메이션을 통해 해당 애니메이션 지점에서 Attack()함수 실행하기
             playerAttack.Attack();
