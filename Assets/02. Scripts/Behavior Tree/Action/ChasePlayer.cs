@@ -1,37 +1,38 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-public class ChaseDetectedEnemy : Node
+public class ChasePlayer: ActionNode
 {
     private NavMeshAgent _navMeshAgent;
-    private GameObject _detectedPlayer;
-    private Blackboard _blackboard;
-    private float _chaseInterval = 0.5f;
-    private float _chaseTime = 0f;
 
-    public ChaseDetectedEnemy(NavMeshAgent navMeshAgent, float chaseInterval, Blackboard blackboard)
+    // 추적 시간
+    private float _chaseInterval = 0.3f;
+    private float _chaseTime = 0.3f;
+
+    public ChasePlayer(float chaseInterval, Blackboard blackboard)
     {
-        _navMeshAgent = navMeshAgent;
         _blackboard = blackboard;
         _chaseInterval = chaseInterval;
     }
 
     public override NodeState Evaluate()
     {
-        // 탐지된 적이 없다면 Failure 반환
-        if (_detectedPlayer == null)
+        if (_navMeshAgent == null)
+            _navMeshAgent = _blackboard.NavMeshAgent;
+
+        // 매번 적이 있는지 확인 후, 없으면 Failure
+        var player = _blackboard.Player;
+        if (player == null)
         {
-            _detectedPlayer = _blackboard.Player;
-            if (_detectedPlayer == null)
-                return NodeState.Failure;
+            _navMeshAgent.ResetPath();
+            return NodeState.Failure;
         }
 
         // _chaseInterval마다 플레이어 쪽으로 경로 탐색 및 이동 명령
         _chaseTime += Time.deltaTime;
         if (_chaseTime >= _chaseInterval)
         {
-            // 플레이어 쪽으로 이동하게 명령
-            _navMeshAgent.SetDestination(_detectedPlayer.transform.position);
+            _navMeshAgent.SetDestination(player.transform.position); // 플레이어 쪽으로 이동하게 명령
             _chaseTime = 0f;
         }
 
