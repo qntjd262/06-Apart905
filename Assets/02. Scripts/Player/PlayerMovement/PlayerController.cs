@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("플레이어 상태")]
     public bool isDead =false;
+    
 
     void Awake()
     {
@@ -40,6 +41,7 @@ public class PlayerController : MonoBehaviour
 
         bool isRunning = Input.GetKey(KeyCode.LeftShift);
         bool isCrouch = Input.GetKey(KeyCode.LeftControl);
+
 
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {

@@ -7,7 +7,7 @@ public class PlayerAttack : MonoBehaviour
     //TODO : 무기 개발 완료 후 공격 범위 가져오기
     [SerializeField] private float attackRange = 2f;
     //TODO : playerstat.cs 추가 후 수정 예정 임시 공격력
-    [SerializeField] private float attackPower = 4f;
+    private PlayerStat playerStat;
 
     [SerializeField] private Transform cameraPos;
 
@@ -28,6 +28,7 @@ public class PlayerAttack : MonoBehaviour
     void Awake()
     {
         //TODO : playerstat.cs에서 캐릭터 스탯 가져오기
+        playerStat = GetComponent<PlayerStat>();
     }
 
     public void Attack()
@@ -74,7 +75,7 @@ public class PlayerAttack : MonoBehaviour
 
                 if(monsterTest != null)
                 {
-                    monsterTest.TakeDamage(attackPower);
+                    monsterTest.TakeDamage(playerStat.AttackPower);
                 }
             }
         }
