@@ -9,11 +9,11 @@ public enum ItemType
 
 public enum EatableType
 {
-    Hunger,
-    Thirst,
-    Health,
-    Stamina,
-    Infection
+    Hunger,   //허기
+    Thirst,   //갈증
+    Health,   //체력
+    Stamina,  //스태미너
+    Infection //감염도
 }
 
 [System.Serializable]
