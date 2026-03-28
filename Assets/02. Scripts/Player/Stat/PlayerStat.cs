@@ -3,14 +3,14 @@ using UnityEngine;
 public class PlayerStat : MonoBehaviour
 {
     [Header("기본 스탯(데이터 SO추가 시 변경 필요)")]
-    [SerializeField] private float maxHp = 100f;
-    [SerializeField] private float def = 5f;
-    [SerializeField] private float attackPower = 3f;
-    [SerializeField] private float maxStamina = 20f;
+    [SerializeField] private float maxHp;
+    [SerializeField] private float def;
+    [SerializeField] private float attackPower;
+    [SerializeField] private float maxStamina;
 
-    [SerializeField] private float infectionIncreaseRate = 1f;
-    [SerializeField] private float ThirstDecreaseRate = 1.5f;
-    [SerializeField] private float HungerDecreaseRate = 1f;
+    [SerializeField] private float infectionIncreaseRate;
+    [SerializeField] private float ThirstDecreaseRate;
+    [SerializeField] private float HungerDecreaseRate;
 
     public float AttackPower
     {
@@ -26,6 +26,20 @@ public class PlayerStat : MonoBehaviour
 
     void Awake()
     {
+        if(CharacterDataManager.Instance != null && CharacterDataManager.Instance.selectedCharacterSO != null)
+        {
+            CharacterStatSO myData = CharacterDataManager.Instance.selectedCharacterSO;
+
+            maxHp = myData.Hp;
+            def = myData.Def;
+            attackPower = myData.AttackPower;
+            maxStamina = myData.MaxStamina;
+            infectionIncreaseRate = myData.InfectionIncreaseRate;
+            ThirstDecreaseRate = myData.ThirstDecreaseRate;
+            HungerDecreaseRate = myData.HungerDecreaseRate;
+
+            Debug.Log($"가져온 캐릭터 데이터 : {myData.Name}");
+        }
         //TODO : 캐릭터 선택 시 데이터매니저에 저장 -> 데이터매니저에 저장된 characterSO를 통해 스탯 초기화
         hp = new StatCondition(maxHp);
         stamina = new StatCondition(maxStamina);

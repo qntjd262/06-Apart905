@@ -1,6 +1,7 @@
 using System;
 
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerGamemanager : MonoBehaviour
 {
@@ -27,5 +28,10 @@ public class PlayerGamemanager : MonoBehaviour
             OnGameStatChangeTime?.Invoke();
             timer = 0f;
         }
+    }
+
+    public void OnClickBack()
+    {
+        SceneManager.LoadScene(2);
     }
 }
