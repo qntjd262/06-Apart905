@@ -1,4 +1,6 @@
+using Unity.VisualScripting;
 using UnityEngine;
+using System;
 
 public class PlayerStat : MonoBehaviour
 {
@@ -23,6 +25,11 @@ public class PlayerStat : MonoBehaviour
     public StatCondition hunger;
     public StatCondition thirst;
     public StatCondition infection;
+
+    [Header("감염 상태 관리")]
+    public int currentInfectionStage = 0;
+
+    public event Action<bool> OnInfectionStateBool;
 
     void Awake()
     {
@@ -55,13 +62,48 @@ public class PlayerStat : MonoBehaviour
         PlayerGamemanager.OnGameStatChangeTime += DecreasSurvivalStat;
     }
 
-    //TODO : 좀비에게 피격 당할 시 증가
-    public void AddInfection(float value)
-    {
-        infection.AddStat(value * infectionIncreaseRate);
 
-        if(infection.currentValue >= 100f)
-            Debug.Log("사망");
+    //몬스터에게 피격당할 시 호출되는 함수
+    public void TakeDamage(float damage)
+    {
+        hp.DecreaseStat(damage);
+        
+        AddInfection();
+
+        if(hp.currentValue <= 0)
+        {
+            Die();
+        }
+    }
+
+    private void AddInfection()
+    {
+        infection.AddStat(infectionIncreaseRate);
+        UpdateInfectionStage();
+    }
+
+    private void UpdateInfectionStage()
+    {
+        int targetStage = 0;
+
+        if(infection.currentValue >= 80f) targetStage = 3;
+        else if(infection.currentValue >= 50f) targetStage = 2;
+        else if(infection.currentValue >= 30f) targetStage = 1;
+
+        if(currentInfectionStage == 0 && targetStage > 0)
+        {
+            OnInfectionStateBool?.Invoke(true);
+        }
+        else if(currentInfectionStage == 1 && targetStage == 0)
+        {
+            OnInfectionStateBool?.Invoke(false);
+        }
+        currentInfectionStage = targetStage;
+    }
+
+    public void Die()
+    {
+        Debug.Log("플레이어 사망");
     }
 
     //배고픔, 갈증 감소 함수
@@ -70,7 +112,7 @@ public class PlayerStat : MonoBehaviour
         hunger.DecreaseStat(HungerDecreaseRate);
         thirst.DecreaseStat(ThirstDecreaseRate);
 
-        if(hunger.currentValue <= 0 || thirst.currentValue <= 0)
+        if(hunger.currentValue <= 0 || thirst.currentValue <= 0 || infection.currentValue >= 100f)
         {
             Debug.Log("허기 또는 갈증이 0 이하 체력깍임");
             hp.DecreaseStat(5f);
