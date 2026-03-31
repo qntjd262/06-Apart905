@@ -4,6 +4,7 @@ using UnityEngine.AI;
 public class ChasePlayer: ActionNode
 {
     private NavMeshAgent _navMeshAgent;
+    private Animator _animator;
 
     // 추적 시간
     private float _chaseInterval = 0.3f;
@@ -13,6 +14,7 @@ public class ChasePlayer: ActionNode
     {
         _blackboard = blackboard;
         _chaseInterval = chaseInterval;
+        _animator = _blackboard.Animator;
     }
 
     public override NodeState Evaluate()
@@ -39,6 +41,7 @@ public class ChasePlayer: ActionNode
         // 플레이어한테 이동할 때 거리가 정지거리 이하면 정지
         if (!_navMeshAgent.pathPending && _navMeshAgent.remainingDistance <= _navMeshAgent.stoppingDistance)
         {
+            Debug.Log("Chase 끝");
             _navMeshAgent.ResetPath(); // 경로 초기화하여 멈춤
             _chaseTime = _chaseInterval; // 다음 추적이 가능하게 타이머 초기화
             return NodeState.Success;

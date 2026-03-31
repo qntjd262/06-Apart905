@@ -35,27 +35,40 @@ public class TestMonsterAI : MonoBehaviour
     // SequenceNode -> 성공하면 다음 노드로
     private void Start()
     {
+        // 여러 곳에서 호출되는 노드 객체 미리 생성
+        var AttackPlayer = new AttackPlayer(_blackboard);
+
         // Behavior Tree 생성
-        var rootNode = new SelectorNode 
+        var rootNode = new SelectorNode
             (
-                // 공격 가능할 시 공격
+                // 공격 중이었다면 끝날 때까지 진행
                 new SequenceNode
                 (
-                    new IsInAttackRange(_blackboard), // 공격 가능 범위 내인지 확인
-                    new AttackPlayer(_blackboard) // 플레이어 공격
+                    new ConditionNode(() => _blackboard.IsAttacking),
+                    AttackPlayer
                 ),
 
-                // 플레이어 확인 후 추적
                 new SequenceNode
                 (
                     new IsSeeingPlayer(_detectRadius, _playerLayer, _blackboard), // 플레이어를 보고 있는지 확인
-                    new ChasePlayer(_chaseInterval, _blackboard) // 탐지된 플레이어를 쫓기
+
+                    new SelectorNode
+                    (
+                        new SequenceNode
+                        (
+                            new IsInAttackRange(_blackboard), // 공격 가능 범위 내인지 확인
+                            new CooldownNode(3f),
+                            AttackPlayer
+                        ),
+
+                        new ChasePlayer(_chaseInterval, _blackboard) // 탐지된 플레이어를 쫓기
+                    )
                 ),
 
                 // 복귀 및 정찰
                 new SequenceNode
                 (
-                    new ReturnOriginPosition(_originPos, _blackboard), // 제자리로 복귀
+                    //new ReturnOriginPosition(_originPos, _blackboard), // 제자리로 복귀
                     new Idle(2f, 5f),
                     new PatrolToFindPlayer(10f, _blackboard)
                 )
@@ -74,10 +87,21 @@ public class TestMonsterAI : MonoBehaviour
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position, _detectRadius); // 탐지 범위를 시각적으로 표시
 
-        if (Application.isPlaying && _blackboard.Player != null)
+        if (!Application.isPlaying) return;
+
+        if (_blackboard.Player != null)
         {
             Gizmos.color = Color.red;
             Gizmos.DrawLine(transform.position, _blackboard.Player.transform.position); // 탐지된 플레이어와의 선을 시각적으로 표시
         }
+
+        if (_blackboard.NavMeshAgent.hasPath)
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawLine(transform.position, _blackboard.NavMeshAgent.destination);
+        }
+
+        var center = _blackboard.Self.transform.position + (_blackboard.Self.transform.forward * 1f);
+        Gizmos.DrawWireCube(center, new Vector3(0.5f, 1f, 0.5f));
     }
 }

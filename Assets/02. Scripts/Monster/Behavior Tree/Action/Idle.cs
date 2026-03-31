@@ -1,12 +1,20 @@
 using UnityEngine;
 
+
 public class Idle : ActionNode
 {
+    private Animator _animator;
+
     private float _idleTimer;
     private float _idleDuration = 0f;
     private float _minIdleTime;
     private float _maxIdleTime;
 
+    /// <summary>
+    /// 일정 시간동안 가만히 대기하는 함수
+    /// </summary>
+    /// <param name="minIdleTime">대기 최소 시간</param>
+    /// <param name="maxIdleTime">대기 최대 시간</param>
     public Idle(float minIdleTime, float maxIdleTime)
     {
         _minIdleTime = minIdleTime;

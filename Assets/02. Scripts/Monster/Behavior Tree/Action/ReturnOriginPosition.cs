@@ -3,6 +3,8 @@ using UnityEngine.AI;
 
 public class ReturnOriginPosition : ActionNode
 {
+    private Animator _animator;
+
     private GameObject _self;
     private Vector3 _originPos;
     private NavMeshAgent _navMeshAgent;
@@ -11,15 +13,14 @@ public class ReturnOriginPosition : ActionNode
     {
         _originPos = originPos;
         _blackboard = blackboard;
+        _animator = _blackboard.Animator;
+        _self = _blackboard.Self;
+        _navMeshAgent = _blackboard.NavMeshAgent;
     }
 
     public override NodeState Evaluate()
     {
-        if (_navMeshAgent == null && _self == null)
-        {
-            _self = _blackboard.Self;
-            _navMeshAgent = _blackboard.NavMeshAgent;
-        }
+  
 
         // 원래 위치와의 거리가 0.5 이하면 Success 반환
         if (Vector3.Distance(_self.transform.position, _originPos) < 0.5f)

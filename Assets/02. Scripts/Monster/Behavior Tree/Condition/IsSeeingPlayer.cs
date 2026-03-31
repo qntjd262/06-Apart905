@@ -12,12 +12,12 @@ public class IsSeeingPlayer : Node
         _detectRadius = detectRadius;
         _playerLayer = playerLayer;
         _blackboard = blackboard;
+        _self = _blackboard.Self;
     }
 
     public override NodeState Evaluate()
     {
-        if (_self == null)
-            _self = _blackboard.Self;
+        Debug.Log("적이 보이는지 확인중");
 
         var overlapSphere = Physics.OverlapSphere(_self.transform.position, _detectRadius, _playerLayer);
         if (overlapSphere.Length > 0)
@@ -35,7 +35,7 @@ public class IsSeeingPlayer : Node
             {
                 if (hit.collider.CompareTag("Player"))
                 {
-                    _blackboard.CanAttackPlayer = distance <= 2f;
+                    _blackboard.Distance = distance;
                     _blackboard.Player = player; // 플레이어 정보를 블랙보드에 저장
                     return NodeState.Success;
                 }
@@ -43,8 +43,8 @@ public class IsSeeingPlayer : Node
         }
 
         // 못찾았을 시 플레이어 관련 정보 비우기 및 Failure 반환
+        _blackboard.Distance = -1f;
         _blackboard.Player = null;
-        _blackboard.CanAttackPlayer = false;
         return NodeState.Failure;
     }
 }
