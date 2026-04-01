@@ -9,8 +9,8 @@ public static class Constants
         Ending
     }
     public enum ESaveLoadType
-{
-    Save,
-    Load
-}
+    {
+        Save,
+        Load
+    }
 }
