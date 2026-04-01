@@ -12,6 +12,9 @@ public class CharacterStatSO : ScriptableObject
     public float Def;
     public float AttackPower;
     public float MaxStamina;
+    public float MaxHunger;
+    public float MaxThirst;
+    public float MaxInfection;
 
     [Header("플레이어 스탯 증감율")]
 

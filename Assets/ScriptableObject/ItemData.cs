@@ -1,19 +1,17 @@
 using UnityEngine;
 
+// 아이템의 대분류
 public enum ItemType
 {
-    Equipable, //장비 아이템
-    Eatable,   //음식 및 사용 아이템
-    Useable    //핵심 아이템(퀘스트)
+    Equipable, // 장착 아이템 (무기, 손전등 등)
+    Eatable,   // 소모 아이템 (음식, 약 등)
+    Useable    // 특수 아이템 (열쇠, 퀘스트 아이템 등)
 }
 
+// 소모 시 영향을 줄 스탯 종류
 public enum EatableType
 {
-    Hunger,   //허기
-    Thirst,   //갈증
-    Health,   //체력
-    Stamina,  //스태미너
-    Infection //감염도
+    Hunger, Thirst, Health, Stamina, Infection
 }
 
 [System.Serializable]
@@ -23,23 +21,19 @@ public class ItemDataEatable
     public float value;
 }
 
-[CreateAssetMenu(fileName = "Item", menuName = "New Item")]
+[CreateAssetMenu(fileName = "New Item", menuName = "Items/ItemData")]
 public class ItemData : ScriptableObject
 {
-    [Header("Info")]
-    public string itemName;         //아이템 이름
-    public string description;      //아이템 설명
-    public ItemType type;           //아이템 타입
-    public Sprite icon;             //아이콘
-    public GameObject dropPrefab;   //프리팹 정보
+    [Header("기본 정보")]
+    public string itemName;
+    [TextArea] public string description;
+    public ItemType type;
+    public Sprite icon;
+    public GameObject dropPrefab; // 바닥에 떨어져 있을 때 모델링
 
-    [Header("Stacking")]
-    public bool canStack;           //중첩으로 가질수 잇는지
-    public int maxStackAmount;      //가질수 잇다면, 최대 중첩은 몇개인지
+    [Header("소모품 설정 (Eatable일 때만 사용)")]
+    public ItemDataEatable[] eatables;
 
-    [Header("Eatable")]
-    public ItemDataEatable[] eatables;  //허기,갈증,스태미나,감염도 구분
-
-    [Header("Equip")]
-    public GameObject equipPrefab;
+    [Header("장착 설정 (Equipable일 때만 사용)")]
+    public GameObject equipPrefab; // 손에 들었을 때 모델링
 }
