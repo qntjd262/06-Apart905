@@ -1,6 +1,7 @@
 using System;
 
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerGamemanager : MonoBehaviour
 {
@@ -18,6 +19,8 @@ public class PlayerGamemanager : MonoBehaviour
         if(Instance == null) Instance = this;
         else Destroy(gameObject);
     }
+
+    //현재 배고픔, 감염도, 갈증이 맥스에 달할 때마다 인터벌 후 hp감소도 적용
     void Update()
     {
         timer += Time.deltaTime;
@@ -27,5 +30,10 @@ public class PlayerGamemanager : MonoBehaviour
             OnGameStatChangeTime?.Invoke();
             timer = 0f;
         }
+    }
+
+    public void OnClickBack()
+    {
+        SceneManager.LoadScene(2);
     }
 }
