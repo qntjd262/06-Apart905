@@ -3,25 +3,24 @@ using UnityEngine.AI;
 
 public class ChasePlayer: ActionNode
 {
-    private NavMeshAgent _navMeshAgent;
-    private Animator _animator;
-
     // 추적 시간
     private float _chaseInterval = 0.3f;
     private float _chaseTime = 0.3f;
+    
+    private NavMeshAgent _navMeshAgent;
+    private Animator _animator;
+
 
     public ChasePlayer(float chaseInterval, Blackboard blackboard)
     {
         _blackboard = blackboard;
         _chaseInterval = chaseInterval;
         _animator = _blackboard.Animator;
+        _navMeshAgent = _blackboard.NavMeshAgent;
     }
 
     public override NodeState Evaluate()
     {
-        if (_navMeshAgent == null)
-            _navMeshAgent = _blackboard.NavMeshAgent;
-
         // 매번 적이 있는지 확인 후, 없으면 Failure
         var player = _blackboard.Player;
         if (player == null)

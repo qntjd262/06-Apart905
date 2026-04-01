@@ -30,6 +30,7 @@ public class Idle : ActionNode
 
         if (_idleTimer >= _idleDuration)
         {
+            Debug.Log("Idle Success");
             _idleTimer = 0f;
             _idleDuration = 0f;
             return NodeState.Success;

@@ -20,8 +20,6 @@ public class ReturnOriginPosition : ActionNode
 
     public override NodeState Evaluate()
     {
-  
-
         // 원래 위치와의 거리가 0.5 이하면 Success 반환
         if (Vector3.Distance(_self.transform.position, _originPos) < 0.5f)
         {

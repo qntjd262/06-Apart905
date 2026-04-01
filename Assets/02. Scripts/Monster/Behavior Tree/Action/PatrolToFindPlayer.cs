@@ -23,13 +23,11 @@ public class PatrolToFindPlayer : ActionNode
         _blackboard = blackboard;
         _patrolRadius = patrolRadius;
         _animator = _blackboard.Animator;
+        _navMeshAgent = _blackboard.NavMeshAgent;
     }
 
     public override NodeState Evaluate()
     {
-        if (_navMeshAgent == null)
-            _navMeshAgent = _blackboard.NavMeshAgent;
-
         // 길을 찾고있거나 이미 찾은 것이 아니라면 
         if (!_navMeshAgent.pathPending && !_navMeshAgent.hasPath)
         {
@@ -59,8 +57,6 @@ public class PatrolToFindPlayer : ActionNode
     {
         Vector2 randomDir2d = Random.insideUnitCircle * _patrolRadius;
         Vector3 randomDir = new Vector3(randomDir2d.x, 0, randomDir2d.y);
-
-        Debug.Log(randomDir);
 
         randomDir += _blackboard.Self.transform.position;
 
