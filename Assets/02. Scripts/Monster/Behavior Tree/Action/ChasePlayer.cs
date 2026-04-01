@@ -3,23 +3,24 @@ using UnityEngine.AI;
 
 public class ChasePlayer: ActionNode
 {
-    private NavMeshAgent _navMeshAgent;
-
     // 추적 시간
     private float _chaseInterval = 0.3f;
     private float _chaseTime = 0.3f;
+    
+    private NavMeshAgent _navMeshAgent;
+    private Animator _animator;
+
 
     public ChasePlayer(float chaseInterval, Blackboard blackboard)
     {
         _blackboard = blackboard;
         _chaseInterval = chaseInterval;
+        _animator = _blackboard.Animator;
+        _navMeshAgent = _blackboard.NavMeshAgent;
     }
 
     public override NodeState Evaluate()
     {
-        if (_navMeshAgent == null)
-            _navMeshAgent = _blackboard.NavMeshAgent;
-
         // 매번 적이 있는지 확인 후, 없으면 Failure
         var player = _blackboard.Player;
         if (player == null)
@@ -39,6 +40,7 @@ public class ChasePlayer: ActionNode
         // 플레이어한테 이동할 때 거리가 정지거리 이하면 정지
         if (!_navMeshAgent.pathPending && _navMeshAgent.remainingDistance <= _navMeshAgent.stoppingDistance)
         {
+            Debug.Log("Chase 끝");
             _navMeshAgent.ResetPath(); // 경로 초기화하여 멈춤
             _chaseTime = _chaseInterval; // 다음 추적이 가능하게 타이머 초기화
             return NodeState.Success;
