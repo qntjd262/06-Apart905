@@ -429,6 +429,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &304695187
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 304695188}
+  m_Layer: 0
+  m_Name: FeetPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &304695188
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 304695187}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1912663460}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &386304034
 GameObject:
   m_ObjectHideFlags: 0
@@ -1580,6 +1611,8 @@ GameObject:
   - component: {fileID: 1912663461}
   - component: {fileID: 1912663462}
   - component: {fileID: 1912663463}
+  - component: {fileID: 1912663464}
+  - component: {fileID: 1912663465}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1659,6 +1692,7 @@ Transform:
   - {fileID: 988473392}
   - {fileID: 1857054921}
   - {fileID: 1768331065}
+  - {fileID: 304695188}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1912663461
@@ -1725,6 +1759,40 @@ MonoBehaviour:
     currentValue: 0
     maxValue: 0
   currentInfectionStage: 0
+--- !u!114 &1912663464
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1912663456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b46252a5865f1a48994227d2c9ccb7a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ripplePrefab: {fileID: 2808058182116745620, guid: fca8ddf98b0e1e3429ebcbc445c706a5, type: 3}
+  groundPoint: {fileID: 304695188}
+--- !u!114 &1912663465
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1912663456}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 775e7452070b39748bd0849cef0b5fec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerNoise: {fileID: 1912663464}
+  threshold: 0.02
+  maxMicVolume: 0.6
+  micSensitivity: 2
+  maxNoiseRadius: 15
+  minNoiseRadius: 2
+  rippleInterval: 0.5
+  showDebugLog: 1
 --- !u!1 &6412647854644295
 GameObject:
   m_ObjectHideFlags: 0

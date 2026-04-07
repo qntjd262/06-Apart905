@@ -17,6 +17,10 @@ public class PlayerAttack : MonoBehaviour
     private float attackCoolDown = 1.45f;
     public bool isAttacking {get; private set;}
 
+    [Header("공격 소음")]
+    private PlayerNoise playerNoise;
+    private float attackNoiseRadius = 10f;
+
     private Animator anim;
 
     void Start()
@@ -29,6 +33,8 @@ public class PlayerAttack : MonoBehaviour
     {
         //TODO : playerstat.cs에서 캐릭터 스탯 가져오기
         playerStat = GetComponent<PlayerStat>();
+
+        playerNoise = GetComponent<PlayerNoise>();
     }
 
     public void Attack()
@@ -48,6 +54,7 @@ public class PlayerAttack : MonoBehaviour
 
         //attackDelay = 애니메이션 동작 타임 제어
         yield return new WaitForSeconds(attackDelay);
+        if(playerNoise != null) playerNoise.TriggerOneShotNoise(attackNoiseRadius);
 
         AttackRayCast();
 
