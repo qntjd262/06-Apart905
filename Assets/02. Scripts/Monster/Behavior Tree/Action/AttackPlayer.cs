@@ -54,7 +54,7 @@ public class AttackPlayer : ActionNode
                     _colliderHashSet.Add(collider);
 
                     // TODO : 플레이어 정보 받아와 플레이어에게 공격하는 함수 호출
-                    //collider.GetComponent<PlayerStat>().TakeDamage(_blackboard.MonsterStat.damage);
+                    collider.GetComponent<PlayerStat>().TakeDamage(_blackboard.MonsterStat.monsterStatSO.damage);
 
                     Debug.Log("플레이어에게 데미지");
                 }

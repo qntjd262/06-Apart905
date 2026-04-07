@@ -5,7 +5,7 @@ public class IsSeeingPlayer : Node
     private GameObject _self;
     private float _detectRadius;
     private float _detectAngle;
-    private LayerMask _playerLayer = LayerMask.GetMask("Player");
+    private LayerMask _playerLayer;
     private Blackboard _blackboard;
 
     public IsSeeingPlayer(float detectRadius, float detectAngle, LayerMask playerLayer, Blackboard blackboard)

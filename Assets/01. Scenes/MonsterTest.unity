@@ -119,17 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!114 &145761798 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7418592438169169293, guid: ace801eba2661c64483aeacfe181e906, type: 3}
-  m_PrefabInstance: {fileID: 4638847872618180042}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b2d16a51fcd19474eac0cd4a5b9d8998, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!4 &145761801 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9132780636154155129, guid: ace801eba2661c64483aeacfe181e906, type: 3}
@@ -512,7 +501,7 @@ GameObject:
   - component: {fileID: 402609050}
   - component: {fileID: 402609049}
   - component: {fileID: 402609048}
-  m_Layer: 7
+  m_Layer: 4
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -604,7 +593,7 @@ Transform:
   m_GameObject: {fileID: 402609047}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.12, y: 1, z: 12.18}
+  m_LocalPosition: {x: 3.56, y: 1, z: 7.58}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1217,7 +1206,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 746f8385f6a66894b9d007dbf4c993e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  monsterAI: {fileID: 145761798}
+  monsterAI: {fileID: 8936681570272820607}
+  player: {fileID: 402609047}
+  monsterStat: {fileID: 8936681570272820604}
 --- !u!1001 &4638847872618180042
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1238,6 +1229,10 @@ PrefabInstance:
       propertyPath: _center
       value: 
       objectReference: {fileID: 145761801}
+    - target: {fileID: 7418592438169169293, guid: ace801eba2661c64483aeacfe181e906, type: 3}
+      propertyPath: _playerLayer.m_Bits
+      value: 16
+      objectReference: {fileID: 0}
     - target: {fileID: 9132780636154155129, guid: ace801eba2661c64483aeacfe181e906, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1291,6 +1286,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 790018128789168648, guid: 3fc7125ebb88de840b468c7f9093224c, type: 3}
+      propertyPath: _detectAngle
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 790018128789168648, guid: 3fc7125ebb88de840b468c7f9093224c, type: 3}
+      propertyPath: _chaseInterval
+      value: 0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 790018128789168648, guid: 3fc7125ebb88de840b468c7f9093224c, type: 3}
+      propertyPath: _halfExtents.x
+      value: 0.92
+      objectReference: {fileID: 0}
+    - target: {fileID: 790018128789168648, guid: 3fc7125ebb88de840b468c7f9093224c, type: 3}
+      propertyPath: _halfExtents.y
+      value: 1.93
+      objectReference: {fileID: 0}
+    - target: {fileID: 790018128789168648, guid: 3fc7125ebb88de840b468c7f9093224c, type: 3}
+      propertyPath: _playerLayer.m_Bits
+      value: 16
+      objectReference: {fileID: 0}
     - target: {fileID: 1177694013544946645, guid: 3fc7125ebb88de840b468c7f9093224c, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -1339,11 +1354,48 @@ PrefabInstance:
       propertyPath: m_Name
       value: TestMonsterAnim
       objectReference: {fileID: 0}
+    - target: {fileID: 7679406937999697682, guid: 3fc7125ebb88de840b468c7f9093224c, type: 3}
+      propertyPath: m_Layer
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7679406937999697682, guid: 3fc7125ebb88de840b468c7f9093224c, type: 3}
+      insertIndex: 3
+      addedObject: {fileID: 8936681570272820604}
   m_SourcePrefab: {fileID: 100100000, guid: 3fc7125ebb88de840b468c7f9093224c, type: 3}
+--- !u!1 &8936681570272820603 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7679406937999697682, guid: 3fc7125ebb88de840b468c7f9093224c, type: 3}
+  m_PrefabInstance: {fileID: 8936681570272820602}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &8936681570272820604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8936681570272820603}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5936c6c8758bfa4479c689ed44ea1dbe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  monsterStatSO: {fileID: 11400000, guid: 8aa57cf68793caf43acd214ec17a2ff3, type: 2}
+  currentHealth: 0
+--- !u!114 &8936681570272820607 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 790018128789168648, guid: 3fc7125ebb88de840b468c7f9093224c, type: 3}
+  m_PrefabInstance: {fileID: 8936681570272820602}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8936681570272820603}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b2d16a51fcd19474eac0cd4a5b9d8998, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

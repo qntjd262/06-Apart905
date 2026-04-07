@@ -3,12 +3,14 @@ using UnityEngine;
 public class TestButtonUI : MonoBehaviour
 {
     public TestMonsterAI monsterAI;
+    public GameObject player;
+    public MonsterStat monsterStat;
 
     public void SetAttacked()
     {
         var blackboard = monsterAI.blackboard;
-        Debug.Log(monsterAI);
-        Debug.Log(monsterAI.blackboard.IsAttacked);
-        blackboard.IsAttacked = true;
+        monsterStat.TakeDamage(monsterStat.monsterStatSO.damage, player);
+        //blackboard.IsAttacked = true;
+        //blackboard.Player = player;
     }
 }

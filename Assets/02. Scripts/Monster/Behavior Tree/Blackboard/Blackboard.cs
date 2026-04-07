@@ -11,7 +11,7 @@ public class Blackboard
     public GameObject Self { get; set; }
     public Animator Animator { get; set; }
     public NavMeshAgent NavMeshAgent { get; set; }
-    public MonsterStatSO MonsterStat { get; set; }
+    public MonsterStat MonsterStat { get; set; }
     public Transform Center { get; set; }
 
     // 공격, 피격

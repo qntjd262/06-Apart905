@@ -7,9 +7,7 @@ public class TestMonsterAI : MonoBehaviour
 
     private Node _rootNode;
     private Vector3 _originPos;
-
-    [Header("몬스터 스탯")]
-    public MonsterStatSO monsterStatData; // 몬스터 스탯 데이터
+    private MonsterStat monsterStatData; // 몬스터 스탯 데이터
 
     [Header("탐색 설정")]
     [SerializeField] private float      _detectRadius = 10f;
@@ -38,7 +36,7 @@ public class TestMonsterAI : MonoBehaviour
         blackboard = new Blackboard(); // 블랙보드 초기화
 
         _originPos = transform.position; // 초기 위치 저장
-        blackboard.MonsterStat = monsterStatData;
+        blackboard.MonsterStat = GetComponent<MonsterStat>();
         blackboard.Self = gameObject; // 몬스터 자신 저장
         blackboard.NavMeshAgent = GetComponent<NavMeshAgent>(); // NavMeshAgnet 가져오기
         blackboard.Animator = GetComponent<Animator>(); // Animation 가져오기
