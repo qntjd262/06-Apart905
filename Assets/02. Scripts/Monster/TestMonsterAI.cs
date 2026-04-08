@@ -30,7 +30,6 @@ public class TestMonsterAI : MonoBehaviour
     [SerializeField] float minIdleTime;
     [SerializeField] float maxIdleTime;
 
-
     private void Awake()
     {
         blackboard = new Blackboard(); // 블랙보드 초기화
@@ -39,7 +38,7 @@ public class TestMonsterAI : MonoBehaviour
         blackboard.MonsterStat = GetComponent<MonsterStat>();
         blackboard.Self = gameObject; // 몬스터 자신 저장
         blackboard.NavMeshAgent = GetComponent<NavMeshAgent>(); // NavMeshAgnet 가져오기
-        blackboard.Animator = GetComponent<Animator>(); // Animation 가져오기
+        blackboard.Animator = GetComponent<MonsterAnimator>(); // Animator 가져오기
         blackboard.Center = _center;
     }
 
@@ -49,23 +48,25 @@ public class TestMonsterAI : MonoBehaviour
     {
         // 여러 곳에서 호출되는 노드 객체 미리 생성
         var AttackPlayer = new AttackPlayer(_halfExtents, blackboard);
+        var AttackWait = new Wait(2f, blackboard);
 
         // Behavior Tree 생성
         var rootNode = new SelectorNode
             (
-                //// 공격을 받았다면
+                // 공격을 받았다면
                 new SequenceNode
                 (
-                    new ConditionNode(() => blackboard.IsAttacked),
+                    new ConditionNode(() => blackboard.MonsterState == Blackboard.State.Attacked),
                     new Attacked(blackboard) // 피격 노드
                 ),
 
-                // 공격 중이었다면 끝날 때까지 진행
-                new SequenceNode
-                (
-                    new ConditionNode(() => blackboard.IsAttacking),
-                    AttackPlayer
-                ),
+                //// 공격 중이었다면 끝날 때까지 진행
+                //new SequenceNode
+                //(
+                //    new ConditionNode(() => blackboard.MonsterState == Blackboard.State.Attacking),
+                //    AttackPlayer
+
+                //),
 
                 new SequenceNode
                 (
@@ -76,19 +77,21 @@ public class TestMonsterAI : MonoBehaviour
                         new SequenceNode
                         (
                             new IsInAttackRange(blackboard), // 공격 가능 범위 내인지 확인
-                            new CooldownNode(3f),
                             AttackPlayer
                         ),
 
-                        new ChasePlayer(_chaseInterval, blackboard) // 탐지된 플레이어를 쫓기
+                        new SelectorNode
+                        (
+                            new ChasePlayer(_chaseInterval, blackboard) // 탐지된 플레이어를 쫓기
+                            // TODO : 플레이어가 시야에서 사라지면 좀 더 이동해 주변 두리번거리게
+                        )
                     )
                 ),
 
-                // 복귀 및 정찰
-                new SequenceNode
+                // 정찰 및 대기
+                new MemorySequenceNode
                 (
-                    //new ReturnOriginPosition(_originPos, _blackboard), // 제자리로 복귀
-                    new Idle(minIdleTime, maxIdleTime),
+                    new Idle(minIdleTime, maxIdleTime, blackboard),
                     new PatrolToFindPlayer(patrolRadius, blackboard)
                 )
             );
@@ -108,11 +111,15 @@ public class TestMonsterAI : MonoBehaviour
         Gizmos.DrawRay(_center.position, Quaternion.Euler(0, -_detectAngle, 0) * transform.forward * _detectRadius);
         Gizmos.DrawRay(_center.position, Quaternion.Euler(0, _detectAngle, 0) * transform.forward * _detectRadius);
 
-        // 공격 범위 표시
-        var center = _center.position + transform.forward;
-        Gizmos.DrawWireCube(center, _halfExtents * 2f);
 
         if (!Application.isPlaying) return;
+
+        // 공격 범위 표시
+        if (blackboard.MonsterState == Blackboard.State.Attacking)
+        {
+            var center = _center.position + transform.forward;
+            Gizmos.DrawWireCube(center, _halfExtents * 2f);
+        }
 
         if (blackboard.Player != null)
         {

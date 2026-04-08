@@ -17,7 +17,7 @@ public class IsSeeingPlayer : Node
         _self = _blackboard.Self;
     }
 
-    public override NodeState Evaluate()
+    public override NodeState OnUpdate()
     {
         Debug.Log("적이 보이는지 확인중");
 

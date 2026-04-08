@@ -1985,6 +1985,7 @@ GameObject:
   - component: {fileID: 1635517585266992853}
   - component: {fileID: 7677777911796077793}
   - component: {fileID: 790018128789168648}
+  - component: {fileID: 2049902063302787069}
   - component: {fileID: 7028900299767475800}
   - component: {fileID: 5054570265997361806}
   m_Layer: 0
@@ -2022,8 +2023,8 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7679406937999697682}
   m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: 9b0c3d7294e6c8d4a8edd308183c9c39, type: 3}
-  m_Controller: {fileID: 0}
+  m_Avatar: {fileID: 9000000, guid: 3ad16dadfe040954983253e9812ffe67, type: 3}
+  m_Controller: {fileID: 9100000, guid: 072ce40309236bc4eb2cde2e7316ded3, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -2047,20 +2048,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2d16a51fcd19474eac0cd4a5b9d8998, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  monsterStatData: {fileID: 11400000, guid: 8aa57cf68793caf43acd214ec17a2ff3, type: 2}
   _detectRadius: 10
   _playerLayer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 16
   _detectAngle: 50
   _center: {fileID: 1943915588115646645}
-  _chaseInterval: 0.5
-  _halfExtents: {x: 0.74, y: 2, z: 1.2}
+  _chaseInterval: 0.4
+  _halfExtents: {x: 0.92, y: 1.93, z: 1.2}
   minPatrolTime: 3
   maxPatrolTime: 5
-  patrolRadius: 15
+  patrolRadius: 10
   minIdleTime: 3
   maxIdleTime: 5
+--- !u!114 &2049902063302787069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7679406937999697682}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5936c6c8758bfa4479c689ed44ea1dbe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  monsterStatSO: {fileID: 11400000, guid: 8aa57cf68793caf43acd214ec17a2ff3, type: 2}
+  currentHealth: 0
 --- !u!136 &7028900299767475800
 CapsuleCollider:
   m_ObjectHideFlags: 0

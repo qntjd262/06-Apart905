@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// 실패하면 다음 노드, 하나라도 성공하면 전체 성공 처리하는 노드
@@ -7,7 +7,7 @@ public class SelectorNode : CompositeNode
 {
     public SelectorNode(params Node[] children) : base(children) { }
 
-    public override NodeState Evaluate()
+    public override NodeState OnUpdate()
     { 
         foreach (Node child in _children)
         {
@@ -17,6 +17,12 @@ public class SelectorNode : CompositeNode
                     return NodeState.Success;
 
                 case NodeState.Running: // 실행 중이면 상태 유지
+                    if (_currentChild != null && _currentChild != child)
+                    {
+                        _currentChild.OnStop();
+                        Debug.Log($"{_currentChild} Node가 종료되었습니다.");
+                    }
+                    _currentChild = child;
                     return NodeState.Running;
 
                 case NodeState.Failure: // 실패하면 다음 노드 평가

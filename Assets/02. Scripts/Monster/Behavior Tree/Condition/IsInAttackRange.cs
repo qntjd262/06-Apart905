@@ -12,7 +12,7 @@ public class IsInAttackRange : Node
         _self = _blackboard.Self;
     }
 
-    public override NodeState Evaluate()
+    public override NodeState OnUpdate()
     {
         _player = _blackboard.Player;
 

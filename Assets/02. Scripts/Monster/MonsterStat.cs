@@ -35,7 +35,7 @@ public class MonsterStat : MonoBehaviour
         }
 
         _blackBoard.Player = player;
-        _blackBoard.IsAttacked = true;
+        _blackBoard.MonsterState = Blackboard.State.Attacked;
         
     }
 

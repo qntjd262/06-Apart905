@@ -15,12 +15,17 @@ public class ChasePlayer: ActionNode
     {
         _blackboard = blackboard;
         _chaseInterval = chaseInterval;
-        _animator = _blackboard.Animator;
         _navMeshAgent = _blackboard.NavMeshAgent;
     }
 
-    public override NodeState Evaluate()
+    public override NodeState OnUpdate()
     {
+        if (isFirstRun)
+        {
+            _blackboard.Animator.OnWalk();
+            isFirstRun = false;
+        }
+
         // 매번 적이 있는지 확인 후, 없으면 Failure
         var player = _blackboard.Player;
         if (player == null)
@@ -40,13 +45,20 @@ public class ChasePlayer: ActionNode
         // 플레이어한테 이동할 때 거리가 정지거리 이하면 정지
         if (!_navMeshAgent.pathPending && _navMeshAgent.remainingDistance <= _navMeshAgent.stoppingDistance)
         {
-            Debug.Log("Chase 끝");
             _navMeshAgent.ResetPath(); // 경로 초기화하여 멈춤
-            _chaseTime = _chaseInterval; // 다음 추적이 가능하게 타이머 초기화
+            _chaseTime = _chaseInterval; // 다음 추적이 가능하게 타이머 초기화'
+            isFirstRun = true;
             return NodeState.Success;
         }
 
         // 거리가 아직 멀다면 Running 반환
         return NodeState.Running;
+    }
+
+    public override void OnStop()
+    {
+        isFirstRun = true;
+        _chaseTime = _chaseInterval;
+        _navMeshAgent.ResetPath();
     }
 }

@@ -20,19 +20,18 @@ public class Attacked : ActionNode
     public Attacked(Blackboard blackboard)
     {
         _blackboard = blackboard;
-        _animator = _blackboard.Animator;
         _navMeshAgent = _blackboard.NavMeshAgent;
     }
 
-    public override NodeState Evaluate()
+    public override NodeState OnUpdate()
     {
         // 처음 시작 시 초기화
         if (!_isRunning)
         {
-            Debug.Log("공격 받음");
             _isRunning = true;
             _hitTimer = Time.time;
-            _blackboard.IsAttacking = false;
+            _blackboard.MonsterState = Blackboard.State.Attacked;
+            _blackboard.Animator.OnAttacked();
 
             // 이동 정지
             _navMeshAgent.isStopped = true;
@@ -69,10 +68,16 @@ public class Attacked : ActionNode
         _navMeshAgent.updateRotation = true;    // 네브메쉬로 인한 회전 시작
         _navMeshAgent.ResetPath();              // 기존 경로 초기화
         _navMeshAgent.isStopped = false;        // 네브메쉬 이동 시작
-        _blackboard.IsAttacked = false;         // 공격 도중 여부 변수 변경
+        _blackboard.MonsterState = Blackboard.State.Idle;        // 공격 도중 여부 변수 변경
         _isRunning = false;                     
         _hitTimer = 0f;
 
         return NodeState.Success;
+    }
+
+    public override void OnStop()
+    {
+        _isRunning = false;
+        _hitTimer = 0f;
     }
 }
