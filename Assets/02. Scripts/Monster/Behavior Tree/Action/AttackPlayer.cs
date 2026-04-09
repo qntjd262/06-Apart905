@@ -9,7 +9,7 @@ public class AttackPlayer : ActionNode
     private Vector3 _halfExtents;
 
     // 레이어 마스크와 공격한 대상을 저장할 HashSet
-    private LayerMask _playerMask = LayerMask.GetMask("Water");
+    private LayerMask _playerMask = LayerMask.GetMask("Player");
     private HashSet<Collider> _colliderHashSet = new HashSet<Collider>();
 
     public AttackPlayer(Vector3 halfExtents, Blackboard blackboard)
