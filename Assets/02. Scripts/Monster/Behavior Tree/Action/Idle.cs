@@ -1,6 +1,5 @@
 using UnityEngine;
 
-
 public class Idle : ActionNode
 {
     private Animator _animator;
@@ -15,13 +14,18 @@ public class Idle : ActionNode
     /// </summary>
     /// <param name="minIdleTime">대기 최소 시간</param>
     /// <param name="maxIdleTime">대기 최대 시간</param>
-    public Idle(float minIdleTime, float maxIdleTime)
+    public Idle(float minIdleTime, float maxIdleTime, Blackboard blackboard)
     {
+        _blackboard = blackboard;
         _minIdleTime = minIdleTime;
         _maxIdleTime = maxIdleTime;
     }
 
-    public override NodeState Evaluate()
+    public override void OnStart()
+    {
+        _blackboard.Animator.OnIdle();
+    }
+    public override NodeState OnUpdate()
     {
         if (_idleDuration == 0f)
             _idleDuration = Random.Range(_minIdleTime, _maxIdleTime);
@@ -30,12 +34,18 @@ public class Idle : ActionNode
 
         if (_idleTimer >= _idleDuration)
         {
-            Debug.Log("Idle Success");
             _idleTimer = 0f;
             _idleDuration = 0f;
             return NodeState.Success;
         }
 
         return NodeState.Running;
+    }
+
+    public override void OnStop()
+    {
+        base.OnStop();
+        _idleTimer = 0f;
+        _idleDuration = 0f;
     }
 }
