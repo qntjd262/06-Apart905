@@ -7,7 +7,7 @@ public class TestMonsterAI : MonoBehaviour
 
     private Node _rootNode;
     private Vector3 _originPos;
-    private MonsterStat monsterStatData; // 몬스터 스탯 데이터
+    private MonsterController monsterStatData; // 몬스터 스탯 데이터
 
     [Header("탐색 설정")]
     [SerializeField] private float      _detectRadius = 10f;
@@ -18,8 +18,9 @@ public class TestMonsterAI : MonoBehaviour
     [Header("Chase 경로 탐색 주기")]
     [SerializeField] private float  _chaseInterval = 0.3f;
 
-    [Header("공격 범위")]
+    [Header("공격 범위 및 공격 후 대기 시간")]
     [SerializeField] private Vector3 _halfExtents;
+    [SerializeField] private float _waitTime;
 
     [Header("Patrol 범위 및 시간")]
     [SerializeField] float minPatrolTime;
@@ -35,7 +36,7 @@ public class TestMonsterAI : MonoBehaviour
         blackboard = new Blackboard(); // 블랙보드 초기화
 
         _originPos = transform.position; // 초기 위치 저장
-        blackboard.MonsterStat = GetComponent<MonsterStat>();
+        blackboard.MonsterStat = GetComponent<MonsterController>();
         blackboard.Self = gameObject; // 몬스터 자신 저장
         blackboard.NavMeshAgent = GetComponent<NavMeshAgent>(); // NavMeshAgnet 가져오기
         blackboard.Animator = GetComponent<MonsterAnimator>(); // Animator 가져오기
@@ -46,44 +47,43 @@ public class TestMonsterAI : MonoBehaviour
     // SequenceNode -> 성공하면 다음 노드로
     private void Start()
     {
-        // 여러 곳에서 호출되는 노드 객체 미리 생성
-        var AttackPlayer = new AttackPlayer(_halfExtents, blackboard);
-        var AttackWait = new Wait(2f, blackboard);
-
         // Behavior Tree 생성
         var rootNode = new SelectorNode
             (
-                // 공격을 받았다면
+                // 몬스터가 죽었다면
                 new SequenceNode
+                (
+                    new ConditionNode(() => blackboard.MonsterState == Blackboard.State.Death),
+                    new Death(blackboard) // 사망
+                ),
+
+                // 공격을 받았다면
+                new MemorySequenceNode
                 (
                     new ConditionNode(() => blackboard.MonsterState == Blackboard.State.Attacked),
                     new Attacked(blackboard) // 피격 노드
                 ),
 
-                //// 공격 중이었다면 끝날 때까지 진행
-                //new SequenceNode
-                //(
-                //    new ConditionNode(() => blackboard.MonsterState == Blackboard.State.Attacking),
-                //    AttackPlayer
-
-                //),
-
                 new SequenceNode
                 (
                     new IsSeeingPlayer(_detectRadius, _detectAngle, _playerLayer, blackboard), // 플레이어를 보고 있는지 확인
 
-                    new SelectorNode
+                    new SelectorNode // 플레이어가 보인다면
                     (
-                        new SequenceNode
+                        new MemorySequenceNode
                         (
                             new IsInAttackRange(blackboard), // 공격 가능 범위 내인지 확인
-                            AttackPlayer
+                            new MemorySequenceNode // 범위 내라면 공격
+                            (
+                                new AttackPlayer(_halfExtents, blackboard),
+                                new Wait(_waitTime, blackboard)
+                            )
                         ),
 
                         new SelectorNode
                         (
-                            new ChasePlayer(_chaseInterval, blackboard) // 탐지된 플레이어를 쫓기
-                            // TODO : 플레이어가 시야에서 사라지면 좀 더 이동해 주변 두리번거리게
+                            new ChasePlayer(_chaseInterval, blackboard) // 범위 바깥이라면 추적
+                                                                        // TODO : 플레이어가 시야에서 사라지면 좀 더 이동해 주변 두리번거리게
                         )
                     )
                 ),
@@ -101,6 +101,7 @@ public class TestMonsterAI : MonoBehaviour
 
     private void Update()
     {
+        Debug.Log(blackboard.MonsterState);
         _rootNode.Evaluate(); // 매 프레임마다 Behavior Tree 평가
     }
 
@@ -115,7 +116,7 @@ public class TestMonsterAI : MonoBehaviour
         if (!Application.isPlaying) return;
 
         // 공격 범위 표시
-        if (blackboard.MonsterState == Blackboard.State.Attacking)
+        if (blackboard.MonsterState == Blackboard.State.Attack)
         {
             var center = _center.position + transform.forward;
             Gizmos.DrawWireCube(center, _halfExtents * 2f);

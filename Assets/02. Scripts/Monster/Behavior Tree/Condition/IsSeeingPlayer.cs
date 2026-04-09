@@ -19,8 +19,6 @@ public class IsSeeingPlayer : Node
 
     public override NodeState OnUpdate()
     {
-        Debug.Log("적이 보이는지 확인중");
-
         var overlapSphere = Physics.OverlapSphere(_blackboard.Center.position, _detectRadius, _playerLayer);
         if (overlapSphere.Length > 0)
         {
@@ -38,8 +36,6 @@ public class IsSeeingPlayer : Node
                 // 발견된 게 플레이어일 떄
                 if (hit.collider.CompareTag("Player"))
                 {
-                    Debug.Log("플레이어 확인");
-                    _blackboard.Distance = distance; // 플레이어와의 거리 정보를 블랙보드에 저장
                     _blackboard.Player = player; // 플레이어 정보를 블랙보드에 저장
                     return NodeState.Success;
                 }
@@ -47,7 +43,6 @@ public class IsSeeingPlayer : Node
         }
 
         // 못찾았을 시 플레이어 관련 정보 비우기 및 Failure 반환
-        _blackboard.Distance = -1f;
         _blackboard.Player = null;
         return NodeState.Failure;
     }

@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Wait : ActionNode
 {
-    private float _lastTimer;
+    private float _startTimer;
     private float _duration;
 
     public Wait(float duration, Blackboard blackboard)
@@ -11,22 +11,25 @@ public class Wait : ActionNode
         _blackboard = blackboard;
     }
 
+    public override void OnStart()
+    {
+        _startTimer = Time.time;
+        _blackboard.Animator.OnIdle();
+    }
+
     public override NodeState OnUpdate()
     {
-        if (isFirstRun)
+        if (Time.time - _startTimer >= _duration)
         {
-            _lastTimer = Time.time;
-            _blackboard.Animator.OnIdle();
-            isFirstRun = false;
-        }
-
-        if (Time.time - _lastTimer >= _duration)
-        {
-            Debug.Log("Wait Сп");
-            isFirstRun = true;
             return NodeState.Success;
         }
 
         return NodeState.Running;
+    }
+
+    public override void OnStop()
+    {
+        base.OnStop();
+        _startTimer = 0f;
     }
 }

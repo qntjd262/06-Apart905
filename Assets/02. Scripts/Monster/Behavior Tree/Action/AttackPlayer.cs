@@ -4,7 +4,7 @@ using UnityEngine;
 public class AttackPlayer : ActionNode
 {
     // 공격 관련
-    private float _attackDuration = 2.5f;
+    private float _attackDuration = 1.75f;
     private float _attackTimer = 0f;
     private Vector3 _halfExtents;
 
@@ -18,22 +18,20 @@ public class AttackPlayer : ActionNode
         _halfExtents = halfExtents;
     }
 
+    public override void OnStart()
+    {
+        _blackboard.MonsterState = Blackboard.State.Attack;
+        _colliderHashSet.Clear();
+
+        // TODO : 애니메이션 실행
+        _blackboard.Animator.OnAttack();
+        _attackTimer = Time.time;
+    }
+
     public override NodeState OnUpdate()
     {
         // 공격 판정을 위한 센터값과 생성할 박스 사이즈
         var center = _blackboard.Center.position + _blackboard.Self.transform.forward;
-
-        // 공격 시작 시 초기화
-        if (isFirstRun)
-        {
-            _blackboard.MonsterState = Blackboard.State.Attacking;
-            _colliderHashSet.Clear();
-
-            // TODO : 애니메이션 실행
-            _blackboard.Animator.OnAttack();
-            isFirstRun = false;
-            _attackTimer = Time.time;
-        }
 
         float attackTime = Time.time - _attackTimer;
 
@@ -54,12 +52,10 @@ public class AttackPlayer : ActionNode
 
                         // TODO : 플레이어 정보 받아와 플레이어에게 공격하는 함수 호출
                         collider.GetComponent<PlayerStat>()?.TakeDamage(_blackboard.MonsterStat.monsterStatSO.damage);
-
-                        Debug.Log("플레이어에게 데미지");
+                        Debug.Log("플레이어 공격");
                     }
                 }
             }
-            // 몬스터 앞에 상자를 생성해 충돌한 물체 배열에 담음
 
             return NodeState.Running;
         }
@@ -73,7 +69,7 @@ public class AttackPlayer : ActionNode
 
     public override void OnStop()
     {
-        isFirstRun = true;
+        base.OnStop();
         _attackTimer = 0f;
         _colliderHashSet.Clear();
         _blackboard.MonsterState = Blackboard.State.Idle;

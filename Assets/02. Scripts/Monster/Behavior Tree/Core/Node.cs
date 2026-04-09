@@ -13,25 +13,29 @@ public abstract class Node
 {
     protected NodeState state; // 노드의 상태
 
-    public Node parent;
+    public bool isFirstStart = true; // 노드의 첫 시작 구분
 
-    /// <summary>
-    /// 노드의 상태를 반환하는 메서드. Success, Failure, Running 중 하나를 반환
-    /// </summary>
-    /// <returns></returns>
+    public virtual void OnStart() { }
+
     public abstract NodeState OnUpdate();
 
     // 노드가 정지 시 호출
-    public virtual void OnStop() { }
+    public virtual void OnStop() => isFirstStart = true;
 
     public NodeState Evaluate()
     {
+        if (isFirstStart)
+        {
+            OnStart();
+            isFirstStart = false;
+        }
+
         state = OnUpdate();
 
-        //if (state == NodeState.Failure || state == NodeState.Success)
-        //{
-        //    OnStop();
-        //}
+        if (state == NodeState.Failure || state == NodeState.Success)
+        {
+            OnStop();
+        }
 
         return state;        
     }

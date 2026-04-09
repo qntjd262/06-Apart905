@@ -24,14 +24,14 @@ public class PatrolToFindPlayer : ActionNode
         _navMeshAgent = _blackboard.NavMeshAgent;
     }
 
+    public override void OnStart()
+    {
+        _blackboard.MonsterState = Blackboard.State.Patrol;
+        _blackboard.Animator.OnWalk();
+    }
+
     public override NodeState OnUpdate()
     {
-        if(isFirstRun)
-        {
-            _blackboard.Animator.OnWalk();
-            isFirstRun = false;
-        }
-
         // 길을 찾고있거나 이미 찾은 것이 아니라면 
         if (!_navMeshAgent.pathPending && !_navMeshAgent.hasPath)
         {
@@ -52,7 +52,6 @@ public class PatrolToFindPlayer : ActionNode
         {
             _navMeshAgent.ResetPath();
             _patrolTimer = 0f;
-            isFirstRun = true;
             return NodeState.Success;
         }
 
@@ -61,10 +60,9 @@ public class PatrolToFindPlayer : ActionNode
 
     public override void OnStop()
     {
-        Debug.Log("Patrol이 다른 running노드가 생겨 정지");
+        base.OnStop();
         _navMeshAgent.ResetPath();
         _patrolTimer = 0f;
-        isFirstRun = true;
     }
 
     public void SetRandomDestination()

@@ -21,14 +21,12 @@ public class Idle : ActionNode
         _maxIdleTime = maxIdleTime;
     }
 
+    public override void OnStart()
+    {
+        _blackboard.Animator.OnIdle();
+    }
     public override NodeState OnUpdate()
     {
-        if (isFirstRun)
-        {
-            _blackboard.Animator.OnIdle();
-            isFirstRun = false;
-        }
-
         if (_idleDuration == 0f)
             _idleDuration = Random.Range(_minIdleTime, _maxIdleTime);
 
@@ -38,7 +36,6 @@ public class Idle : ActionNode
         {
             _idleTimer = 0f;
             _idleDuration = 0f;
-            isFirstRun = true;
             return NodeState.Success;
         }
 
@@ -47,8 +44,8 @@ public class Idle : ActionNode
 
     public override void OnStop()
     {
+        base.OnStop();
         _idleTimer = 0f;
         _idleDuration = 0f;
-        isFirstRun = true;
     }
 }

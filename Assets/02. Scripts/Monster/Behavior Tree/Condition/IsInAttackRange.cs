@@ -18,7 +18,6 @@ public class IsInAttackRange : Node
 
         if (Vector3.Distance(_self.transform.position, _player.transform.position) <= 2f)
         {
-            Debug.Log("적 공격사거리 내에 있음");
             return NodeState.Success;
         }
         else

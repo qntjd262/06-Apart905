@@ -20,7 +20,6 @@ public class SelectorNode : CompositeNode
                     if (_currentChild != null && _currentChild != child)
                     {
                         _currentChild.OnStop();
-                        Debug.Log($"{_currentChild} Node가 종료되었습니다.");
                     }
                     _currentChild = child;
                     return NodeState.Running;

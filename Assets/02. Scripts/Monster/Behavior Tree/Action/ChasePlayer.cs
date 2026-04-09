@@ -8,24 +8,23 @@ public class ChasePlayer: ActionNode
     private float _chaseTime = 0.3f;
     
     private NavMeshAgent _navMeshAgent;
-    private Animator _animator;
-
 
     public ChasePlayer(float chaseInterval, Blackboard blackboard)
     {
         _blackboard = blackboard;
         _chaseInterval = chaseInterval;
+        _chaseTime = _chaseInterval;
         _navMeshAgent = _blackboard.NavMeshAgent;
+    }
+
+    public override void OnStart()
+    {
+        _blackboard.MonsterState = Blackboard.State.Chase;
+        _blackboard.Animator.OnWalk();
     }
 
     public override NodeState OnUpdate()
     {
-        if (isFirstRun)
-        {
-            _blackboard.Animator.OnWalk();
-            isFirstRun = false;
-        }
-
         // 매번 적이 있는지 확인 후, 없으면 Failure
         var player = _blackboard.Player;
         if (player == null)
@@ -47,7 +46,6 @@ public class ChasePlayer: ActionNode
         {
             _navMeshAgent.ResetPath(); // 경로 초기화하여 멈춤
             _chaseTime = _chaseInterval; // 다음 추적이 가능하게 타이머 초기화'
-            isFirstRun = true;
             return NodeState.Success;
         }
 
@@ -57,7 +55,7 @@ public class ChasePlayer: ActionNode
 
     public override void OnStop()
     {
-        isFirstRun = true;
+        base.OnStop();
         _chaseTime = _chaseInterval;
         _navMeshAgent.ResetPath();
     }

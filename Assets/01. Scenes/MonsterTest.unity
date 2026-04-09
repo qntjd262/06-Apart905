@@ -484,17 +484,12 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 333219809}
   m_CullTransparentMesh: 1
---- !u!1 &376300771 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7679406937999697682, guid: 3fc7125ebb88de840b468c7f9093224c, type: 3}
-  m_PrefabInstance: {fileID: 2010499549}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &376300774 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2049902063302787069, guid: 3fc7125ebb88de840b468c7f9093224c, type: 3}
   m_PrefabInstance: {fileID: 2010499549}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 376300771}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5936c6c8758bfa4479c689ed44ea1dbe, type: 3}
@@ -505,25 +500,12 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 790018128789168648, guid: 3fc7125ebb88de840b468c7f9093224c, type: 3}
   m_PrefabInstance: {fileID: 2010499549}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 376300771}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b2d16a51fcd19474eac0cd4a5b9d8998, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &376300778
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 376300771}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1962fbb303bd01f4aade27fa83148774, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _animator: {fileID: 0}
 --- !u!1 &402609047
 GameObject:
   m_ObjectHideFlags: 0
@@ -628,7 +610,7 @@ Transform:
   m_GameObject: {fileID: 402609047}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.94, y: 1, z: 16.41}
+  m_LocalPosition: {x: 0.04, y: 1, z: -5.17}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3659,10 +3641,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 5054570265997361806, guid: 3fc7125ebb88de840b468c7f9093224c, type: 3}
-      propertyPath: m_AngularSpeed
-      value: 120
-      objectReference: {fileID: 0}
     - target: {fileID: 7679406937999697682, guid: 3fc7125ebb88de840b468c7f9093224c, type: 3}
       propertyPath: m_Name
       value: TestMonsterAnim (1)
@@ -3670,10 +3648,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7679406937999697682, guid: 3fc7125ebb88de840b468c7f9093224c, type: 3}
-      insertIndex: 2
-      addedObject: {fileID: 376300778}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3fc7125ebb88de840b468c7f9093224c, type: 3}
 --- !u!1 &2055519894
 GameObject:

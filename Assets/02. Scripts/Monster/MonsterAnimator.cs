@@ -12,6 +12,7 @@ public class MonsterAnimator : MonoBehaviour
     public static readonly int MonsterAniParamIsMoving = Animator.StringToHash("IsMoving");
     public static readonly int MonsterAniParamAttack = Animator.StringToHash("Attack");
     public static readonly int MonsterAniParamAttacked = Animator.StringToHash("Attacked");
+    public static readonly int MonsterAniParamDeath = Animator.StringToHash("Death");
 
     private void Awake()
     {
@@ -40,6 +41,7 @@ public class MonsterAnimator : MonoBehaviour
     public void OnAttack()
     {
         _animator.SetTrigger(MonsterAniParamAttack);
+        _animator.SetBool(MonsterAniParamIsMoving, false);
     }
 
     public void OnIdle()
@@ -50,5 +52,12 @@ public class MonsterAnimator : MonoBehaviour
     public void OnAttacked()
     {
         _animator.SetTrigger(MonsterAniParamAttacked);
+        _animator.ResetTrigger(MonsterAniParamAttack);
+    }
+
+    public void OnDeath()
+    {
+        _animator.SetTrigger(MonsterAniParamDeath);
+
     }
 }

@@ -4,7 +4,7 @@ public class TestButtonUI : MonoBehaviour
 {
     public TestMonsterAI monsterAI;
     public GameObject player;
-    public MonsterStat monsterStat;
+    public MonsterController monsterStat;
 
     public void SetAttacked()
     {
