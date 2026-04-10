@@ -68,7 +68,7 @@ public class CharacterDataManager : MonoBehaviour
             newSO.ThirstDecreaseRate = float.Parse(row[7].Trim());
             newSO.HungerDecreaseRate = float.Parse(row[8].Trim());
 
-            if (!characterDB.ContainsKey(newSO.name))
+            if (!characterDB.ContainsKey(newSO.Name))
             {
                 characterDB.Add(newSO.Name, newSO);
             }
