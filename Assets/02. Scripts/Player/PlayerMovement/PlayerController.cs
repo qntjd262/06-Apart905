@@ -10,6 +10,10 @@ public class PlayerController : MonoBehaviour
 
     [Header("플레이어 상태")]
     public bool isDead =false;
+
+    //[Header("인벤토리 세팅")]
+    
+
     
 
     void Awake()
@@ -27,6 +31,17 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         if(isDead) return;
+        
+        /* UIManager 인벤토리 관리 TODO : ToggleInventory() -> public , isInventoryOpen 프로퍼티 추가
+        if (Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.Tab) || (UIManager.Instance.isInventoryOpen && Input.GetKeyDown(KeyCode.Escape)))
+        {
+            UIManager.Instance.ToggleInventory();
+        }
+
+        if(UIManager.Instance.isInventoryOpen) return;
+        */
+            
+        
 
         //플레이어 회전 + 카메라
         float mouseX = Input.GetAxis("Mouse X");
@@ -60,5 +75,6 @@ public class PlayerController : MonoBehaviour
             //TODO : 공격 애니메이션을 통해 해당 애니메이션 지점에서 Attack()함수 실행하기
             playerAttack.Attack();
         }
+
     }
 }
