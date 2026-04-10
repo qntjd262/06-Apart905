@@ -34,6 +34,22 @@ public class CharacterSelector : MonoBehaviour
     private int totalCount;
     private Transform[] cards;
 
+    private void OnEnable()
+    {
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.OpenPopupWithEffects("CHARACTER SELECT");
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.ClosePopupWithEffects();
+        }
+    }
+
     void Start()
     {
         if (container == null || characterDatas == null || characterDatas.Length == 0)
@@ -138,7 +154,12 @@ public class CharacterSelector : MonoBehaviour
         {
             GameManager.Instance.SetCharacter(characterDatas[currentIndex]);
         }
+
+        gameObject.SetActive(false);
+
         if (UIManager.Instance != null)
+        {
             UIManager.Instance.LoadScene(Constants.ESceneType.Game);
+        }
     }
 }
