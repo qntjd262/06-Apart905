@@ -7,7 +7,6 @@ public class TestMonsterAI : MonoBehaviour
 
     private Node _rootNode;
     private Vector3 _originPos;
-    private MonsterController monsterStatData; // 몬스터 스탯 데이터
 
     [Header("탐색 설정")]
     [SerializeField] private float      _detectRadius = 10f;
@@ -65,7 +64,7 @@ public class TestMonsterAI : MonoBehaviour
                     new Attacked(blackboard) // 피격 노드
                 ),
 
-
+                // 플레이어가 보일 때 공격 or 추적
                 new SequenceNode
                 (
                     new IsSeeingPlayer(_detectRadius, _detectAngle, _playerLayer, blackboard), // 플레이어를 보고 있는지 확인
@@ -86,10 +85,12 @@ public class TestMonsterAI : MonoBehaviour
                     )
                 ),
 
+                // 추적 중 플레이어가 시야에서 사라질 시 추가 추적
                 new MemorySequenceNode
                 (
                     new ConditionNode(() => blackboard.HasLostTarget),
-                    new MoveToLastPoint(_chaseDuration, blackboard)
+                    new MoveToLastPoint(_chaseDuration, blackboard),
+                    new LookAround(4f, 40f, blackboard)
                 ),
 
                 // 정찰 및 대기
