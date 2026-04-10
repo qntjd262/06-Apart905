@@ -7,7 +7,6 @@ public class TestMonsterAI : MonoBehaviour
 
     private Node _rootNode;
     private Vector3 _originPos;
-    private MonsterController monsterStatData; // 몬스터 스탯 데이터
 
     [Header("탐색 설정")]
     [SerializeField] private float      _detectRadius = 10f;
@@ -15,8 +14,9 @@ public class TestMonsterAI : MonoBehaviour
     [SerializeField] private float      _detectAngle = 60f;
     [SerializeField] private Transform _center;
 
-    [Header("Chase 경로 탐색 주기")]
+    [Header("Chase 경로 탐색 주기 및 추가 이동 시간")]
     [SerializeField] private float  _chaseInterval = 0.3f;
+    [SerializeField] private float  _chaseDuration = 3f;
 
     [Header("공격 범위 및 공격 후 대기 시간")]
     [SerializeField] private Vector3 _halfExtents;
@@ -64,13 +64,14 @@ public class TestMonsterAI : MonoBehaviour
                     new Attacked(blackboard) // 피격 노드
                 ),
 
+                // 플레이어가 보일 때 공격 or 추적
                 new SequenceNode
                 (
                     new IsSeeingPlayer(_detectRadius, _detectAngle, _playerLayer, blackboard), // 플레이어를 보고 있는지 확인
 
                     new SelectorNode // 플레이어가 보인다면
                     (
-                        new MemorySequenceNode
+                        new SequenceNode
                         (
                             new IsInAttackRange(blackboard), // 공격 가능 범위 내인지 확인
                             new MemorySequenceNode // 범위 내라면 공격
@@ -80,12 +81,16 @@ public class TestMonsterAI : MonoBehaviour
                             )
                         ),
 
-                        new SelectorNode
-                        (
-                            new ChasePlayer(_chaseInterval, blackboard) // 범위 바깥이라면 추적
-                                                                        // TODO : 플레이어가 시야에서 사라지면 좀 더 이동해 주변 두리번거리게
-                        )
+                        new ChasePlayer(_chaseInterval, blackboard) // 범위 바깥이라면 추적
                     )
+                ),
+
+                // 추적 중 플레이어가 시야에서 사라질 시 추가 추적
+                new MemorySequenceNode
+                (
+                    new ConditionNode(() => blackboard.HasLostTarget),
+                    new MoveToLastPoint(_chaseDuration, blackboard),
+                    new LookAround(4f, 40f, blackboard)
                 ),
 
                 // 정찰 및 대기
