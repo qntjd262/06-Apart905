@@ -1,6 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using System;
+using Unity.AppUI.UI;
 
 public class PlayerStat : MonoBehaviour
 {
@@ -59,12 +60,12 @@ public class PlayerStat : MonoBehaviour
 
     void OnEnable()
     {
-        PlayerGamemanager.OnGameStatChangeTime += DecreasSurvivalStat;
+        PlayerGamemanager.OnGameStatChangeTime += DecreaseSurvivalStat;
     }
 
     void OnDisable()
     {
-        TODO : PlayerGamemanager.OnGameStatChangeTime -= DecreasSurvivalStat;
+        PlayerGamemanager.OnGameStatChangeTime -= DecreaseSurvivalStat;
     }
 
 
@@ -109,10 +110,13 @@ public class PlayerStat : MonoBehaviour
     public void Die()
     {
         Debug.Log("플레이어 사망");
+
+        this.enabled = false;
+        //TODO : 사망 애니메이션, 사망 UI ON, 게임 시간 멈춤 등 사망 처리
     }
 
     //배고픔, 갈증 감소 함수
-    private void DecreasSurvivalStat()
+    private void DecreaseSurvivalStat()
     {
         hunger.DecreaseStat(HungerDecreaseRate);
         thirst.DecreaseStat(ThirstDecreaseRate);
