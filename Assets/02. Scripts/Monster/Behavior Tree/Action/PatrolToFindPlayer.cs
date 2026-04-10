@@ -3,7 +3,6 @@ using UnityEngine.AI;
 
 public class PatrolToFindPlayer : ActionNode
 {
-    private Animator _animator;
     private NavMeshAgent _navMeshAgent;
 
     // Patrol 범위
@@ -22,11 +21,16 @@ public class PatrolToFindPlayer : ActionNode
     {
         _blackboard = blackboard;
         _patrolRadius = patrolRadius;
-        _animator = _blackboard.Animator;
         _navMeshAgent = _blackboard.NavMeshAgent;
     }
 
-    public override NodeState Evaluate()
+    public override void OnStart()
+    {
+        _blackboard.MonsterState = Blackboard.State.Patrol;
+        _blackboard.Animator.OnWalk();
+    }
+
+    public override NodeState OnUpdate()
     {
         // 길을 찾고있거나 이미 찾은 것이 아니라면 
         if (!_navMeshAgent.pathPending && !_navMeshAgent.hasPath)
@@ -39,7 +43,8 @@ public class PatrolToFindPlayer : ActionNode
         _patrolTimer += Time.deltaTime;
 
         // 목적지까지 도착했는가 확인하는 변수
-        bool isArrived = !_navMeshAgent.pathPending && _navMeshAgent.remainingDistance < _navMeshAgent.stoppingDistance; 
+        bool isArrived = !_navMeshAgent.pathPending
+            && _navMeshAgent.remainingDistance < _navMeshAgent.stoppingDistance;
         // patrol이 일정 시간 이상 지속될 시 강제로 성공처리 하기위한 변수
         bool isTimeOver = _patrolTimer >= _patrolDuration; 
 
@@ -51,6 +56,13 @@ public class PatrolToFindPlayer : ActionNode
         }
 
         return NodeState.Running;
+    }
+
+    public override void OnStop()
+    {
+        base.OnStop();
+        _navMeshAgent.ResetPath();
+        _patrolTimer = 0f;
     }
 
     public void SetRandomDestination()
@@ -65,6 +77,5 @@ public class PatrolToFindPlayer : ActionNode
         {
             _navMeshAgent.SetDestination(hit.position);
         }
-
     }
 }

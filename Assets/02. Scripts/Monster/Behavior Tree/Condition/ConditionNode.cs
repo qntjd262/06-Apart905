@@ -10,7 +10,7 @@ public class ConditionNode : Node
         _condition = condition;
     }
 
-    public override NodeState Evaluate()
+    public override NodeState OnUpdate()
     {
         return _condition() ? NodeState.Success : NodeState.Failure;
     }

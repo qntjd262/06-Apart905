@@ -10,7 +10,7 @@ public class CooldownNode: Node
         _cooldown = cooldown;
     }
 
-    public override NodeState Evaluate()
+    public override NodeState OnUpdate()
     {
         // 현재 시간 - 지난 시작 시간 < 쿨타임이면 쿨타임이 안지났으므로 faiure
         if (Time.time - _lastTimer < _cooldown)
