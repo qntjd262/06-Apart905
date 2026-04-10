@@ -192,7 +192,6 @@ public class UIManager : Singleton<UIManager>
 
     public void LoadScene(Constants.ESceneType sceneType)
     {
-        Debug.Log($"UIManager: LoadScene request - {sceneType}");
         StartCoroutine(LoadSceneAsync(sceneType));
     }
 
@@ -236,7 +235,6 @@ public class UIManager : Singleton<UIManager>
     private IEnumerator LoadSceneAsync(Constants.ESceneType sceneType)
     {
         Time.timeScale = 1f;
-        Debug.Log($"UIManager: LoadSceneAsync start - {sceneType}");
 
         DestroyExistingLoadingPanels();
 
@@ -262,7 +260,8 @@ public class UIManager : Singleton<UIManager>
             yield break;
         }
 
-        GameObject loadingPanelObject = Instantiate(loadingPanelPrefab, CurrentCanvas.transform);
+        GameObject loadingPanelObject = Instantiate(loadingPanelPrefab);
+        DontDestroyOnLoad(loadingPanelObject);
         if (!loadingPanelObject.activeSelf)
         {
             loadingPanelObject.SetActive(true);
@@ -320,7 +319,6 @@ public class UIManager : Singleton<UIManager>
         loadingPanelController.SetProgress(1f);
         asyncOperation.allowSceneActivation = true;
         yield return new WaitUntil(() => asyncOperation.isDone);
-        Debug.Log($"UIManager: Scene load completed - {sceneType}");
 
         CloseAllGlobalPopups();
         Destroy(loadingPanelObject);
@@ -374,7 +372,6 @@ public class UIManager : Singleton<UIManager>
 
     protected override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        DestroyExistingLoadingPanels();
         CloseAllGlobalPopups();
 
         GameObject sceneCanvasObj = GameObject.FindGameObjectWithTag("Canvas");

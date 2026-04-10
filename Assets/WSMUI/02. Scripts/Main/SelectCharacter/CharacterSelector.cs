@@ -147,7 +147,6 @@ public class CharacterSelector : MonoBehaviour
 
     public void OnClickSelectButton()
     {
-        Debug.Log("<color=yellow>선택 버튼 클릭됨!</color>");
         PlayerPrefs.SetInt("SelectedCharacter", currentIndex);
         PlayerPrefs.Save();
 
