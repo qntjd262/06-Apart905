@@ -35,7 +35,6 @@ public class LookAround : ActionNode
         if (timer < _duration)
         {
             float rotate = _currentAngle + Mathf.Sin(timer) * _maxRotAngle;
-            Debug.Log("rotate : " + rotate);
 
             _blackboard.Self.transform.rotation = Quaternion.Euler(0f, rotate, 0f);
 

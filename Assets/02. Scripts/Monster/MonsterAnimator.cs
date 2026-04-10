@@ -5,7 +5,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class MonsterAnimator : MonoBehaviour
 {
-    public Animator _animator;
+    private Animator _animator;
     private NavMeshAgent _navMeshAgent;
 
     // 애니메이터 파라미터

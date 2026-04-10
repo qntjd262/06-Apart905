@@ -7,15 +7,17 @@ public class AttackPlayer : ActionNode
     private float _attackDuration = 1.75f;
     private float _attackTimer = 0f;
     private Vector3 _halfExtents;
+    private Vector3 _offset;
 
     // 레이어 마스크와 공격한 대상을 저장할 HashSet
     private LayerMask _playerMask = LayerMask.GetMask("Player");
     private HashSet<Collider> _colliderHashSet = new HashSet<Collider>();
 
-    public AttackPlayer(Vector3 halfExtents, Blackboard blackboard)
+    public AttackPlayer(Vector3 halfExtents, Vector3 offset, Blackboard blackboard)
     {
-        _blackboard = blackboard;
         _halfExtents = halfExtents;
+        _offset = offset;
+        _blackboard = blackboard;
     }
 
     public override void OnStart()
@@ -31,7 +33,7 @@ public class AttackPlayer : ActionNode
     public override NodeState OnUpdate()
     {
         // 공격 판정을 위한 센터값과 생성할 박스 사이즈
-        var center = _blackboard.Center.position + _blackboard.Self.transform.forward;
+        var center = _blackboard.Center.position + _blackboard.Self.transform.forward + _offset; ;
 
         float attackTime = Time.time - _attackTimer;
 
