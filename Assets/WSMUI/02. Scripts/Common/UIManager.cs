@@ -10,7 +10,6 @@ public class UIManager : Singleton<UIManager>
     [Header("Canvases")]
     [SerializeField] private Canvas globalCanvas;
     [SerializeField] private Canvas hudCanvas;
-    [SerializeField] private GameObject loadingPanelPrefab;
 
     public Canvas CurrentCanvas => hudCanvas != null ? hudCanvas : globalCanvas;
 
@@ -20,14 +19,15 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private TextMeshProUGUI globalWindowTitleText;
 
     [Header("UI Panels (Local)")]
-    public GameObject inventoryPanel;
+    [SerializeField] private GameObject inventoryPanel;
     public GameObject pauseMenuPanel;
 
     [Header("Global Popup Panels")]
-    public GameObject selectCharacterPanel;
-    public GameObject saveLoadPanel;
-    public GameObject endingListPanel;
-    public GameObject optionPanel;
+    [SerializeField] private GameObject selectCharacterPanel;
+    [SerializeField] private GameObject saveLoadPanel;
+    [SerializeField] private GameObject endingListPanel;
+    [SerializeField] private GameObject optionPanel;
+    [SerializeField] private GameObject loadingPanelPrefab;
 
     private HUDController _hudController;
     private int activePopupCount = 0;
@@ -86,6 +86,12 @@ public class UIManager : Singleton<UIManager>
         }
     }
 
+    public void CloseSelectCharacterPanel()
+    {
+        if (selectCharacterPanel != null)
+            selectCharacterPanel.SetActive(false);
+    }
+
     public void OpenSaveLoadPanelAsLoadMode()
     {
         if (saveLoadPanel != null)
@@ -115,32 +121,6 @@ public class UIManager : Singleton<UIManager>
         {
             optionPanel.SetActive(true);
         }
-    }
-
-    public void RegisterGlobalEffects(GameObject dim, GameObject bars, TextMeshProUGUI title)
-    {
-        if (dimBackground != null && dimBackground != dim)
-        {
-            dimBackground.SetActive(false);
-        }
-
-        if (cinematicBars != null && cinematicBars != bars)
-        {
-            cinematicBars.SetActive(false);
-        }
-
-        if (globalWindowTitleText != null && globalWindowTitleText != title)
-        {
-            globalWindowTitleText.text = string.Empty;
-        }
-
-        dimBackground = dim;
-        cinematicBars = bars;
-        globalWindowTitleText = title;
-
-        if (dimBackground != null) dimBackground.SetActive(false);
-        if (cinematicBars != null) cinematicBars.SetActive(false);
-        if (globalWindowTitleText != null) globalWindowTitleText.text = string.Empty;
     }
 
     public void OpenPopupWithEffects(string title)
@@ -192,6 +172,7 @@ public class UIManager : Singleton<UIManager>
 
     public void LoadScene(Constants.ESceneType sceneType)
     {
+        Debug.Log($"LoadScene 호출 - loadingPanelPrefab: {(loadingPanelPrefab == null ? "NULL" : loadingPanelPrefab.name)}");
         StartCoroutine(LoadSceneAsync(sceneType));
     }
 
@@ -204,7 +185,6 @@ public class UIManager : Singleton<UIManager>
         }
 
         bool isNowActive = !inventoryPanel.activeSelf;
-        Debug.Log($"UIManager: Inventory toggle -> {isNowActive} ({inventoryPanel.name})");
 
         inventoryPanel.SetActive(isNowActive);
 
@@ -235,8 +215,6 @@ public class UIManager : Singleton<UIManager>
     private IEnumerator LoadSceneAsync(Constants.ESceneType sceneType)
     {
         Time.timeScale = 1f;
-
-        DestroyExistingLoadingPanels();
 
         bool loadingEffectsOpened = dimBackground != null || cinematicBars != null || globalWindowTitleText != null;
         if (loadingEffectsOpened)
@@ -345,18 +323,6 @@ public class UIManager : Singleton<UIManager>
         return current.gameObject;
     }
 
-    private void DestroyExistingLoadingPanels()
-    {
-        LoadingPanelController[] loadingPanels = FindObjectsByType<LoadingPanelController>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        foreach (LoadingPanelController panel in loadingPanels)
-        {
-            if (panel != null)
-            {
-                Destroy(panel.gameObject);
-            }
-        }
-    }
-
     private void CloseAllGlobalPopups()
     {
         if (selectCharacterPanel != null) selectCharacterPanel.SetActive(false);
@@ -373,48 +339,15 @@ public class UIManager : Singleton<UIManager>
     protected override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         CloseAllGlobalPopups();
-
         GameObject sceneCanvasObj = GameObject.FindGameObjectWithTag("Canvas");
-        if (sceneCanvasObj != null)
-        {
-            hudCanvas = sceneCanvasObj.GetComponent<Canvas>();
-        }
+        if (sceneCanvasObj != null) hudCanvas = sceneCanvasObj.GetComponent<Canvas>();
 
+        // inventoryPanel만 재탐색
         InventoryUI invUI = GameObject.FindAnyObjectByType<InventoryUI>(FindObjectsInactive.Include);
-        if (invUI != null)
-        {
-            inventoryPanel = invUI.gameObject;
-        }
-
-        PauseMenuController pauseUI = GameObject.FindAnyObjectByType<PauseMenuController>(FindObjectsInactive.Include);
-        if (pauseUI != null)
-        {
-            pauseMenuPanel = pauseUI.gameObject;
-        }
-
-        CharacterSelector characterSelector = GameObject.FindAnyObjectByType<CharacterSelector>(FindObjectsInactive.Include);
-        if (characterSelector != null)
-        {
-            selectCharacterPanel = GetPopupRoot(characterSelector.gameObject);
-        }
-
-        SaveLoadController saveLoadController = GameObject.FindAnyObjectByType<SaveLoadController>(FindObjectsInactive.Include);
-        if (saveLoadController != null)
-        {
-            saveLoadPanel = GetPopupRoot(saveLoadController.gameObject);
-        }
-
-        OptionsController optionsController = GameObject.FindAnyObjectByType<OptionsController>(FindObjectsInactive.Include);
-        if (optionsController != null)
-        {
-            optionPanel = GetPopupRoot(optionsController.gameObject);
-        }
+        if (invUI != null) inventoryPanel = invUI.gameObject;
 
         if (inventoryPanel != null) inventoryPanel.SetActive(false);
-        if (pauseMenuPanel != null) pauseMenuPanel.SetActive(false);
-        if (selectCharacterPanel != null) selectCharacterPanel.SetActive(false);
-        if (saveLoadPanel != null) saveLoadPanel.SetActive(false);
-        if (optionPanel != null) optionPanel.SetActive(false);
+
 
         CloseAllGlobalPopups();
     }

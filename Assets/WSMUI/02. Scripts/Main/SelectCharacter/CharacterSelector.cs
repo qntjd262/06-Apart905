@@ -34,24 +34,15 @@ public class CharacterSelector : MonoBehaviour
     private int totalCount;
     private Transform[] cards;
 
+
+
+
     private void OnEnable()
     {
         if (UIManager.Instance != null)
-        {
             UIManager.Instance.OpenPopupWithEffects("CHARACTER SELECT");
-        }
-    }
 
-    private void OnDisable()
-    {
-        if (UIManager.Instance != null)
-        {
-            UIManager.Instance.ClosePopupWithEffects();
-        }
-    }
-
-    void Start()
-    {
+        // Start에 있던 초기화 로직 이동
         if (container == null || characterDatas == null || characterDatas.Length == 0)
         {
             Debug.LogError("데이터나 컨테이너가 설정되지 않았습니다!");
@@ -64,17 +55,21 @@ public class CharacterSelector : MonoBehaviour
         for (int i = 0; i < totalCount; i++)
         {
             cards[i] = container.GetChild(i);
-
             CharacterCard cardScript = cards[i].GetComponent<CharacterCard>();
-            if (cardScript != null)
-            {
-                cardScript.SetCard(characterDatas[i]);
-            }
+            if (cardScript != null) cardScript.SetCard(characterDatas[i]);
         }
 
+        currentIndex = 0;
         UpdateUI(true);
     }
 
+    private void OnDisable()
+    {
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.ClosePopupWithEffects();
+        }
+    }
     public void OnNextButton()
     {
         if (currentIndex < totalCount - 1)
@@ -151,14 +146,11 @@ public class CharacterSelector : MonoBehaviour
         PlayerPrefs.Save();
 
         if (GameManager.Instance != null)
-        {
             GameManager.Instance.SetCharacter(characterDatas[currentIndex]);
-        }
-
-        gameObject.SetActive(false);
 
         if (UIManager.Instance != null)
         {
+            UIManager.Instance.CloseSelectCharacterPanel();
             UIManager.Instance.LoadScene(Constants.ESceneType.Game);
         }
     }
