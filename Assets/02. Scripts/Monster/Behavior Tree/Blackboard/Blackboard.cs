@@ -29,8 +29,4 @@ public class Blackboard
             _monsterState = value;
         }
     }
-
-    // 추적 중 플레이어가 안보이게 되었을 때
-    public bool HasLostTarget { get; set; } = false;
-    public Vector3 LastPoint { get; set; }
 }

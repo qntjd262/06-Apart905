@@ -50,7 +50,8 @@ public class PatrolToFindPlayer : ActionNode
 
         if (isArrived || isTimeOver)
         {
-            OnStop();
+            _navMeshAgent.ResetPath();
+            _patrolTimer = 0f;
             return NodeState.Success;
         }
 
