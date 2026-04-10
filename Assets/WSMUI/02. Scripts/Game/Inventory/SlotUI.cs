@@ -60,12 +60,10 @@ public class SlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         }
         else if (!draggingSlot.IsQuickSlot && !this.IsQuickSlot)
         {
-            // 가방 내부 이동
             InventoryManager.Instance.SwapItemWithinBag(draggingSlot.SlotIndex, this.SlotIndex);
         }
         else if (draggingSlot.IsQuickSlot && this.IsQuickSlot)
         {
-            // 퀵슬롯 내부 이동
             InventoryManager.Instance.SwapItemWithinQuickSlot(draggingSlot.SlotIndex, this.SlotIndex);
         }
     }
