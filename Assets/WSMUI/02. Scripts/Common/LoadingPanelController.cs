@@ -22,18 +22,25 @@ public class LoadingPanelController : MonoBehaviour
     /// <param name="progress">게이지 값</param>
     public void SetProgress(float progress)
     {
-        gaugeImage.fillAmount = progress;
+        if (gaugeImage != null)
+        {
+            gaugeImage.fillAmount = progress;
+        }
     }
 
     public void Show(Action onComplete)
     {
         SetProgress(0f);
-        _canvasGroup.DOFade(1f, 1.0f).OnComplete(()=>onComplete?.Invoke());
+        _canvasGroup.DOFade(1f, 1.0f)
+            .SetUpdate(true)
+            .OnComplete(() => onComplete?.Invoke());
     }
 
     public void Hide(Action onComplete)
     {
         SetProgress(1f);
-        _canvasGroup.DOFade(0f, 0.2f).OnComplete(()=>onComplete?.Invoke());
+        _canvasGroup.DOFade(0f, 0.2f)
+            .SetUpdate(true)
+            .OnComplete(() => onComplete?.Invoke());
     }
 }

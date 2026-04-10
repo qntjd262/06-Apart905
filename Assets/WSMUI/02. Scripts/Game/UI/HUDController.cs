@@ -6,7 +6,6 @@ public class HUDController : MonoBehaviour
 
     void Awake()
     {
-        // Start가 아닌 Awake에서 컴포넌트를 캐싱해야 안전하다.
         gauge = GetComponent<SurvivalGauge>();
     }
 

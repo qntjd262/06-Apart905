@@ -43,47 +43,47 @@ public class InventoryManager : Singleton<InventoryManager>
 
     // public bool AddItem(ItemData itemToAdd, int amount)
     // {
-        // // 1. 겹칠 수 있는 아이템인지 먼저 확인
-        // if (itemToAdd.maxStack > 1)
-        // {
-        //     for (int i = 0; i < bagSize; i++)
-        //     {
-        //         if (!BagSlots[i].IsEmpty && BagSlots[i].item == itemToAdd && BagSlots[i].amount < itemToAdd.maxStack)
-        //         {
-        //             // 해당 슬롯에 얼마나 더 넣을 수 있는지 계산
-        //             int spaceLeft = itemToAdd.maxStack - BagSlots[i].amount;
-        //             int amountToAdd = Mathf.Min(spaceLeft, amount);
-                    
-        //             BagSlots[i].amount += amountToAdd;
-        //             amount -= amountToAdd; // 남은 개수 차감
+    // // 1. 겹칠 수 있는 아이템인지 먼저 확인
+    // if (itemToAdd.maxStack > 1)
+    // {
+    //     for (int i = 0; i < bagSize; i++)
+    //     {
+    //         if (!BagSlots[i].IsEmpty && BagSlots[i].item == itemToAdd && BagSlots[i].amount < itemToAdd.maxStack)
+    //         {
+    //             // 해당 슬롯에 얼마나 더 넣을 수 있는지 계산
+    //             int spaceLeft = itemToAdd.maxStack - BagSlots[i].amount;
+    //             int amountToAdd = Mathf.Min(spaceLeft, amount);
 
-        //             // 다 넣었다면 갱신 후 종료
-        //             if (amount <= 0)
-        //             {
-        //                 OnBagUpdated?.Invoke();
-        //                 return true;
-        //             }
-        //         }
-        //     }
-        // }
+    //             BagSlots[i].amount += amountToAdd;
+    //             amount -= amountToAdd; // 남은 개수 차감
 
-        // // 2. 겹치지 못했거나 남은 개수가 있다면 빈 슬롯 탐색
-        // if (amount > 0)
-        // {
-        //     for (int i = 0; i < bagSize; i++)
-        //     {
-        //         if (BagSlots[i].IsEmpty)
-        //         {
-        //             BagSlots[i].item = itemToAdd;
-        //             BagSlots[i].amount = amount;
-        //             OnBagUpdated?.Invoke();
-        //             return true;
-        //         }
-        //     }
-        // }
+    //             // 다 넣었다면 갱신 후 종료
+    //             if (amount <= 0)
+    //             {
+    //                 OnBagUpdated?.Invoke();
+    //                 return true;
+    //             }
+    //         }
+    //     }
+    // }
 
-        // Debug.Log("가방이 꽉 차서 아이템을 획득할 수 없습니다.");
-        // return false;
+    // // 2. 겹치지 못했거나 남은 개수가 있다면 빈 슬롯 탐색
+    // if (amount > 0)
+    // {
+    //     for (int i = 0; i < bagSize; i++)
+    //     {
+    //         if (BagSlots[i].IsEmpty)
+    //         {
+    //             BagSlots[i].item = itemToAdd;
+    //             BagSlots[i].amount = amount;
+    //             OnBagUpdated?.Invoke();
+    //             return true;
+    //         }
+    //     }
+    // }
+
+    // Debug.Log("가방이 꽉 차서 아이템을 획득할 수 없습니다.");
+    // return false;
     // }
 
     public void SwapItemBetweenBagAndQuickSlot(int bagIndex, int quickIndex)

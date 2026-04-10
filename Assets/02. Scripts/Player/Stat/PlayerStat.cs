@@ -62,6 +62,11 @@ public class PlayerStat : MonoBehaviour
         PlayerGamemanager.OnGameStatChangeTime += DecreasSurvivalStat;
     }
 
+    void OnDisable()
+    {
+        TODO : PlayerGamemanager.OnGameStatChangeTime -= DecreasSurvivalStat;
+    }
+
 
     //몬스터에게 피격당할 시 호출되는 함수
     public void TakeDamage(float damage)
