@@ -32,8 +32,9 @@ public class AttackPlayer : ActionNode
 
     public override NodeState OnUpdate()
     {
+        var rotOffset = _blackboard.Self.transform.rotation * _offset;
         // 공격 판정을 위한 센터값과 생성할 박스 사이즈
-        var center = _blackboard.Center.position + _blackboard.Self.transform.forward + _offset; ;
+        var center = _blackboard.Center.position + _blackboard.Self.transform.forward + rotOffset; ;
 
         float attackTime = Time.time - _attackTimer;
 

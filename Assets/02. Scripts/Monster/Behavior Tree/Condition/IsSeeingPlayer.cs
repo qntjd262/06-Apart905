@@ -33,12 +33,8 @@ public class IsSeeingPlayer : Node
             if (angle <= _detectAngle &&
                 Physics.Raycast(_blackboard.Center.position, direction, out RaycastHit hit, distance))
             {
-                // 발견된 게 플레이어일 떄
-                if (hit.collider.CompareTag("Player"))
-                {
-                    _blackboard.Player = player; // 플레이어 정보를 블랙보드에 저장
-                    return NodeState.Success;
-                }
+                _blackboard.Player = player; // 플레이어 정보를 블랙보드에 저장
+                return NodeState.Success;
             }
         }
 

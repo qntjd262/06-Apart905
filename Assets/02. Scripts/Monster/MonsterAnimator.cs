@@ -13,6 +13,7 @@ public class MonsterAnimator : MonoBehaviour
     public static readonly int MonsterAniParamAttack = Animator.StringToHash("Attack");
     public static readonly int MonsterAniParamAttacked = Animator.StringToHash("Attacked");
     public static readonly int MonsterAniParamDeath = Animator.StringToHash("Death");
+    public static readonly int MonsterAniParamIsFront = Animator.StringToHash("IsFront");
 
     private void Awake()
     {
@@ -49,8 +50,9 @@ public class MonsterAnimator : MonoBehaviour
         _animator.SetBool(MonsterAniParamIsMoving, false);
     }
 
-    public void OnAttacked()
+    public void OnAttacked(bool isFront)
     {
+        _animator.SetBool(MonsterAniParamIsFront, isFront);
         _animator.SetTrigger(MonsterAniParamAttacked);
         _animator.ResetTrigger(MonsterAniParamAttack);
     }
