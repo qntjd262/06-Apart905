@@ -19,22 +19,26 @@ public class IsSeeingPlayer : Node
 
     public override NodeState OnUpdate()
     {
-        var overlapSphere = Physics.OverlapSphere(_blackboard.Center.position, _detectRadius, _playerLayer);
+        var overlapSphere = Physics.OverlapSphere(_blackboard.Self.transform.position, _detectRadius, _playerLayer);
         if (overlapSphere.Length > 0)
         {
             var player = overlapSphere[0].gameObject;
-          
+
             // 각도, 방향, 거리 계산
-            Vector3 direction = player.transform.position - _blackboard.Center.position;
+            Vector3 direction = player.transform.position - _blackboard.Center.position + new Vector3(0, 0.5f, 0);
             float distance = direction.magnitude;
             float angle = Vector3.Angle(_self.transform.forward, direction);
 
             // 시야각이 일정 각도 이내이고, 사이에 장애물이 없으면 발견 판정
             if (angle <= _detectAngle &&
-                Physics.Raycast(_blackboard.Center.position, direction, out RaycastHit hit, distance))
+                Physics.Raycast(_blackboard.Center.position, direction, out RaycastHit hit, distance + 0.5f))
             {
-                _blackboard.Player = player; // 플레이어 정보를 블랙보드에 저장
-                return NodeState.Success;
+                // hit한 오브젝트의 태그가 Player라면
+                if (hit.collider.CompareTag("Player"))
+                {
+                    _blackboard.Player = player; // 플레이어 정보를 블랙보드에 저장
+                    return NodeState.Success;
+                }
             }
         }
 

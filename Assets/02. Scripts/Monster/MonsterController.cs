@@ -9,7 +9,7 @@ public class MonsterController
     private Blackboard _blackBoard;
     private NavMeshAgent _navMeshAgent;
 
-    [Header("���� ü��")]
+    [Header("몬스터 체력")]
     private float monsterHealth;
     [SerializeField] private float currentHealth;
 
@@ -32,7 +32,7 @@ public class MonsterController
 
         currentHealth -= damage;
        
-        Debug.Log($"{damage} ���� , ���� ü�� {currentHealth}");
+        Debug.Log($"{damage} 입음, 남은 체력 {currentHealth}");
         if (currentHealth <= 0)
         {
             Death();
