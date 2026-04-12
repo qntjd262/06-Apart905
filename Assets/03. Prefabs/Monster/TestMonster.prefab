@@ -122,6 +122,7 @@ GameObject:
   - component: {fileID: 7418592438169169293}
   - component: {fileID: 204768924431422052}
   - component: {fileID: 4531184012337641742}
+  - component: {fileID: 7375390519383913840}
   m_Layer: 0
   m_Name: TestMonster
   m_TagString: Untagged
@@ -210,14 +211,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2d16a51fcd19474eac0cd4a5b9d8998, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _detectRadius: 5
+  _detectRadius: 10
   _playerLayer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 0
+  _detectAngle: 50
+  _center: {fileID: 0}
   _chaseInterval: 0.5
-  minPatrolTime: 0
-  maxPatrolTime: 0
-  patrolRadius: 0
+  _halfExtents: {x: 0, y: 0, z: 0}
+  _waitTime: 0
+  minPatrolTime: 3
+  maxPatrolTime: 5
+  patrolRadius: 15
+  minIdleTime: 3
+  maxIdleTime: 5
 --- !u!136 &204768924431422052
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -251,11 +258,11 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.5
-  m_Speed: 3.5
+  m_Speed: 2.5
   m_Acceleration: 8
   avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0.5
+  m_AngularSpeed: 80
+  m_StoppingDistance: 2
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -263,3 +270,17 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &7375390519383913840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5480882465535015853}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93e0958fdb16ba74eace9b48087ab5a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  monsterHealth: 20
+  currentHealth: 20

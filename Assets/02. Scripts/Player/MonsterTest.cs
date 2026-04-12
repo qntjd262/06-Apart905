@@ -6,10 +6,12 @@ public class MonsterTest : MonoBehaviour
     [SerializeField] private float monsterHealth = 20f;
     [SerializeField] private float currentHealth;
 
+
     void Start()
     {
         currentHealth = monsterHealth;
     }
+
 
     public void TakeDamage(float damage)
     {
