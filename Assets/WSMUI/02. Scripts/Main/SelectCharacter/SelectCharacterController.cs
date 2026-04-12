@@ -2,11 +2,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
+using System.Collections.Generic;
+using System.Linq;
 
-public class CharacterSelector : MonoBehaviour
+public class SelectCharacterController : MonoBehaviour
 {
     [Header("Data Source")]
-    [SerializeField] private CharacterData[] characterDatas;
+    private List<CharacterStatSO> characterDatas = new List<CharacterStatSO>();
 
     [Header("UI References - Info Box (Left)")]
 
@@ -34,31 +36,10 @@ public class CharacterSelector : MonoBehaviour
     private int totalCount;
     private Transform[] cards;
 
-
-
-
     private void OnEnable()
     {
         if (UIManager.Instance != null)
             UIManager.Instance.OpenPopupWithEffects("CHARACTER SELECT");
-
-        // Start에 있던 초기화 로직 이동
-        if (container == null || characterDatas == null || characterDatas.Length == 0)
-        {
-            Debug.LogError("데이터나 컨테이너가 설정되지 않았습니다!");
-            return;
-        }
-
-        totalCount = characterDatas.Length;
-        cards = new Transform[totalCount];
-
-        for (int i = 0; i < totalCount; i++)
-        {
-            cards[i] = container.GetChild(i);
-            CharacterCard cardScript = cards[i].GetComponent<CharacterCard>();
-            if (cardScript != null) cardScript.SetCard(characterDatas[i]);
-        }
-
         currentIndex = 0;
         UpdateUI(true);
     }
@@ -70,6 +51,50 @@ public class CharacterSelector : MonoBehaviour
             UIManager.Instance.ClosePopupWithEffects();
         }
     }
+
+    void Start()
+    {
+        /*
+        if (container == null || characterDatas == null || characterDatas.Length == 0)
+        {
+            Debug.LogError("데이터나 컨테이너가 설정되지 않았습니다!");
+            return;
+        }
+        */
+        if (CharacterDataManager.Instance != null && CharacterDataManager.Instance.characterDB.Count > 0)
+        {
+            characterDatas = CharacterDataManager.Instance.characterDB.Values.ToList();
+        }
+        else
+        {
+            Debug.LogError("캐릭터 데이터가 아직 구글에서 로드 되지 않았음");
+            return;
+        }
+
+
+        //아래는 기존 코드 동일 characterDatas.Length -> characterDatas.Count
+        totalCount = characterDatas.Count;
+        cards = new Transform[totalCount];
+
+
+        for (int i = 0; i < totalCount; i++)
+        {
+            cards[i] = container.GetChild(i);
+
+
+            CharacterCard cardScript = cards[i].GetComponent<CharacterCard>();
+            if (cardScript != null)
+            {
+                cardScript.SetCard(characterDatas[i]);
+            }
+        }
+
+
+        UpdateUI(true);
+    }
+
+
+
     public void OnNextButton()
     {
         if (currentIndex < totalCount - 1)
@@ -119,19 +144,26 @@ public class CharacterSelector : MonoBehaviour
 
     private void UpdateStats()
     {
-        if (characterDatas == null || characterDatas.Length <= currentIndex) return;
+        //characterDatas.Length -> characterDatas.Count
+        if (characterDatas == null || characterDatas.Count <= currentIndex) return;
 
-        CharacterData data = characterDatas[currentIndex];
 
-        if (descriptionText != null) descriptionText.text = data.description;
+        //CharacterData -> CharacterStatSO
+        CharacterStatSO data = characterDatas[currentIndex];
 
-        if (hpText != null) hpText.text = data.hp.ToString();
-        if (atkText != null) atkText.text = data.atk.ToString();
-        if (defText != null) defText.text = data.def.ToString();
-        if (stamText != null) stamText.text = data.stam.ToString();
-        if (thirstText != null) thirstText.text = data.thirst.ToString();
-        if (hungerText != null) hungerText.text = data.hunger.ToString();
-        if (sanityText != null) sanityText.text = data.sanity.ToString();
+
+        if (descriptionText != null) descriptionText.text = $"Description : {data.description}";
+
+
+        //data.뒤에 변수명 수정
+        if (hpText != null) hpText.text = $"HP : {data.Hp}";
+        if (atkText != null) atkText.text = $"Attack : {data.AttackPower}";
+        if (defText != null) defText.text = $"Def : {data.Def}";
+        if (stamText != null) stamText.text = $"Stamina : {data.MaxStamina}";
+        if (thirstText != null) thirstText.text = $"Thirst : {data.ThirstDecreaseRate}";
+        if (hungerText != null) hungerText.text = $"Hunger : {data.HungerDecreaseRate}";
+        if (sanityText != null) sanityText.text = $"Infection : {data.InfectionIncreaseRate}";
+
     }
 
     private void UpdateButtonState()
@@ -142,16 +174,17 @@ public class CharacterSelector : MonoBehaviour
 
     public void OnClickSelectButton()
     {
-        PlayerPrefs.SetInt("SelectedCharacter", currentIndex);
-        PlayerPrefs.Save();
-
-        if (GameManager.Instance != null)
-            GameManager.Instance.SetCharacter(characterDatas[currentIndex]);
+        if (CharacterDataManager.Instance != null)
+        {
+            CharacterDataManager.Instance.selectedCharacterSO = characterDatas[currentIndex];
+            Debug.Log($"선택된 캐릭터는 {characterDatas[currentIndex].Name}입니다.");
+        }
 
         if (UIManager.Instance != null)
         {
             UIManager.Instance.CloseSelectCharacterPanel();
             UIManager.Instance.LoadScene(Constants.ESceneType.Game);
         }
+
     }
 }

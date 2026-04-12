@@ -6,7 +6,8 @@ using DG.Tweening;
 
 [RequireComponent(typeof(CanvasGroup))]
 public class LoadingPanelController : MonoBehaviour
-{ [SerializeField] private Image gaugeImage;
+{
+    [SerializeField] private Image gaugeImage;
 
     private CanvasGroup _canvasGroup;
 
@@ -14,6 +15,14 @@ public class LoadingPanelController : MonoBehaviour
     {
         _canvasGroup = GetComponent<CanvasGroup>();
         _canvasGroup.alpha = 0;
+
+        Canvas canvas = GetComponent<Canvas>();
+        if (canvas == null) canvas = gameObject.AddComponent<Canvas>();
+        canvas.overrideSorting = true;
+        canvas.sortingOrder = 1000;
+
+        if (GetComponent<GraphicRaycaster>() == null)
+            gameObject.AddComponent<GraphicRaycaster>();
     }
 
     /// <summary>

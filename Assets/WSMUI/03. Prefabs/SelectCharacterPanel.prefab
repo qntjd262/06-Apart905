@@ -1231,8 +1231,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8271949703822449047}
-        m_TargetAssemblyTypeName: CharacterSelector, Assembly-CSharp
+      - m_Target: {fileID: 5388480736961191278}
+        m_TargetAssemblyTypeName: SelectCharacterController, Assembly-CSharp
         m_MethodName: OnNextButton
         m_Mode: 1
         m_Arguments:
@@ -1252,8 +1252,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 598624630001895034}
+  - component: {fileID: 5388480736961191278}
   m_Layer: 5
-  m_Name: SelectCharacter
+  m_Name: SelectCharacterPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1283,6 +1284,33 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &5388480736961191278
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1986431491735728409}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df37c4614d1ab704e883faff3a38aa74, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  descriptionText: {fileID: 5202117637791272526}
+  hpText: {fileID: 49318514024934722}
+  atkText: {fileID: 3371600857837712281}
+  defText: {fileID: 6729888128608004075}
+  stamText: {fileID: 3768267020648152462}
+  thirstText: {fileID: 3673361022933853431}
+  hungerText: {fileID: 7547071644976541140}
+  sanityText: {fileID: 1068555160269482057}
+  container: {fileID: 7575602448623977516}
+  nextButton: {fileID: 6435178059446134001}
+  prevButton: {fileID: 7253114120997263512}
+  spacing: 450
+  fixedY: 20
+  duration: 0.5
+  unselectedScale: 0.7
 --- !u!1 &2028935707205115491
 GameObject:
   m_ObjectHideFlags: 0
@@ -2616,8 +2644,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8271949703822449047}
-        m_TargetAssemblyTypeName: CharacterSelector, Assembly-CSharp
+      - m_Target: {fileID: 5388480736961191278}
+        m_TargetAssemblyTypeName: SelectCharacterController, Assembly-CSharp
         m_MethodName: OnPrevButton
         m_Mode: 1
         m_Arguments:
@@ -2931,8 +2959,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 8271949703822449047}
-        m_TargetAssemblyTypeName: CharacterSelector, Assembly-CSharp
+      - m_Target: {fileID: 5388480736961191278}
+        m_TargetAssemblyTypeName: SelectCharacterController, Assembly-CSharp
         m_MethodName: OnClickSelectButton
         m_Mode: 1
         m_Arguments:
@@ -3300,9 +3328,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2011308788422676022}
-  - component: {fileID: 8271949703822449047}
   m_Layer: 5
-  m_Name: CharacterSelectPanel
+  m_Name: Bg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3328,38 +3355,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &8271949703822449047
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7734922543625186317}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df37c4614d1ab704e883faff3a38aa74, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  characterDatas:
-  - {fileID: 11400000, guid: c66ef5f29a47ac34782dc2ac6a874d31, type: 2}
-  - {fileID: 11400000, guid: 2bc7c9887c3acb54ebbe3aadbd3b400e, type: 2}
-  - {fileID: 11400000, guid: d931c83da07e8eb448b418161cd447d5, type: 2}
-  - {fileID: 11400000, guid: 4c788b4a1bf79e446aab19926f914b43, type: 2}
-  descriptionText: {fileID: 5202117637791272526}
-  hpText: {fileID: 49318514024934722}
-  atkText: {fileID: 3371600857837712281}
-  defText: {fileID: 6729888128608004075}
-  stamText: {fileID: 3768267020648152462}
-  thirstText: {fileID: 3673361022933853431}
-  hungerText: {fileID: 7547071644976541140}
-  sanityText: {fileID: 1068555160269482057}
-  container: {fileID: 7575602448623977516}
-  nextButton: {fileID: 6435178059446134001}
-  prevButton: {fileID: 7253114120997263512}
-  spacing: 450
-  fixedY: 20
-  duration: 0.5
-  unselectedScale: 0.7
 --- !u!1 &8247989134444117261
 GameObject:
   m_ObjectHideFlags: 0

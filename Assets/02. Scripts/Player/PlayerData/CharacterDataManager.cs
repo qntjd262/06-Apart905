@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
+using Unity.VisualScripting;
 
 public class CharacterDataManager : MonoBehaviour
 {
@@ -13,6 +14,8 @@ public class CharacterDataManager : MonoBehaviour
     public Dictionary<string, CharacterStatSO> characterDB = new Dictionary<string, CharacterStatSO>();
     
     public CharacterStatSO selectedCharacterSO;
+    [Header("캐릭터 일러스트 모음")]
+    [SerializeField] private Sprite[] allCharacterSprites;
 
     void Awake()
     {
@@ -67,7 +70,24 @@ public class CharacterDataManager : MonoBehaviour
             newSO.InfectionIncreaseRate = float.Parse(row[6].Trim());
             newSO.ThirstDecreaseRate = float.Parse(row[7].Trim());
             newSO.HungerDecreaseRate = float.Parse(row[8].Trim());
+            newSO.description = row[9].Trim();
 
+            bool isImageFound = false;
+
+            foreach(Sprite spr in allCharacterSprites)
+            {
+                if(spr != null &&spr.name == newSO.ID)
+                {
+                    newSO.characterSprite = spr;
+                    isImageFound = true;
+                    break;
+                }
+            }
+
+            if (!isImageFound)
+            {
+                Debug.Log($"캐릭터 일러스트 매치 실패 {newSO.Name}");
+            }
             if (!characterDB.ContainsKey(newSO.Name))
             {
                 characterDB.Add(newSO.Name, newSO);

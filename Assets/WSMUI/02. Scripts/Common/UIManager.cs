@@ -27,7 +27,7 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private GameObject saveLoadPanel;
     [SerializeField] private GameObject endingListPanel;
     [SerializeField] private GameObject optionPanel;
-    [SerializeField] private GameObject loadingPanelPrefab;
+    [SerializeField] private LoadingPanelController loadingPanelPrefab;
 
     private HUDController _hudController;
     private int activePopupCount = 0;
@@ -111,7 +111,6 @@ public class UIManager : Singleton<UIManager>
         if (endingListPanel != null)
         {
             endingListPanel.SetActive(true);
-            OpenPopupWithEffects("ENDING LIST");
         }
     }
 
@@ -215,91 +214,37 @@ public class UIManager : Singleton<UIManager>
     private IEnumerator LoadSceneAsync(Constants.ESceneType sceneType)
     {
         Time.timeScale = 1f;
-
-        bool loadingEffectsOpened = dimBackground != null || cinematicBars != null || globalWindowTitleText != null;
-        if (loadingEffectsOpened)
-        {
-            OpenPopupWithEffects("LOADING");
-        }
+        OpenPopupWithEffects("LOADING");
 
         if (loadingPanelPrefab == null)
         {
-            Debug.LogError("UIManager: loadingPanelPrefab reference is missing. Loading without the loading panel.");
-            if (loadingEffectsOpened) ClosePopupWithEffects();
+            Debug.LogError("UIManager: loadingPanelPrefab reference is missing.");
+            ClosePopupWithEffects();
             SceneManager.LoadScene(sceneType.ToString());
             yield break;
         }
 
-        if (CurrentCanvas == null)
-        {
-            Debug.LogError("UIManager: CurrentCanvas is null. Loading without the loading panel.");
-            if (loadingEffectsOpened) ClosePopupWithEffects();
-            SceneManager.LoadScene(sceneType.ToString());
-            yield break;
-        }
-
-        GameObject loadingPanelObject = Instantiate(loadingPanelPrefab);
-        DontDestroyOnLoad(loadingPanelObject);
-        if (!loadingPanelObject.activeSelf)
-        {
-            loadingPanelObject.SetActive(true);
-        }
-
-        Canvas loadingCanvas = loadingPanelObject.GetComponent<Canvas>();
-        if (loadingCanvas == null)
-        {
-            loadingCanvas = loadingPanelObject.AddComponent<Canvas>();
-        }
-
-        loadingCanvas.overrideSorting = true;
-        loadingCanvas.sortingOrder = 1000;
-
-        if (loadingPanelObject.GetComponent<GraphicRaycaster>() == null)
-        {
-            loadingPanelObject.AddComponent<GraphicRaycaster>();
-        }
-
-        loadingPanelObject.transform.SetAsLastSibling();
-
-        LoadingPanelController loadingPanelController = loadingPanelObject.GetComponent<LoadingPanelController>();
-        if (loadingPanelController == null)
-        {
-            Debug.LogError("UIManager: LoadingPanelController is missing on the loading panel prefab.");
-            Destroy(loadingPanelObject);
-            if (loadingEffectsOpened) ClosePopupWithEffects();
-            SceneManager.LoadScene(sceneType.ToString());
-            yield break;
-        }
+        loadingPanelPrefab.gameObject.SetActive(true);
 
         bool showDone = false;
-        loadingPanelController.Show(() => showDone = true);
-        Debug.Log("UIManager: Loading panel show requested. Waiting for fade-in to finish.");
+        loadingPanelPrefab.Show(() => showDone = true);
         yield return new WaitUntil(() => showDone);
 
-        Debug.Log("UIManager: Loading panel fade-in completed. Starting async scene load.");
         AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneType.ToString());
-        if (asyncOperation == null)
-        {
-            Debug.LogError($"UIManager: Failed to start async loading for scene '{sceneType}'.");
-            Destroy(loadingPanelObject);
-            if (loadingEffectsOpened) ClosePopupWithEffects();
-            yield break;
-        }
-
         asyncOperation.allowSceneActivation = false;
 
         while (asyncOperation.progress < 0.9f)
         {
-            loadingPanelController.SetProgress(asyncOperation.progress);
+            loadingPanelPrefab.SetProgress(asyncOperation.progress);
             yield return null;
         }
 
-        loadingPanelController.SetProgress(1f);
+        loadingPanelPrefab.SetProgress(1f);
         asyncOperation.allowSceneActivation = true;
         yield return new WaitUntil(() => asyncOperation.isDone);
 
+        loadingPanelPrefab.gameObject.SetActive(false);
         CloseAllGlobalPopups();
-        Destroy(loadingPanelObject);
     }
 
     private bool IsAnyGlobalPopupActive()
@@ -308,19 +253,6 @@ public class UIManager : Singleton<UIManager>
             || (optionPanel != null && optionPanel.activeSelf)
             || (selectCharacterPanel != null && selectCharacterPanel.activeSelf)
             || (endingListPanel != null && endingListPanel.activeSelf);
-    }
-
-    private GameObject GetPopupRoot(GameObject popupObject)
-    {
-        if (popupObject == null) return null;
-
-        Transform current = popupObject.transform;
-        while (current.parent != null && current.parent.GetComponent<Canvas>() == null)
-        {
-            current = current.parent;
-        }
-
-        return current.gameObject;
     }
 
     private void CloseAllGlobalPopups()
@@ -347,9 +279,6 @@ public class UIManager : Singleton<UIManager>
         if (invUI != null) inventoryPanel = invUI.gameObject;
 
         if (inventoryPanel != null) inventoryPanel.SetActive(false);
-
-
-        CloseAllGlobalPopups();
     }
 
     protected override void OnSceneUnloaded(Scene scene) { }
