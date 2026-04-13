@@ -9,18 +9,22 @@ public class TestMonsterAI : MonoBehaviour
     private Vector3 _originPos;
 
     [Header("탐색 설정")]
-    [SerializeField] private float      _detectRadius = 10f;
-    [SerializeField] private LayerMask  _playerLayer;
-    [SerializeField] private float      _detectAngle = 60f;
-    [SerializeField] private Transform _center;
+    [SerializeField] private float      detectRadius = 10f;
+    [SerializeField] private LayerMask  playerLayer;
+    [SerializeField] private float      detectAngle = 60f;
+    [SerializeField] private Transform  center;
 
-    [Header("Chase 경로 탐색 주기 및 추가 이동 시간")]
+    [Header("Chase 경로 탐색 주기")]
     [SerializeField] private float  _chaseInterval = 0.3f;
+    [Header("Chase 후 추가 이동 시간")]
     [SerializeField] private float  _chaseDuration = 3f;
 
-    [Header("공격 범위 및 공격 후 대기 시간")]
-    [SerializeField] private Vector3 _halfExtents;
-    [SerializeField] private float _waitTime;
+    [Header("공격 범위, 공격 후 대기 시간, 공격 범위 offset")]
+    [SerializeField] private Vector3    _halfExtents;
+    [Header("공격 후 대기 시간")]
+    [SerializeField] private float      _waitTime;
+    [Header("공격 범위 offset")]
+    [SerializeField] private Vector3    offset;
 
     [Header("Patrol 범위 및 시간")]
     [SerializeField] float minPatrolTime;
@@ -40,7 +44,7 @@ public class TestMonsterAI : MonoBehaviour
         blackboard.Self = gameObject; // 몬스터 자신 저장
         blackboard.NavMeshAgent = GetComponent<NavMeshAgent>(); // NavMeshAgnet 가져오기
         blackboard.Animator = GetComponent<MonsterAnimator>(); // Animator 가져오기
-        blackboard.Center = _center;
+        blackboard.Center = center;
     }
 
     // SelectorNode -> 실패하면 다음 노드로
@@ -64,10 +68,10 @@ public class TestMonsterAI : MonoBehaviour
                     new Attacked(blackboard) // 피격 노드
                 ),
 
-                // 플레이어가 보일 때 공격 or 추적
+                // 플레이어가 보인다면
                 new SequenceNode
                 (
-                    new IsSeeingPlayer(_detectRadius, _detectAngle, _playerLayer, blackboard), // 플레이어를 보고 있는지 확인
+                    new IsSeeingPlayer(detectRadius, detectAngle, playerLayer, blackboard), // 플레이어를 보고 있는지 확인
 
                     new SelectorNode // 플레이어가 보인다면
                     (
@@ -76,7 +80,7 @@ public class TestMonsterAI : MonoBehaviour
                             new IsInAttackRange(blackboard), // 공격 가능 범위 내인지 확인
                             new MemorySequenceNode // 범위 내라면 공격
                             (
-                                new AttackPlayer(_halfExtents, blackboard),
+                                new AttackPlayer(_halfExtents, offset, blackboard),
                                 new Wait(_waitTime, blackboard)
                             )
                         ),
@@ -85,13 +89,22 @@ public class TestMonsterAI : MonoBehaviour
                     )
                 ),
 
-                // 추적 중 플레이어가 시야에서 사라질 시 추가 추적
+                // 적의 발소리가 들린다면 || 추적 중이 아니라면 
+                new SequenceNode
+                (
+                    new ConditionNode(() => blackboard.MonsterState != Blackboard.State.Chase),
+                    new ConditionNode(() => blackboard.CanHearPlayer),
+                    new LookAt(() => blackboard.SoundDirection, blackboard)
+                ),
+
+                // 추적 중 플레이어가 시야에서 사라진다면
                 new MemorySequenceNode
                 (
                     new ConditionNode(() => blackboard.HasLostTarget),
                     new MoveToLastPoint(_chaseDuration, blackboard),
                     new LookAround(4f, 40f, blackboard)
                 ),
+
 
                 // 정찰 및 대기
                 new MemorySequenceNode
@@ -113,30 +126,25 @@ public class TestMonsterAI : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, _detectRadius); // 탐지 범위를 시각적으로 표시
-        Gizmos.DrawRay(_center.position, Quaternion.Euler(0, -_detectAngle, 0) * transform.forward * _detectRadius);
-        Gizmos.DrawRay(_center.position, Quaternion.Euler(0, _detectAngle, 0) * transform.forward * _detectRadius);
+        Gizmos.DrawWireSphere(transform.position, detectRadius); // 탐지 범위를 시각적으로 표시
+        Gizmos.DrawRay(this.center.position, Quaternion.Euler(0, -detectAngle, 0) * transform.forward * detectRadius);
+        Gizmos.DrawRay(this.center.position, Quaternion.Euler(0, detectAngle, 0) * transform.forward * detectRadius);
 
+        var center = this.center.position + transform.forward + offset;
+        Gizmos.DrawWireCube(center, _halfExtents * 2f);
 
         if (!Application.isPlaying) return;
-
-        // 공격 범위 표시
-        if (blackboard.MonsterState == Blackboard.State.Attack)
-        {
-            var center = _center.position + transform.forward;
-            Gizmos.DrawWireCube(center, _halfExtents * 2f);
-        }
 
         if (blackboard.Player != null)
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawLine(_center.position, blackboard.Player.transform.position); // 탐지된 플레이어와의 선을 시각적으로 표시
+            Gizmos.DrawLine(this.center.position, blackboard.Player.transform.position + new Vector3(0, 0.5f, 0)); // 탐지된 플레이어와의 선을 시각적으로 표시
         }
 
         if (blackboard.NavMeshAgent.hasPath)
         {
             Gizmos.color = Color.blue;
-            Gizmos.DrawLine(_center.position, blackboard.NavMeshAgent.destination);
+            Gizmos.DrawLine(this.center.position, blackboard.NavMeshAgent.destination);
         }
     }
 }

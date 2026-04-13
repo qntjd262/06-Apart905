@@ -8,7 +8,6 @@ public class LookAround : ActionNode
 
     private float _currentAngle;
     private float _maxRotAngle;
-    private float _sin;
 
 
     public LookAround(float duration, float maxRotAngle, Blackboard blackboard)
@@ -31,11 +30,14 @@ public class LookAround : ActionNode
     public override NodeState OnUpdate()
     {
         float timer = Time.time - _elapsedTime;
+        // sin이 한바퀴를 돌면 고개를 좌우로 한번씩 움직이고 중앙에 오게 된다.
+        // 한바퀴가 2파이이므로 3.14*2 = 6.28을 총 실행시간으로 나누면 초당 움직여야할 값이 나오게 된다.
+        float degreePerSec = 6.28f / _duration;
 
         if (timer < _duration)
         {
-            float rotate = _currentAngle + Mathf.Sin(timer) * _maxRotAngle;
-            Debug.Log("rotate : " + rotate);
+            
+            float rotate = _currentAngle + Mathf.Sin(timer * degreePerSec) * _maxRotAngle;
 
             _blackboard.Self.transform.rotation = Quaternion.Euler(0f, rotate, 0f);
 

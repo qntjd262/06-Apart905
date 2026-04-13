@@ -2049,7 +2049,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1962fbb303bd01f4aade27fa83148774, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _animator: {fileID: 0}
 --- !u!114 &790018128789168648
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2062,15 +2061,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2d16a51fcd19474eac0cd4a5b9d8998, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _detectRadius: 10
-  _playerLayer:
+  detectRadius: 10
+  playerLayer:
     serializedVersion: 2
     m_Bits: 1024
-  _detectAngle: 50
-  _center: {fileID: 1943915588115646645}
+  detectAngle: 60
+  center: {fileID: 0}
   _chaseInterval: 0.4
+  _chaseDuration: 3
   _halfExtents: {x: 0.92, y: 1.93, z: 1.2}
   _waitTime: 1
+  offset: {x: 0, y: 0, z: 0}
   minPatrolTime: 3
   maxPatrolTime: 5
   patrolRadius: 10
