@@ -14,14 +14,16 @@ public class TestMonsterAI : MonoBehaviour
     [SerializeField] private float      detectAngle = 60f;
     [SerializeField] private Transform  center;
 
-
-    [Header("Chase 경로 탐색 주기 및 추가 이동 시간")]
+    [Header("Chase 경로 탐색 주기")]
     [SerializeField] private float  _chaseInterval = 0.3f;
+    [Header("Chase 후 추가 이동 시간")]
     [SerializeField] private float  _chaseDuration = 3f;
 
     [Header("공격 범위, 공격 후 대기 시간, 공격 범위 offset")]
     [SerializeField] private Vector3    _halfExtents;
+    [Header("공격 후 대기 시간")]
     [SerializeField] private float      _waitTime;
+    [Header("공격 범위 offset")]
     [SerializeField] private Vector3    offset;
 
     [Header("Patrol 범위 및 시간")]
@@ -66,7 +68,7 @@ public class TestMonsterAI : MonoBehaviour
                     new Attacked(blackboard) // 피격 노드
                 ),
 
-                // 플레이어가 보일 때 공격 or 추적
+                // 플레이어가 보인다면
                 new SequenceNode
                 (
                     new IsSeeingPlayer(detectRadius, detectAngle, playerLayer, blackboard), // 플레이어를 보고 있는지 확인
@@ -87,13 +89,22 @@ public class TestMonsterAI : MonoBehaviour
                     )
                 ),
 
-                // 추적 중 플레이어가 시야에서 사라질 시 추가 추적
+                // 적의 발소리가 들린다면 || 추적 중이 아니라면 
+                new SequenceNode
+                (
+                    new ConditionNode(() => blackboard.MonsterState != Blackboard.State.Chase),
+                    new ConditionNode(() => blackboard.CanHearPlayer),
+                    new LookAt(() => blackboard.SoundDirection, blackboard)
+                ),
+
+                // 추적 중 플레이어가 시야에서 사라진다면
                 new MemorySequenceNode
                 (
                     new ConditionNode(() => blackboard.HasLostTarget),
                     new MoveToLastPoint(_chaseDuration, blackboard),
                     new LookAround(4f, 40f, blackboard)
                 ),
+
 
                 // 정찰 및 대기
                 new MemorySequenceNode
@@ -127,7 +138,7 @@ public class TestMonsterAI : MonoBehaviour
         if (blackboard.Player != null)
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawLine(this.center.position, blackboard.Player.transform.position); // 탐지된 플레이어와의 선을 시각적으로 표시
+            Gizmos.DrawLine(this.center.position, blackboard.Player.transform.position + new Vector3(0, 0.5f, 0)); // 탐지된 플레이어와의 선을 시각적으로 표시
         }
 
         if (blackboard.NavMeshAgent.hasPath)
