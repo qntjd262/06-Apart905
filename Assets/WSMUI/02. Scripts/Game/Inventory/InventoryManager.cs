@@ -151,6 +151,33 @@ public class InventoryManager : Singleton<InventoryManager>
         }
     }
 
+    public void RemoveItem(string itemName, int amount)
+    {
+        int remainingToRemove = amount;
+
+        for (int i = 0; i < bagSize; i++)
+        {
+            if (BagSlots[i].item != null && BagSlots[i].item.itemName == itemName)
+            {
+                if (BagSlots[i].amount > remainingToRemove)
+                {
+                    BagSlots[i].amount -= remainingToRemove;
+                    remainingToRemove = 0;
+                }
+                else
+                {
+                    remainingToRemove -= BagSlots[i].amount;
+                    BagSlots[i].item = null;
+                    BagSlots[i].amount = 0;
+                }
+            }
+            if (remainingToRemove <= 0) break;
+        }
+
+        OnBagUpdated?.Invoke();
+        OnQuickSlotUpdated?.Invoke(); // 퀵슬롯 적용
+    }
+
     private void ApplyEffect(PlayerStat player, ItemDataEatable effect)
     {
         StatCondition targetStat = null;

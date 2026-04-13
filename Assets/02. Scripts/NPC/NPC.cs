@@ -41,7 +41,10 @@ public class NPC : MonoBehaviour, IInteractable
     void CompleteQuest()
     {
         myQuest.isCompleted = true;
+        if (myQuest.type == QuestType.ItemCollection)
+        {
+            InventoryManager.Instance.RemoveItem(myQuest.targetID, myQuest.goalAmount);
+        }
         QuestManager.Instance.activeQuests.Remove(myQuest);
-        Debug.Log("보상 지급 로직 실행");
     }
 }
