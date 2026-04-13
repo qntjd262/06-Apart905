@@ -86,6 +86,138 @@ public class InventoryManager : Singleton<InventoryManager>
     // return false;
     // }
 
+    public bool AddItem(ItemData itemToAdd)
+    {
+        for (int i = 0; i < bagSize; i++)
+        {
+            if (BagSlots[i].item == null)
+            {
+                BagSlots[i].item = itemToAdd;
+                BagSlots[i].amount = 1;
+
+                if(QuestManager.Instance != null)
+                {
+                    QuestManager.Instance.NotifyEvent(QuestType.ItemCollection, itemToAdd.itemName, 1);
+                }
+
+                OnBagUpdated?.Invoke();
+                return true;
+            }
+        }
+        Debug.Log("가방이 가득 찼습니다.");
+        return false;
+    }
+
+    public int GetItemCount(string itemName)
+    {
+        int count = 0;
+        foreach(var slot in BagSlots)
+        {
+            if(slot.item != null && slot.item.itemName == itemName)
+            {
+                count += slot.amount;
+            }
+        }
+        //퀵슬롯용
+        foreach(var slot in QuickSlots)
+        {
+            if(slot.item != null && slot.item.itemName == itemName)
+            {
+                count += slot.amount;
+            }
+        }
+        return count;
+    }
+
+    public void UseItem(int index, bool isQuickSlot, PlayerStat player)
+    {
+        InventorySlot targetSlot = isQuickSlot ? QuickSlots[index] : BagSlots[index];
+
+        if (targetSlot.item == null || targetSlot.IsEmpty) return;
+
+        ItemData item = targetSlot.item;
+
+        if (item.type == ItemType.Eatable)
+        {
+            foreach (var effect in item.eatables)
+            {
+                ApplyEffect(player, effect);
+            }
+
+            targetSlot.item = null; 
+
+            if (isQuickSlot) OnQuickSlotUpdated?.Invoke();
+            else OnBagUpdated?.Invoke();
+        }
+    }
+
+    public void RemoveItem(string itemName, int amount)
+    {
+        int remainingToRemove = amount;
+
+        for (int i = 0; i < bagSize; i++)
+        {
+            if (BagSlots[i].item != null && BagSlots[i].item.itemName == itemName)
+            {
+                if (BagSlots[i].amount > remainingToRemove)
+                {
+                    BagSlots[i].amount -= remainingToRemove;
+                    remainingToRemove = 0;
+                }
+                else
+                {
+                    remainingToRemove -= BagSlots[i].amount;
+                    BagSlots[i].item = null;
+                    BagSlots[i].amount = 0;
+                }
+            }
+            if (remainingToRemove <= 0) break;
+        }
+
+        OnBagUpdated?.Invoke();
+        OnQuickSlotUpdated?.Invoke(); // 퀵슬롯 적용
+    }
+
+    private void ApplyEffect(PlayerStat player, ItemDataEatable effect)
+    {
+        StatCondition targetStat = null;
+
+        switch (effect.type)
+        {
+            case EatableType.Hunger: 
+                targetStat = player.hunger; 
+                break;
+            case EatableType.Thirst: 
+                targetStat = player.thirst; 
+                break;
+            case EatableType.Health: 
+                targetStat = player.hp; 
+                break;
+            case EatableType.Stamina: 
+                targetStat = player.stamina; 
+                break;
+            case EatableType.Infection: 
+                targetStat = player.infection; 
+                break;
+        }
+
+    if (targetStat != null)
+    {
+        // 감염도(Infection)인 경우에만 수치를 뺌
+        if (effect.type == EatableType.Infection)
+        {
+            targetStat.currentValue -= effect.value;
+        }
+        else // 나머지는 수치를 더합니다 (회복 효과)
+        {
+            targetStat.currentValue += effect.value;
+        }
+
+        // 스탯이 0 ~ 최대값 범위를 벗어나지 않게 고정
+        targetStat.currentValue = Mathf.Clamp(targetStat.currentValue, 0, targetStat.maxValue);
+    }
+}
+
     public void SwapItemBetweenBagAndQuickSlot(int bagIndex, int quickIndex)
     {
 
@@ -123,15 +255,22 @@ public class InventoryManager : Singleton<InventoryManager>
     }
 
     // 중복되는 스왑 처리 로직을 내부 함수로 분리하여 최적화
+    // private void SwapSlots(InventorySlot slot1, InventorySlot slot2)
+    // {
+    //      ItemData tempItem = slot1.item;
+    //      int tempAmount = slot1.amount;
+
+    //      slot1.item = slot2.item;
+    //      slot1.amount = slot2.amount;
+
+    //      slot2.item = tempItem;
+    //      slot2.amount = tempAmount;
+    // }
+
     private void SwapSlots(InventorySlot slot1, InventorySlot slot2)
     {
-        // ItemData tempItem = slot1.item;
-        // int tempAmount = slot1.amount;
-
-        // slot1.item = slot2.item;
-        // slot1.amount = slot2.amount;
-
-        // slot2.item = tempItem;
-        // slot2.amount = tempAmount;
+        ItemData tempItem = slot1.item;
+        slot1.item = slot2.item;
+        slot2.item = tempItem;
     }
 }
