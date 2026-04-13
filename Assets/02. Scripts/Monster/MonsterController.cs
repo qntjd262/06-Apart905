@@ -2,12 +2,11 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class MonsterController
-    : MonoBehaviour
+public class MonsterController : MonoBehaviour
 {
-    public MonsterStatSO monsterStatSO;
-    private Blackboard _blackBoard;
     private NavMeshAgent _navMeshAgent;
+    private Blackboard _blackBoard;
+    public MonsterStatSO monsterStatSO;
 
     [Header("몬스터 체력")]
     private float monsterHealth;
@@ -25,6 +24,36 @@ public class MonsterController
         _navMeshAgent = GetComponent<NavMeshAgent>();
     }
 
+    private void Update()
+    {
+
+    }
+
+    #region 적 발소리 체크
+    /// <summary>
+    /// 플레이어의 발소리가 난 위치를 전달받아 처리
+    /// </summary>
+    /// <param name="soundOrigin"></param>
+    public void CanHearPlayerSound(Vector3 soundOrigin)
+    {
+        if (_blackBoard.MonsterState != Blackboard.State.Idle &&
+            _blackBoard.MonsterState != Blackboard.State.Patrol)
+        {
+            return;
+        }
+
+        var soundDirection = (soundOrigin - transform.position).normalized;
+
+        // TODO : 플레이어의 Noise 범위 내에 있는지 확인
+        // 만약, 범위 내에 있다면 true, 없다면 false
+        _blackBoard.CanHearPlayer = true;
+        _blackBoard.SoundDirection = soundDirection;
+        Debug.Log(soundDirection);
+        Debug.Log($"블랙보드에 저장된 : {_blackBoard.SoundDirection}");
+    }
+    #endregion
+
+    #region 피격 및 사망
     public void TakeDamage(float damage, GameObject player)
     {
         if (currentHealth < 0)
@@ -42,6 +71,7 @@ public class MonsterController
         _blackBoard.MonsterState = Blackboard.State.Attacked;
     }
 
+    // 사망
     public void Death()
     {
         Debug.Log(_blackBoard.MonsterState);
@@ -49,6 +79,7 @@ public class MonsterController
         StartCoroutine(DeathAnim());
     }
 
+    // 사망 시 처리
     IEnumerator DeathAnim()
     {
         float deathAnimTime = 0f;
@@ -67,4 +98,5 @@ public class MonsterController
         GetComponent<TestMonsterAI>().enabled = false;
         GetComponent<CapsuleCollider>().enabled = false;
     }
+    #endregion
 }
