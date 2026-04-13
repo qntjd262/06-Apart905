@@ -89,11 +89,11 @@ public class TestMonsterAI : MonoBehaviour
                     )
                 ),
 
-                // 적의 발소리가 들린다면 || 추적 중이 아니라면 
+                // 적의 발소리가 들린다면 && 추적 중이 아니라면 
                 new SequenceNode
                 (
-                    new ConditionNode(() => blackboard.MonsterState != Blackboard.State.Chase),
-                    new ConditionNode(() => blackboard.CanHearPlayer),
+                    new ConditionNode(() => blackboard.MonsterState != Blackboard.State.Chase &&
+                                            blackboard.CanHearPlayer),
                     new LookAt(() => blackboard.SoundDirection, blackboard)
                 ),
 
