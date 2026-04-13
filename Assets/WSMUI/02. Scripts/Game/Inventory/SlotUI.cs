@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using TMPro;
 
-public class SlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
+public class SlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler, IPointerClickHandler
 {
     [SerializeField] private Image icon;
     [SerializeField] private TextMeshProUGUI amountText;
@@ -67,6 +67,29 @@ public class SlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         {
             // 퀵슬롯 내부 이동
             InventoryManager.Instance.SwapItemWithinQuickSlot(draggingSlot.SlotIndex, this.SlotIndex);
+        }
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Right)
+        {
+            if (icon.sprite != null)
+            {
+                PlayerStat player = GameObject.FindWithTag("Player").GetComponent<PlayerStat>();
+                InventoryManager.Instance.UseItem(SlotIndex, IsQuickSlot, player);
+            }
+        }
+    }
+
+    private void UseItem()
+    {
+        PlayerStat player = GameObject.FindWithTag("Player").GetComponent<PlayerStat>();
+
+        if (player != null)
+        {
+            InventoryManager.Instance.UseItem(SlotIndex, IsQuickSlot, player);
+            Debug.Log($"슬롯 {SlotIndex} (퀵슬롯 여부: {IsQuickSlot}) 아이템 사용 시도");
         }
     }
 }
