@@ -29,6 +29,9 @@ public class PlayerStat : MonoBehaviour
     [Header("감염 상태 관리")]
     public int currentInfectionStage = 0;
 
+    [Header("상태 제어")]
+    public bool isInteracting = false;
+
     public event Action<bool> OnInfectionStateBool;
 
     void Awake()

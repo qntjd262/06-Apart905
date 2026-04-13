@@ -16,9 +16,13 @@ public class PlayerLook : MonoBehaviour
     private float crouchHeight = 2.3f;
     private float cameraForwardOffset = 0.35f;
 
+    private PlayerStat playerStat;
+
 
     void Start()
     {
+        playerStat = GetComponent<PlayerStat>();
+
         Camera mainCam = Camera.main;
 
         if(mainCam != null && cameraPos != null)
@@ -35,6 +39,8 @@ public class PlayerLook : MonoBehaviour
     }
     public void Look(float mouseX, float mouseY)
     {
+        if(playerStat.isInteracting) return;
+
         transform.Rotate(0f, mouseX * mouseSensitivity, 0f);
         
         currentVerticalRotation -= mouseY * mouseSensitivity;
