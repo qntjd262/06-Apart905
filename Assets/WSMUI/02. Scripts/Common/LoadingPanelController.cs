@@ -14,12 +14,12 @@ public class LoadingPanelController : MonoBehaviour
     private void Awake()
     {
         _canvasGroup = GetComponent<CanvasGroup>();
-        _canvasGroup.alpha = 0;
+        _canvasGroup.alpha = 1;
 
         Canvas canvas = GetComponent<Canvas>();
         if (canvas == null) canvas = gameObject.AddComponent<Canvas>();
         canvas.overrideSorting = true;
-        canvas.sortingOrder = 1000;
+        canvas.sortingOrder = 150;
 
         if (GetComponent<GraphicRaycaster>() == null)
             gameObject.AddComponent<GraphicRaycaster>();

@@ -29,7 +29,14 @@ public class SoundManager : Singleton<SoundManager>
         bgmSource.volume = PlayerPrefs.GetFloat(BGM_VOLUME_KEY, 1f);
         sfxSource.volume = PlayerPrefs.GetFloat(SFX_VOLUME_KEY, 1f);
     }
-
+    public void PlaySceneBGM(string sceneName)
+    {
+        SceneBGMData mapping = sceneBGMMap.FirstOrDefault(x => x.sceneType.ToString() == sceneName);
+        if (mapping != null)
+            PlayBGM(mapping.bgmKey);
+        else
+            StopBGM();
+    }
     public void PlayBGM(string key)
     {
         if (!_bgmDict.TryGetValue(key, out SoundDataSO data)) return;
@@ -67,14 +74,7 @@ public class SoundManager : Singleton<SoundManager>
         PlayerPrefs.Save();
     }
 
-    protected override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-        SceneBGMData mapping = sceneBGMMap.FirstOrDefault(x => x.sceneType.ToString() == scene.name);
-        if (mapping != null)
-            PlayBGM(mapping.bgmKey);
-        else
-            StopBGM();
-    }
+    protected override void OnSceneLoaded(Scene scene, LoadSceneMode mode) { }
 
     protected override void OnSceneUnloaded(Scene scene) { }
 }

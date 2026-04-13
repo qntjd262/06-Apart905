@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -29,6 +30,9 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private GameObject optionPanel;
     [SerializeField] private LoadingPanelController loadingPanelPrefab;
 
+    [Header("Fade")]
+    [SerializeField] private CanvasGroup fadeCanvasGroup;
+
     private HUDController _hudController;
     private int activePopupCount = 0;
 
@@ -42,6 +46,7 @@ public class UIManager : Singleton<UIManager>
         {
             globalCanvas = GetComponentInChildren<Canvas>();
         }
+
     }
 
     private void Start()
@@ -169,12 +174,6 @@ public class UIManager : Singleton<UIManager>
         }
     }
 
-    public void LoadScene(Constants.ESceneType sceneType)
-    {
-        Debug.Log($"LoadScene 호출 - loadingPanelPrefab: {(loadingPanelPrefab == null ? "NULL" : loadingPanelPrefab.name)}");
-        StartCoroutine(LoadSceneAsync(sceneType));
-    }
-
     private void ToggleInventory()
     {
         if (inventoryPanel == null)
@@ -211,42 +210,67 @@ public class UIManager : Singleton<UIManager>
         }
     }
 
-    private IEnumerator LoadSceneAsync(Constants.ESceneType sceneType)
+    public void LoadScene(Constants.ESceneType sceneType, bool withLoadingPanel = true)
+    {
+        StartCoroutine(LoadSceneAsync(sceneType, withLoadingPanel));
+    }
+
+    private IEnumerator LoadSceneAsync(Constants.ESceneType sceneType, bool withLoadingPanel = true)
     {
         Time.timeScale = 1f;
-        OpenPopupWithEffects("LOADING");
 
-        if (loadingPanelPrefab == null)
+        // 1. 화면 검게
+        bool fadeDone = false;
+        FadeOut(0.5f, () => fadeDone = true);
+        yield return new WaitUntil(() => fadeDone);
+
+        if (withLoadingPanel)
         {
-            Debug.LogError("UIManager: loadingPanelPrefab reference is missing.");
-            ClosePopupWithEffects();
-            SceneManager.LoadScene(sceneType.ToString());
-            yield break;
+            if (loadingPanelPrefab == null)
+            {
+                Debug.LogError("UIManager: loadingPanelPrefab reference is missing.");
+                SceneManager.LoadScene(sceneType.ToString());
+                yield break;
+            }
+
+            // 2. 검은 화면에서 로딩 패널 즉시 등장
+            OpenPopupWithEffects("LOADING");
+            loadingPanelPrefab.gameObject.SetActive(true);
+            loadingPanelPrefab.SetProgress(0f);
+
+            // 3. 화면 다시 밝게
+            fadeDone = false;
+            FadeIn(0.5f, () => fadeDone = true);
+            yield return new WaitUntil(() => fadeDone);
         }
-
-        loadingPanelPrefab.gameObject.SetActive(true);
-
-        bool showDone = false;
-        loadingPanelPrefab.Show(() => showDone = true);
-        yield return new WaitUntil(() => showDone);
 
         AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneType.ToString());
         asyncOperation.allowSceneActivation = false;
 
         while (asyncOperation.progress < 0.9f)
         {
-            loadingPanelPrefab.SetProgress(asyncOperation.progress);
+            if (withLoadingPanel) loadingPanelPrefab.SetProgress(asyncOperation.progress);
             yield return null;
         }
 
-        loadingPanelPrefab.SetProgress(1f);
+        if (withLoadingPanel) loadingPanelPrefab.SetProgress(1f);
+
+        // 4. 화면 검게
+        fadeDone = false;
+        FadeOut(0.5f, () => fadeDone = true);
+        yield return new WaitUntil(() => fadeDone);
+
         asyncOperation.allowSceneActivation = true;
         yield return new WaitUntil(() => asyncOperation.isDone);
 
-        loadingPanelPrefab.gameObject.SetActive(false);
-        CloseAllGlobalPopups();
-    }
+        if (withLoadingPanel)
+        {
+            loadingPanelPrefab.gameObject.SetActive(false);
+            CloseAllGlobalPopups();
+        }
 
+        // 5. 화면 다시 밝게 (OnSceneLoaded의 FadeIn과 중복되므로 제거)
+    }
     private bool IsAnyGlobalPopupActive()
     {
         return (saveLoadPanel != null && saveLoadPanel.activeSelf)
@@ -268,6 +292,28 @@ public class UIManager : Singleton<UIManager>
         if (globalWindowTitleText != null) globalWindowTitleText.text = string.Empty;
     }
 
+    public void FadeIn(float duration = 0.5f, Action onComplete = null)
+    {
+        fadeCanvasGroup.alpha = 1f;
+        fadeCanvasGroup.gameObject.SetActive(true);
+        fadeCanvasGroup.DOFade(0f, duration)
+            .SetUpdate(true)
+            .OnComplete(() =>
+            {
+                fadeCanvasGroup.gameObject.SetActive(false);
+                onComplete?.Invoke();
+            });
+    }
+
+    public void FadeOut(float duration = 0.5f, Action onComplete = null)
+    {
+        fadeCanvasGroup.alpha = 0f;
+        fadeCanvasGroup.gameObject.SetActive(true);
+        fadeCanvasGroup.DOFade(1f, duration)
+            .SetUpdate(true)
+            .OnComplete(() => onComplete?.Invoke());
+    }
+
     protected override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         CloseAllGlobalPopups();
@@ -277,8 +323,13 @@ public class UIManager : Singleton<UIManager>
         // inventoryPanel만 재탐색
         InventoryUI invUI = GameObject.FindAnyObjectByType<InventoryUI>(FindObjectsInactive.Include);
         if (invUI != null) inventoryPanel = invUI.gameObject;
-
         if (inventoryPanel != null) inventoryPanel.SetActive(false);
+
+        FadeIn(1f, () =>
+     {
+         if (SoundManager.Instance != null)
+             SoundManager.Instance.PlaySceneBGM(scene.name);
+     });
     }
 
     protected override void OnSceneUnloaded(Scene scene) { }
