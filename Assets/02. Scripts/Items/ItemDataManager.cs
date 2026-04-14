@@ -40,7 +40,8 @@ public class ItemDataManager : MonoBehaviour
 
         Debug.Log($"파싱 완료 총 {allItemList.Count}종의 아이템 로드 됨");
 
-        
+        GlobalItemCountManager.Instance.InitializeItemDeck(allItemList);
+        Debug.Log("아이템 주머니 생성 완료");
     }
 
     private IEnumerator DownloadAndParseCSV(string url, ItemType expectedType)
@@ -60,8 +61,10 @@ public class ItemDataManager : MonoBehaviour
 
     private void ParseCSV(string csvData, ItemType type)
     {
+        
         string[] lines = csvData.Split('\n');
 
+        Debug.Log($"[{type}] 총 읽어들인 줄 수: {lines.Length}줄 (1줄이면 링크가 잘못된 것입니다!)");
         for(int i = 1; i < lines.Length; i++)
         {
             if(string.IsNullOrWhiteSpace(lines[i])) continue;
@@ -108,6 +111,11 @@ public class ItemDataManager : MonoBehaviour
                 itemDB.Add(newItem.ID, newItem);
                 allItemList.Add(newItem);
             }
+            else
+            {
+                Debug.LogWarning($"[{type}] ID 중복 발생! 제외됨: {newItem.ID}");
+            }
         }
+       
     }
 }
