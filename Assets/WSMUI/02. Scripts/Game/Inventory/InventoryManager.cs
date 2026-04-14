@@ -35,6 +35,29 @@ public class InventoryManager : Singleton<InventoryManager>
             QuickSlots[i] = new InventorySlot();
     }
 
+    public bool AddItem(ItemData itemToAdd)
+    {
+        for (int i = 0; i < bagSize; i++)
+        {
+            if (BagSlots[i].item == null)
+            {
+                BagSlots[i].item = itemToAdd;
+                BagSlots[i].amount = 1;
+
+                if(QuestManager.Instance != null)
+                {
+                    QuestManager.Instance.NotifyEvent(QuestType.ItemCollection, itemToAdd.Name, 1);
+                }
+
+                OnBagUpdated?.Invoke();
+                return true;
+            }
+        }
+        Debug.Log("가방이 가득 찼습니다.");
+        return false;
+    }
+
+    /*
     public bool AddItem(ItemData itemToAdd, int amount)
     {
         if (itemToAdd.maxStack > 1)
@@ -74,6 +97,7 @@ public class InventoryManager : Singleton<InventoryManager>
         Debug.Log("가방이 꽉 차서 아이템을 획득할 수 없습니다.");
         return false;
     }
+    */
 
     public int GetItemCount(string itemName)
     {
