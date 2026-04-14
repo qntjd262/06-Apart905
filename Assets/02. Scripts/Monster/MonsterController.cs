@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
+[RequireComponent(typeof(CapsuleCollider))]
 public class MonsterController : MonoBehaviour
 {
     private NavMeshAgent _navMeshAgent;
@@ -24,11 +26,6 @@ public class MonsterController : MonoBehaviour
         _navMeshAgent = GetComponent<NavMeshAgent>();
     }
 
-    private void Update()
-    {
-
-    }
-
     #region 적 발소리 체크
     /// <summary>
     /// 플레이어의 발소리가 난 위치를 전달받아 처리
@@ -48,8 +45,6 @@ public class MonsterController : MonoBehaviour
         // 만약, 범위 내에 있다면 true, 없다면 false
         _blackBoard.CanHearPlayer = true;
         _blackBoard.SoundDirection = soundDirection;
-        Debug.Log(soundDirection);
-        Debug.Log($"블랙보드에 저장된 : {_blackBoard.SoundDirection}");
     }
     #endregion
 
