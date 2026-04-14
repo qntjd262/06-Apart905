@@ -40,7 +40,17 @@ public class PlayerMove : MonoBehaviour
     }
 
     public void Move(float h, float v, bool isRunning, bool isCrouch)
-    {
+    {   //npc와 대화 중 움직이지 않는 로직
+        if(playerStat != null && playerStat.isInteracting)
+        {
+            if(playerAnim != null)
+            {
+                playerAnim.SetFloat("Speed", 0, 0.1f, Time.deltaTime);
+            }
+            return;
+        }
+
+
         if(controller.isGrounded && velocity.y < 0)
         {
             velocity.y = -2f;

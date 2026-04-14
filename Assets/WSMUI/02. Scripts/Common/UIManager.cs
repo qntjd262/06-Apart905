@@ -20,7 +20,7 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private TextMeshProUGUI globalWindowTitleText;
 
     [Header("UI Panels (Local)")]
-    [SerializeField] private GameObject inventoryPanel;
+    [SerializeField] public GameObject inventoryPanel;
     public GameObject pauseMenuPanel;
 
     [Header("Global Popup Panels")]

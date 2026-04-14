@@ -1,5 +1,6 @@
 using UnityEngine;
 
+
 // 아이템의 대분류
 public enum ItemType
 {
@@ -11,33 +12,56 @@ public enum ItemType
 // 소모 시 영향을 줄 스탯 종류
 public enum EatableType
 {
-    Hunger, Thirst, Health, Stamina, Infection
+    None, Hunger, Thirst, Health, Stamina, Infection
 }
 
-[System.Serializable]
-public class ItemDataEatable
-{
-    public EatableType type;
-    public float value;
-}
 
-[CreateAssetMenu(fileName = "New Item", menuName = "Items/ItemData")]
 
 public class ItemData : ScriptableObject
 {
     [Header("기본 정보")]
-    public string itemName;
+    public string ID;
+    public string Name;
+    public int SpawnCount;
+    public ItemType itemType;
+    public string iconPath;
     [TextArea] public string description;
-    public ItemType type;
-    public Sprite icon;
-    public GameObject dropPrefab; // 바닥에 떨어져 있을 때 모델링
-
-    [Header("소모품 설정 (Eatable일 때만 사용)")]
-    public ItemDataEatable[] eatables;
-
-    [Header("장착 설정 (Equipable일 때만 사용)")]
-    public GameObject equipPrefab; // 손에 들었을 때 모델링
 
     [Header("스택 설정")]
     public int maxStack = 1;
+
+    private void OnValidate()
+    {
+        // 1. 장착 아이템은 무조건 최대 스택을 1로 강제
+        if (itemType == ItemType.Equipable)
+        {
+            maxStack = 1;
+        }
+
+        // 2. 스택은 최소 1 이상이어야 함 (0이나 음수 방지)
+        if (maxStack < 1)
+        {
+            maxStack = 1;
+        }
+    }
+}
+
+public class EatableItemData : ItemData
+{
+    public EatableType eatableType_1;
+    public float value_1;
+    public EatableType eatableType_2;
+    public float value_2;
+}
+
+public class EquipItemData : ItemData
+{
+    public float equipValue;
+    public string equipPrefabPath;
+}
+
+public class UseItemData : ItemData
+{
+    //특 수 아이템 공통 데이터 value
+    public float useValue;
 }

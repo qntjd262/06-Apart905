@@ -16,7 +16,7 @@ public class IsInAttackRange : Node
     {
         _player = _blackboard.Player;
 
-        if (Vector3.Distance(_self.transform.position, _player.transform.position) <= 2f)
+        if (Vector3.Distance(_self.transform.position, _player.transform.position) <= _blackboard.NavMeshAgent.stoppingDistance)
         {
             return NodeState.Success;
         }
