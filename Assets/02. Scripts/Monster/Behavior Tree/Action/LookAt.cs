@@ -5,10 +5,12 @@ public class LookAt : ActionNode
 {
     private Func<Vector3> _getDirection;
     private Vector3 _soundDirection;
+    private float _rotateSpeed;
 
-    public LookAt(Func<Vector3> getDirection, Blackboard blackboard)
+    public LookAt(Func<Vector3> getDirection, float rotateSpeed, Blackboard blackboard)
     {
         _getDirection = getDirection;
+        _rotateSpeed = rotateSpeed;
         _blackboard = blackboard;
     }
 
@@ -18,7 +20,7 @@ public class LookAt : ActionNode
         _soundDirection = _getDirection();
         Debug.Log(_soundDirection);
         // NavMeshAgent 회전 잠금
-        _blackboard.NavMeshAgent.updateRotation = false; 
+        _blackboard.NavMeshAgent.updateRotation = false;
     }
 
     public override NodeState OnUpdate()
@@ -26,7 +28,7 @@ public class LookAt : ActionNode
         var selfTransform = _blackboard.Self.transform;
 
         var lookRotation = Quaternion.LookRotation(_soundDirection);
-        selfTransform.rotation = Quaternion.Slerp(selfTransform.rotation, lookRotation, 1 * Time.deltaTime);
+        selfTransform.rotation = Quaternion.Slerp(selfTransform.rotation, lookRotation, _rotateSpeed * Time.deltaTime);
 
         if (Vector3.Angle(selfTransform.forward, _soundDirection) < 3f)
         {

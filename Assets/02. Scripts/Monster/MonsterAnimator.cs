@@ -1,12 +1,15 @@
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(NavMeshAgent))]
 public class MonsterAnimator : MonoBehaviour
-{
+{   
     private Animator _animator;
     private NavMeshAgent _navMeshAgent;
+
+    private MonsterSoundController _soundController;
 
     // 애니메이터 파라미터
     public static readonly int MonsterAniParamIsMoving = Animator.StringToHash("IsMoving");
@@ -19,6 +22,7 @@ public class MonsterAnimator : MonoBehaviour
     {
         _animator = GetComponent<Animator>();
         _navMeshAgent = GetComponent<NavMeshAgent>();
+        _soundController = GetComponent<MonsterSoundController>();
 
         _animator.applyRootMotion = true;
         _navMeshAgent.updatePosition = false;
@@ -43,6 +47,8 @@ public class MonsterAnimator : MonoBehaviour
     {
         _animator.SetTrigger(MonsterAniParamAttack);
         _animator.SetBool(MonsterAniParamIsMoving, false);
+        _soundController.OnAttackSound();
+
     }
 
     public void OnIdle()
@@ -55,6 +61,7 @@ public class MonsterAnimator : MonoBehaviour
         _animator.SetBool(MonsterAniParamIsFront, isFront);
         _animator.SetTrigger(MonsterAniParamAttacked);
         _animator.ResetTrigger(MonsterAniParamAttack);
+        _soundController.OnAttackedSound();
     }
 
     public void OnDeath()
