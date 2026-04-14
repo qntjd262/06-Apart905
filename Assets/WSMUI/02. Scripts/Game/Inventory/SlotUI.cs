@@ -14,6 +14,9 @@ public class SlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 
     private static SlotUI draggingSlot;
 
+    public bool IsStorageSlot { get; set; }
+
+
     public void UpdateSlot(InventorySlot slotData)
     {
         if (slotData.IsEmpty)
@@ -65,6 +68,14 @@ public class SlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         else if (draggingSlot.IsQuickSlot && this.IsQuickSlot)
         {
             InventoryManager.Instance.SwapItemWithinQuickSlot(draggingSlot.SlotIndex, this.SlotIndex);
+        }
+        else if (draggingSlot.IsStorageSlot && !this.IsStorageSlot && !this.IsQuickSlot)
+        {
+            InventoryManager.Instance.SwapItemBetweenStorageAndBag(draggingSlot.SlotIndex, this.SlotIndex);
+        }
+        else if (!draggingSlot.IsStorageSlot && !draggingSlot.IsQuickSlot && this.IsStorageSlot)
+        {
+            InventoryManager.Instance.SwapItemBetweenStorageAndBag(this.SlotIndex, draggingSlot.SlotIndex);
         }
     }
 

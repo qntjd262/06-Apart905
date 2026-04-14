@@ -22,6 +22,7 @@ public class ItemDataEatable
 }
 
 [CreateAssetMenu(fileName = "New Item", menuName = "Items/ItemData")]
+
 public class ItemData : ScriptableObject
 {
     [Header("기본 정보")]
@@ -37,4 +38,7 @@ public class ItemData : ScriptableObject
 
     [Header("장착 설정 (Equipable일 때만 사용)")]
     public GameObject equipPrefab; // 손에 들었을 때 모델링
+
+    [Header("스택 설정")]
+    public int maxStack = 1;
 }
