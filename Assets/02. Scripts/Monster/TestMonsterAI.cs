@@ -21,9 +21,7 @@ public class TestMonsterAI : MonoBehaviour
 
     [Header("공격 범위, 공격 후 대기 시간, 공격 범위 offset")]
     [SerializeField] private Vector3    _halfExtents;
-    [Header("공격 후 대기 시간")]
     [SerializeField] private float      _waitTime;
-    [Header("공격 범위 offset")]
     [SerializeField] private Vector3    offset;
 
     [Header("Patrol 범위 및 시간")]
@@ -89,12 +87,12 @@ public class TestMonsterAI : MonoBehaviour
                     )
                 ),
 
-                // 적의 발소리가 들린다면 || 추적 중이 아니라면 
+                // 적의 발소리가 들린다면 && 추적 중이 아니라면 
                 new SequenceNode
                 (
-                    new ConditionNode(() => blackboard.MonsterState != Blackboard.State.Chase),
-                    new ConditionNode(() => blackboard.CanHearPlayer),
-                    new LookAt(() => blackboard.SoundDirection, blackboard)
+                    new ConditionNode(() => blackboard.MonsterState != Blackboard.State.Chase &&
+                                            blackboard.CanHearPlayer),
+                    new LookAt(() => blackboard.SoundDirection, 1f, blackboard)
                 ),
 
                 // 추적 중 플레이어가 시야에서 사라진다면
