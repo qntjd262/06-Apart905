@@ -67,11 +67,11 @@ public class PauseMenuController : MonoBehaviour
 
     public void OnMainMenuClick()
     {
-        gameObject.SetActive(false);
-
+        // SetActive(false) 전에 LoadScene 먼저 → OnDisable 타이밍 문제 제거
         if (UIManager.Instance != null)
         {
             UIManager.Instance.LoadScene(Constants.ESceneType.Main);
+            gameObject.SetActive(false); // LoadScene 이후에 끄기
             return;
         }
 

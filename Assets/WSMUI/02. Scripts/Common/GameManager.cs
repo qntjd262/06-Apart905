@@ -6,9 +6,9 @@ public class GameManager : Singleton<GameManager>
 {
     [SerializeField] private GameObject playerPrefab;
 
-    public CharacterData SelectedCharacterData { get; private set; }
+    public CharacterStatSO SelectedCharacterData { get; private set; }
 
-    public void SetCharacter(CharacterData data)
+    public void SetCharacter(CharacterStatSO data)
     {
         if (data != null) SelectedCharacterData = data;
     }

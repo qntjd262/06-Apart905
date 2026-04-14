@@ -2,11 +2,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
+using System.Collections.Generic;
+using System.Linq;
 
-public class CharacterSelector : MonoBehaviour
+public class SelectCharacterController : MonoBehaviour
 {
     [Header("Data Source")]
-    [SerializeField] private CharacterData[] characterDatas;
+    private List<CharacterStatSO> characterDatas = new List<CharacterStatSO>();
 
     [Header("UI References - Info Box (Left)")]
 
@@ -33,13 +35,14 @@ public class CharacterSelector : MonoBehaviour
     private int currentIndex = 0;
     private int totalCount;
     private Transform[] cards;
+    private CharacterCard[] cardScripts; // 추가
 
     private void OnEnable()
     {
         if (UIManager.Instance != null)
-        {
             UIManager.Instance.OpenPopupWithEffects("CHARACTER SELECT");
-        }
+        currentIndex = 0;
+        UpdateUI(true);
     }
 
     private void OnDisable()
@@ -52,25 +55,39 @@ public class CharacterSelector : MonoBehaviour
 
     void Start()
     {
+        /*
         if (container == null || characterDatas == null || characterDatas.Length == 0)
         {
             Debug.LogError("데이터나 컨테이너가 설정되지 않았습니다!");
             return;
         }
+        */
+        if (CharacterDataManager.Instance != null && CharacterDataManager.Instance.characterDB.Count > 0)
+        {
+            characterDatas = CharacterDataManager.Instance.characterDB.Values.ToList();
+        }
+        else
+        {
+            Debug.LogError("캐릭터 데이터가 아직 구글에서 로드 되지 않았음");
+            return;
+        }
 
-        totalCount = characterDatas.Length;
+
+        //아래는 기존 코드 동일 characterDatas.Length -> characterDatas.Count
+        totalCount = characterDatas.Count;
         cards = new Transform[totalCount];
+        cardScripts = new CharacterCard[totalCount]; // 이 줄
+
 
         for (int i = 0; i < totalCount; i++)
         {
             cards[i] = container.GetChild(i);
+            cardScripts[i] = cards[i].GetComponent<CharacterCard>(); // 추가
 
-            CharacterCard cardScript = cards[i].GetComponent<CharacterCard>();
-            if (cardScript != null)
-            {
-                cardScript.SetCard(characterDatas[i]);
-            }
+            if (cardScripts[i] != null)
+                cardScripts[i].SetCard(characterDatas[i]);
         }
+
 
         UpdateUI(true);
     }
@@ -95,6 +112,7 @@ public class CharacterSelector : MonoBehaviour
 
     private void UpdateUI(bool isImmediate)
     {
+        if (cards == null || totalCount == 0) return; // 추가
         float targetX = -currentIndex * spacing;
         container.DOKill();
 
@@ -103,40 +121,47 @@ public class CharacterSelector : MonoBehaviour
         else
             container.DOAnchorPos(new Vector2(targetX, fixedY), duration).SetEase(Ease.OutCubic);
 
-        // 카드 스케일 조절
         for (int i = 0; i < totalCount; i++)
         {
-            bool isSelected = i == currentIndex;
             Transform card = cards[i];
             card.DOKill(true);
 
-            float targetScale = isSelected ? 1.0f : unselectedScale;
+            float targetScale = i == currentIndex ? 1.0f : unselectedScale;
+            float targetAlpha = Mathf.Clamp01(1f - Mathf.Abs(i - currentIndex) * 0.8f);
 
             if (isImmediate)
                 card.localScale = Vector3.one * targetScale;
             else
                 card.DOScale(targetScale, duration);
-        }
 
+            cardScripts?[i]?.SetAlpha(targetAlpha, duration, isImmediate);
+        }
         UpdateStats();
         UpdateButtonState();
     }
 
     private void UpdateStats()
     {
-        if (characterDatas == null || characterDatas.Length <= currentIndex) return;
+        //characterDatas.Length -> characterDatas.Count
+        if (characterDatas == null || characterDatas.Count <= currentIndex) return;
 
-        CharacterData data = characterDatas[currentIndex];
 
-        if (descriptionText != null) descriptionText.text = data.description;
+        //CharacterData -> CharacterStatSO
+        CharacterStatSO data = characterDatas[currentIndex];
 
-        if (hpText != null) hpText.text = data.hp.ToString();
-        if (atkText != null) atkText.text = data.atk.ToString();
-        if (defText != null) defText.text = data.def.ToString();
-        if (stamText != null) stamText.text = data.stam.ToString();
-        if (thirstText != null) thirstText.text = data.thirst.ToString();
-        if (hungerText != null) hungerText.text = data.hunger.ToString();
-        if (sanityText != null) sanityText.text = data.sanity.ToString();
+
+        if (descriptionText != null) descriptionText.text = $"Description : {data.description}";
+
+
+        //data.뒤에 변수명 수정
+        if (hpText != null) hpText.text = $"HP : {data.Hp}";
+        if (atkText != null) atkText.text = $"Attack : {data.AttackPower}";
+        if (defText != null) defText.text = $"Def : {data.Def}";
+        if (stamText != null) stamText.text = $"Stamina : {data.MaxStamina}";
+        if (thirstText != null) thirstText.text = $"Thirst : {data.ThirstDecreaseRate}";
+        if (hungerText != null) hungerText.text = $"Hunger : {data.HungerDecreaseRate}";
+        if (sanityText != null) sanityText.text = $"Infection : {data.InfectionIncreaseRate}";
+
     }
 
     private void UpdateButtonState()
@@ -147,19 +172,17 @@ public class CharacterSelector : MonoBehaviour
 
     public void OnClickSelectButton()
     {
-        PlayerPrefs.SetInt("SelectedCharacter", currentIndex);
-        PlayerPrefs.Save();
-
-        if (GameManager.Instance != null)
+        if (CharacterDataManager.Instance != null)
         {
-            GameManager.Instance.SetCharacter(characterDatas[currentIndex]);
+            CharacterDataManager.Instance.selectedCharacterSO = characterDatas[currentIndex];
+            Debug.Log($"선택된 캐릭터는 {characterDatas[currentIndex].Name}입니다.");
         }
-
-        gameObject.SetActive(false);
 
         if (UIManager.Instance != null)
         {
+            UIManager.Instance.CloseSelectCharacterPanel();
             UIManager.Instance.LoadScene(Constants.ESceneType.Game);
         }
+
     }
 }

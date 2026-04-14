@@ -15,7 +15,7 @@ public class SaveLoadController : MonoBehaviour
     [Header("버튼 연결 (각각 따로 할당)")]
     [SerializeField] private Button saveButton;
     [SerializeField] private Button loadButton;
-    [SerializeField] private Button closeButton;
+    [SerializeField] private Button returnButton;
 
     private int selectedSlotIndex = -1;
     private SaveSlotUI[] spawnedSlots;
@@ -24,7 +24,7 @@ public class SaveLoadController : MonoBehaviour
 
     private void Awake()
     {
-        closeButton.onClick.AddListener(OnCloseClick);
+        returnButton.onClick.AddListener(OnReturnClick);
         saveButton.onClick.AddListener(OnSaveButtonClick);
         loadButton.onClick.AddListener(OnLoadButtonClick);
     }
@@ -120,7 +120,7 @@ public class SaveLoadController : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    private void OnCloseClick()
+    private void OnReturnClick()
     {
         gameObject.SetActive(false);
     }
