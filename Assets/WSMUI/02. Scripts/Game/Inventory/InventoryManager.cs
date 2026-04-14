@@ -7,14 +7,12 @@ public class InventoryManager : Singleton<InventoryManager>
     [SerializeField] private int bagSize = 20;
     [SerializeField] private int quickSlotSize = 5;
 
-    // 외부에서는 읽기만 가능하도록 프로퍼티로 캡슐화
     public InventorySlot[] BagSlots { get; private set; }
     public InventorySlot[] QuickSlots { get; private set; }
+    public InventorySlot[] CurrentStorageSlots { get; private set; }
 
     public Action OnBagUpdated;
     public Action OnQuickSlotUpdated;
-
-    public InventorySlot[] CurrentStorageSlots { get; private set; }
     public Action OnStorageUpdated;
 
     protected override void Awake()
@@ -30,83 +28,71 @@ public class InventoryManager : Singleton<InventoryManager>
     {
         BagSlots = new InventorySlot[bagSize];
         for (int i = 0; i < bagSize; i++)
-        {
             BagSlots[i] = new InventorySlot();
-        }
 
         QuickSlots = new InventorySlot[quickSlotSize];
         for (int i = 0; i < quickSlotSize; i++)
-        {
             QuickSlots[i] = new InventorySlot();
-        }
     }
 
-    // public bool AddItem(ItemData itemToAdd, int amount)
-    // {
-    // // 1. 겹칠 수 있는 아이템인지 먼저 확인
-    // if (itemToAdd.maxStack > 1)
-    // {
-    //     for (int i = 0; i < bagSize; i++)
-    //     {
-    //         if (!BagSlots[i].IsEmpty && BagSlots[i].item == itemToAdd && BagSlots[i].amount < itemToAdd.maxStack)
-    //         {
-    //             // 해당 슬롯에 얼마나 더 넣을 수 있는지 계산
-    //             int spaceLeft = itemToAdd.maxStack - BagSlots[i].amount;
-    //             int amountToAdd = Mathf.Min(spaceLeft, amount);
+    public bool AddItem(ItemData itemToAdd, int amount)
+    {
+        if (itemToAdd.maxStack > 1)
+        {
+            for (int i = 0; i < bagSize; i++)
+            {
+                if (!BagSlots[i].IsEmpty && BagSlots[i].item == itemToAdd && BagSlots[i].amount < itemToAdd.maxStack)
+                {
+                    int spaceLeft = itemToAdd.maxStack - BagSlots[i].amount;
+                    int amountToAdd = Mathf.Min(spaceLeft, amount);
+                    BagSlots[i].amount += amountToAdd;
+                    amount -= amountToAdd;
 
-    //             BagSlots[i].amount += amountToAdd;
-    //             amount -= amountToAdd; // 남은 개수 차감
+                    if (amount <= 0)
+                    {
+                        OnBagUpdated?.Invoke();
+                        return true;
+                    }
+                }
+            }
+        }
 
-    //             // 다 넣었다면 갱신 후 종료
-    //             if (amount <= 0)
-    //             {
-    //                 OnBagUpdated?.Invoke();
-    //                 return true;
-    //             }
-    //         }
-    //     }
-    // }
+        if (amount > 0)
+        {
+            for (int i = 0; i < bagSize; i++)
+            {
+                if (BagSlots[i].IsEmpty)
+                {
+                    BagSlots[i].item = itemToAdd;
+                    BagSlots[i].amount = amount;
+                    OnBagUpdated?.Invoke();
+                    return true;
+                }
+            }
+        }
 
-    // // 2. 겹치지 못했거나 남은 개수가 있다면 빈 슬롯 탐색
-    // if (amount > 0)
-    // {
-    //     for (int i = 0; i < bagSize; i++)
-    //     {
-    //         if (BagSlots[i].IsEmpty)
-    //         {
-    //             BagSlots[i].item = itemToAdd;
-    //             BagSlots[i].amount = amount;
-    //             OnBagUpdated?.Invoke();
-    //             return true;
-    //         }
-    //     }
-    // }
-
-    // Debug.Log("가방이 꽉 차서 아이템을 획득할 수 없습니다.");
-    // return false;
-    // }
+        Debug.Log("가방이 꽉 차서 아이템을 획득할 수 없습니다.");
+        return false;
+    }
 
     public void SwapItemBetweenBagAndQuickSlot(int bagIndex, int quickIndex)
+{
+    if (bagIndex < 0 || bagIndex >= bagSize) return;
+    if (quickIndex < 0 || quickIndex >= quickSlotSize) return;
+
+    InventorySlot bSlot = BagSlots[bagIndex];
+
+    if (!bSlot.IsEmpty && bSlot.item.type != ItemType.Equipable)
     {
-
-        // if (bagIndex < 0 || bagIndex >= bagSize) return;
-        // if (quickIndex < 0 || quickIndex >= quickSlotSize) return;
-
-
-        // InventorySlot bSlot = BagSlots[bagIndex];
-
-
-        // if (!bSlot.IsEmpty && bSlot.item.itemType == ItemData.ItemType.Resource)
-        // {
-        //     Debug.Log("이 아이템은 퀵슬롯에 장착할 수 없습니다.");
-        //     return;
-        // }
-        // SwapSlots(BagSlots[bagIndex], QuickSlots[quickIndex]);
-        // OnBagUpdated?.Invoke();
-        // OnQuickSlotUpdated?.Invoke();
+        Debug.Log("이 아이템은 퀵슬롯에 장착할 수 없습니다.");
+        return;
     }
 
-    // 가방 내부 스왑 기능 추가
+    SwapSlots(BagSlots[bagIndex], QuickSlots[quickIndex]);
+    OnBagUpdated?.Invoke();
+    OnQuickSlotUpdated?.Invoke();
+}
+
     public void SwapItemWithinBag(int index1, int index2)
     {
         if (index1 < 0 || index1 >= bagSize || index2 < 0 || index2 >= bagSize) return;
@@ -114,7 +100,6 @@ public class InventoryManager : Singleton<InventoryManager>
         OnBagUpdated?.Invoke();
     }
 
-    // 퀵슬롯 내부 스왑 기능 추가
     public void SwapItemWithinQuickSlot(int index1, int index2)
     {
         if (index1 < 0 || index1 >= quickSlotSize || index2 < 0 || index2 >= quickSlotSize) return;
@@ -122,16 +107,38 @@ public class InventoryManager : Singleton<InventoryManager>
         OnQuickSlotUpdated?.Invoke();
     }
 
-    // 중복되는 스왑 처리 로직을 내부 함수로 분리하여 최적화
+    public void SwapItemBetweenStorageAndBag(int storageIndex, int bagIndex)
+    {
+        if (CurrentStorageSlots == null) return;
+        if (storageIndex < 0 || storageIndex >= CurrentStorageSlots.Length) return;
+        if (bagIndex < 0 || bagIndex >= bagSize) return;
+
+        SwapSlots(CurrentStorageSlots[storageIndex], BagSlots[bagIndex]);
+        OnStorageUpdated?.Invoke();
+        OnBagUpdated?.Invoke();
+    }
+
+    public void OpenStorage(InventorySlot[] storageSlots)
+    {
+        CurrentStorageSlots = storageSlots;
+        OnStorageUpdated?.Invoke();
+    }
+
+    public void CloseStorage()
+    {
+        CurrentStorageSlots = null;
+        OnStorageUpdated?.Invoke();
+    }
+
     private void SwapSlots(InventorySlot slot1, InventorySlot slot2)
     {
-        // ItemData tempItem = slot1.item;
-        // int tempAmount = slot1.amount;
+        ItemData tempItem = slot1.item;
+        int tempAmount = slot1.amount;
 
-        // slot1.item = slot2.item;
-        // slot1.amount = slot2.amount;
+        slot1.item = slot2.item;
+        slot1.amount = slot2.amount;
 
-        // slot2.item = tempItem;
-        // slot2.amount = tempAmount;
+        slot2.item = tempItem;
+        slot2.amount = tempAmount;
     }
 }
