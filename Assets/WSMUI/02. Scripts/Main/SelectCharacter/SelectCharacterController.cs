@@ -35,6 +35,7 @@ public class SelectCharacterController : MonoBehaviour
     private int currentIndex = 0;
     private int totalCount;
     private Transform[] cards;
+    private CharacterCard[] cardScripts; // 추가
 
     private void OnEnable()
     {
@@ -75,25 +76,21 @@ public class SelectCharacterController : MonoBehaviour
         //아래는 기존 코드 동일 characterDatas.Length -> characterDatas.Count
         totalCount = characterDatas.Count;
         cards = new Transform[totalCount];
+        cardScripts = new CharacterCard[totalCount]; // 이 줄
 
 
         for (int i = 0; i < totalCount; i++)
         {
             cards[i] = container.GetChild(i);
+            cardScripts[i] = cards[i].GetComponent<CharacterCard>(); // 추가
 
-
-            CharacterCard cardScript = cards[i].GetComponent<CharacterCard>();
-            if (cardScript != null)
-            {
-                cardScript.SetCard(characterDatas[i]);
-            }
+            if (cardScripts[i] != null)
+                cardScripts[i].SetCard(characterDatas[i]);
         }
 
 
         UpdateUI(true);
     }
-
-
 
     public void OnNextButton()
     {
@@ -115,6 +112,7 @@ public class SelectCharacterController : MonoBehaviour
 
     private void UpdateUI(bool isImmediate)
     {
+        if (cards == null || totalCount == 0) return; // 추가
         float targetX = -currentIndex * spacing;
         container.DOKill();
 
@@ -123,21 +121,21 @@ public class SelectCharacterController : MonoBehaviour
         else
             container.DOAnchorPos(new Vector2(targetX, fixedY), duration).SetEase(Ease.OutCubic);
 
-        // 카드 스케일 조절
         for (int i = 0; i < totalCount; i++)
         {
-            bool isSelected = i == currentIndex;
             Transform card = cards[i];
             card.DOKill(true);
 
-            float targetScale = isSelected ? 1.0f : unselectedScale;
+            float targetScale = i == currentIndex ? 1.0f : unselectedScale;
+            float targetAlpha = Mathf.Clamp01(1f - Mathf.Abs(i - currentIndex) * 0.8f);
 
             if (isImmediate)
                 card.localScale = Vector3.one * targetScale;
             else
                 card.DOScale(targetScale, duration);
-        }
 
+            cardScripts?[i]?.SetAlpha(targetAlpha, duration, isImmediate);
+        }
         UpdateStats();
         UpdateButtonState();
     }

@@ -75,12 +75,15 @@ public class UIManager : Singleton<UIManager>
             }
         }
 
+        //playercontroller에서 인벤토리 토글 담당
+        /*
         bool isPaused = pauseMenuPanel != null && pauseMenuPanel.activeSelf;
         bool isBlockedByPopup = IsAnyGlobalPopupActive();
         if (!isPaused && !isBlockedByPopup && (Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.Tab)))
         {
             if (inventoryPanel != null) ToggleInventory();
         }
+        */
     }
 
     public void OpenSelectCharacterPanel()
@@ -174,7 +177,7 @@ public class UIManager : Singleton<UIManager>
         }
     }
 
-    private void ToggleInventory()
+    public void ToggleInventory()
     {
         if (inventoryPanel == null)
         {
