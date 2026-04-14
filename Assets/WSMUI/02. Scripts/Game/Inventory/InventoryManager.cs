@@ -97,7 +97,7 @@ public class InventoryManager : Singleton<InventoryManager>
 
                 if(QuestManager.Instance != null)
                 {
-                    QuestManager.Instance.NotifyEvent(QuestType.ItemCollection, itemToAdd.itemName, 1);
+                    QuestManager.Instance.NotifyEvent(QuestType.ItemCollection, itemToAdd.Name, 1);
                 }
 
                 OnBagUpdated?.Invoke();
@@ -113,7 +113,7 @@ public class InventoryManager : Singleton<InventoryManager>
         int count = 0;
         foreach(var slot in BagSlots)
         {
-            if(slot.item != null && slot.item.itemName == itemName)
+            if(slot.item != null && slot.item.Name == itemName)
             {
                 count += slot.amount;
             }
@@ -121,7 +121,7 @@ public class InventoryManager : Singleton<InventoryManager>
         //퀵슬롯용
         foreach(var slot in QuickSlots)
         {
-            if(slot.item != null && slot.item.itemName == itemName)
+            if(slot.item != null && slot.item.Name == itemName)
             {
                 count += slot.amount;
             }
@@ -137,11 +137,15 @@ public class InventoryManager : Singleton<InventoryManager>
 
         ItemData item = targetSlot.item;
 
-        if (item.type == ItemType.Eatable)
+        if (item is EatableItemData eatItem)
         {
-            foreach (var effect in item.eatables)
+            if(eatItem.eatableType_1 != EatableType.None)
             {
-                ApplyEffect(player, effect);
+                ApplyEffect(player, eatItem.eatableType_1, eatItem.value_1);
+            }
+            if(eatItem.eatableType_2 != EatableType.None)
+            {
+                ApplyEffect(player, eatItem.eatableType_2, eatItem.value_2);
             }
 
             targetSlot.item = null; 
@@ -157,7 +161,7 @@ public class InventoryManager : Singleton<InventoryManager>
 
         for (int i = 0; i < bagSize; i++)
         {
-            if (BagSlots[i].item != null && BagSlots[i].item.itemName == itemName)
+            if (BagSlots[i].item != null && BagSlots[i].item.Name == itemName)
             {
                 if (BagSlots[i].amount > remainingToRemove)
                 {
@@ -178,39 +182,30 @@ public class InventoryManager : Singleton<InventoryManager>
         OnQuickSlotUpdated?.Invoke(); // 퀵슬롯 적용
     }
 
-    private void ApplyEffect(PlayerStat player, ItemDataEatable effect)
+    private void ApplyEffect(PlayerStat player, EatableType type, float value)
     {
         StatCondition targetStat = null;
 
-        switch (effect.type)
+        switch (type)
         {
-            case EatableType.Hunger: 
-                targetStat = player.hunger; 
-                break;
-            case EatableType.Thirst: 
-                targetStat = player.thirst; 
-                break;
-            case EatableType.Health: 
-                targetStat = player.hp; 
-                break;
-            case EatableType.Stamina: 
-                targetStat = player.stamina; 
-                break;
-            case EatableType.Infection: 
-                targetStat = player.infection; 
-                break;
+            case EatableType.Hunger: targetStat = player.hunger; break;
+            case EatableType.Thirst: targetStat = player.thirst; break;
+            case EatableType.Health: targetStat = player.hp; break;
+            case EatableType.Stamina: targetStat = player.stamina; break;
+            case EatableType.Infection: targetStat = player.infection; break;
         }
+        
 
     if (targetStat != null)
     {
         // 감염도(Infection)인 경우에만 수치를 뺌
-        if (effect.type == EatableType.Infection)
+        if (type == EatableType.Infection)
         {
-            targetStat.currentValue -= effect.value;
+            targetStat.currentValue -= value;
         }
         else // 나머지는 수치를 더합니다 (회복 효과)
         {
-            targetStat.currentValue += effect.value;
+            targetStat.currentValue += value;
         }
 
         // 스탯이 0 ~ 최대값 범위를 벗어나지 않게 고정
