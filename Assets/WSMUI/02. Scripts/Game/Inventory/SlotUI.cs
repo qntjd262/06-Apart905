@@ -27,7 +27,8 @@ public class SlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         }
         else
         {
-            icon.sprite = slotData.item.icon;
+            Sprite loadedSprite = Resources.Load<Sprite>(slotData.item.iconPath);
+            icon.sprite = loadedSprite;
             icon.color = new Color(1, 1, 1, 1);
             amountText.text = slotData.amount > 1 ? slotData.amount.ToString() : "";
         }

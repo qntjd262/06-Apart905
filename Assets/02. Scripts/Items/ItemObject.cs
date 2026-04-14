@@ -10,7 +10,7 @@ public class ItemObject : MonoBehaviour, IInteractable
 
         if (InventoryManager.Instance.AddItem(itemData))
         {
-            Debug.Log($"{itemData.itemName}을(를) 가방에 넣었습니다.");
+            Debug.Log($"{itemData.Name}을(를) 가방에 넣었습니다.");
             Destroy(gameObject);
         }
     }
