@@ -75,23 +75,123 @@ public class InventoryManager : Singleton<InventoryManager>
         return false;
     }
 
-    public void SwapItemBetweenBagAndQuickSlot(int bagIndex, int quickIndex)
-{
-    if (bagIndex < 0 || bagIndex >= bagSize) return;
-    if (quickIndex < 0 || quickIndex >= quickSlotSize) return;
-
-    InventorySlot bSlot = BagSlots[bagIndex];
-
-    if (!bSlot.IsEmpty && bSlot.item.type != ItemType.Equipable)
+    public int GetItemCount(string itemName)
     {
-        Debug.Log("이 아이템은 퀵슬롯에 장착할 수 없습니다.");
-        return;
+        int count = 0;
+        foreach(var slot in BagSlots)
+        {
+            if(slot.item != null && slot.item.Name == itemName)
+            {
+                count += slot.amount;
+            }
+        }
+        //퀵슬롯용
+        foreach(var slot in QuickSlots)
+        {
+            if(slot.item != null && slot.item.Name == itemName)
+            {
+                count += slot.amount;
+            }
+        }
+        return count;
     }
 
-    SwapSlots(BagSlots[bagIndex], QuickSlots[quickIndex]);
-    OnBagUpdated?.Invoke();
-    OnQuickSlotUpdated?.Invoke();
-}
+    public void UseItem(int index, bool isQuickSlot, PlayerStat player)
+    {
+        InventorySlot targetSlot = isQuickSlot ? QuickSlots[index] : BagSlots[index];
+
+        if (targetSlot.item == null || targetSlot.IsEmpty) return;
+
+        ItemData item = targetSlot.item;
+
+        if (item is EatableItemData eatItem)
+        {
+            if(eatItem.eatableType_1 != EatableType.None)
+                ApplyEffect(player, eatItem.eatableType_1, eatItem.value_1);
+            if(eatItem.eatableType_2 != EatableType.None)
+                ApplyEffect(player, eatItem.eatableType_2, eatItem.value_2);
+
+            targetSlot.item = null; 
+
+            if (isQuickSlot) OnQuickSlotUpdated?.Invoke();
+            else OnBagUpdated?.Invoke();
+        }
+    }
+
+    public void RemoveItem(string itemName, int amount)
+    {
+        int remainingToRemove = amount;
+
+        for (int i = 0; i < bagSize; i++)
+        {
+            if (BagSlots[i].item != null && BagSlots[i].item.Name == itemName)
+            {
+                if (BagSlots[i].amount > remainingToRemove)
+                {
+                    BagSlots[i].amount -= remainingToRemove;
+                    remainingToRemove = 0;
+                }
+                else
+                {
+                    remainingToRemove -= BagSlots[i].amount;
+                    BagSlots[i].item = null;
+                    BagSlots[i].amount = 0;
+                }
+            }
+            if (remainingToRemove <= 0) break;
+        }
+
+        OnBagUpdated?.Invoke();
+        OnQuickSlotUpdated?.Invoke(); // 퀵슬롯 적용
+    }
+
+    private void ApplyEffect(PlayerStat player, EatableType type, float value)
+    {
+        StatCondition targetStat = null;
+
+        switch (type)
+        {
+            case EatableType.Hunger: targetStat = player.hunger; break;
+            case EatableType.Thirst: targetStat = player.thirst; break;
+            case EatableType.Health: targetStat = player.hp;     break;
+            case EatableType.Stamina:targetStat = player.stamina; break;
+            case EatableType.Infection: targetStat = player.infection; break;
+        }
+
+        if (targetStat != null)
+        {
+            // 감염도(Infection)인 경우에만 수치를 뺌
+            if (type == EatableType.Infection)
+            {
+                targetStat.currentValue -= value;
+            }
+            else // 나머지는 수치를 더합니다 (회복 효과)
+            {
+                targetStat.currentValue += value;
+            }
+
+            // 스탯이 0 ~ 최대값 범위를 벗어나지 않게 고정
+            targetStat.currentValue = Mathf.Clamp(targetStat.currentValue, 0, targetStat.maxValue);
+        }
+    }
+
+    public void SwapItemBetweenBagAndQuickSlot(int bagIndex, int quickIndex)
+    {
+        if (bagIndex < 0 || bagIndex >= bagSize) return;
+        if (quickIndex < 0 || quickIndex >= quickSlotSize) return;
+
+        InventorySlot bSlot = BagSlots[bagIndex];
+
+        if (!bSlot.IsEmpty && bSlot.item.itemType != ItemType.Equipable)
+        {
+            Debug.Log("이 아이템은 퀵슬롯에 장착할 수 없습니다.");
+            return;
+        }
+
+        SwapSlots(BagSlots[bagIndex], QuickSlots[quickIndex]);
+        OnBagUpdated?.Invoke();
+        OnQuickSlotUpdated?.Invoke();
+    }
 
     public void SwapItemWithinBag(int index1, int index2)
     {
