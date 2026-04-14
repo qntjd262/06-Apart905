@@ -2,6 +2,7 @@ using UnityEngine;
 
 public enum QuestType { ItemCollection, ZombieHunt }
 
+[CreateAssetMenu(fileName = "New Quest", menuName = "QuestSystem/Quest")]
 public class Quest : ScriptableObject
 {
     [Header("Quest Info")]
@@ -32,4 +33,15 @@ public class Quest : ScriptableObject
             }
         }
     }
+
+    public void ForceSyncProgress(int amount)
+{
+    if (isCompleted) return;
+    
+    currentAmount = amount;
+    if (currentAmount >= goalAmount)
+    {
+        currentAmount = goalAmount;
+    }
+}
 }

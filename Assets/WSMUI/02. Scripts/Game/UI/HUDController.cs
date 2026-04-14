@@ -3,15 +3,11 @@ using UnityEngine;
 public class HUDController : MonoBehaviour
 {
     private SurvivalGauge gauge;
+    private PlayerStat playerStat;
 
     void Awake()
     {
         gauge = GetComponent<SurvivalGauge>();
-    }
-
-    void Start()
-    {
-        InitHUD();
     }
 
     public void InitHUD()
@@ -22,12 +18,27 @@ public class HUDController : MonoBehaviour
             return;
         }
 
-        var data = GameManager.Instance.SelectedCharacterData;
+        playerStat = FindFirstObjectByType<PlayerStat>();
+        if (playerStat == null)
+        {
+            Debug.LogWarning("HUD: PlayerStat을 찾을 수 없습니다.");
+            return;
+        }
 
-        // 플레이어 연동 시 주석 해제 필수
-        // gauge.UpdateStamina(data.maxStamina, data.maxStamina, false);
-        // gauge.UpdateHunger(data.maxHunger, data.maxHunger);
-        // gauge.UpdateThirst(data.maxThirst, data.maxThirst);
-        // gauge.UpdateSanity(0, data.maxSanity); 
+        // 초기값으로 게이지 세팅
+        gauge.UpdateStamina(playerStat.stamina.currentValue, playerStat.stamina.maxValue, false);
+        gauge.UpdateHunger(playerStat.hunger.currentValue, playerStat.hunger.maxValue);
+        gauge.UpdateThirst(playerStat.thirst.currentValue, playerStat.thirst.maxValue);
+        gauge.UpdateSanity(playerStat.infection.currentValue, playerStat.infection.maxValue);
+    }
+
+    void Update()
+    {
+        if (playerStat == null || gauge == null) return;
+
+        gauge.UpdateStamina(playerStat.stamina.currentValue, playerStat.stamina.maxValue);
+        gauge.UpdateHunger(playerStat.hunger.currentValue, playerStat.hunger.maxValue);
+        gauge.UpdateThirst(playerStat.thirst.currentValue, playerStat.thirst.maxValue);
+        gauge.UpdateSanity(playerStat.infection.currentValue, playerStat.infection.maxValue);
     }
 }

@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
     private PlayerLook playerLook;
     private PlayerAttack playerAttack;
 
+
     [Header("플레이어 상태")]
     public bool isDead =false;
 

@@ -5,8 +5,6 @@ using UnityEditor;
 
 public class MainPanelController : MonoBehaviour
 {
-    // 프리팹과 인스턴스 변수들은 전부 UIManager로 이관되었으므로 삭제함.
-
     public void OnClickStartButton()
     {
         // SoundManager.Instance.PlaySFX("Button_Click");

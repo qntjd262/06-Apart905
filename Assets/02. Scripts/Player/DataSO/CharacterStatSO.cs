@@ -6,6 +6,9 @@ public class CharacterStatSO : ScriptableObject
     [Header("기본 정보")]
     public string ID;
     public string Name;
+    //추가사항
+    public Sprite characterSprite;
+    [TextArea] public string description;
 
     [Header("플레이어 기본 스탯")]
     public float Hp;
