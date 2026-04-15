@@ -13,7 +13,7 @@ public class StorageUI : MonoBehaviour
         {
             uiSlots[i].SlotIndex = i;
             uiSlots[i].IsQuickSlot = false;
-            uiSlots[i].IsStorageSlot = true; // SlotUI에 추가 필요
+            uiSlots[i].IsStorageSlot = true;
         }
 
         if (InventoryManager.Instance != null)
