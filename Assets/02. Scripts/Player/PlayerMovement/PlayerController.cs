@@ -33,14 +33,25 @@ public class PlayerController : MonoBehaviour
     {
         if(isDead) return;
         
-        /* UIManager 인벤토리 관리 TODO : ToggleInventory() -> public , isInventoryOpen 프로퍼티 추가
-        if (Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.Tab) || (UIManager.Instance.isInventoryOpen && Input.GetKeyDown(KeyCode.Escape)))
+        if (Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.Tab))
         {
             UIManager.Instance.ToggleInventory();
         }
 
-        if(UIManager.Instance.isInventoryOpen) return;
-        */
+        bool isInventoryOpen = UIManager.Instance.inventoryPanel.activeSelf;
+
+        if (isInventoryOpen)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+
+            return;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
             
         
 
