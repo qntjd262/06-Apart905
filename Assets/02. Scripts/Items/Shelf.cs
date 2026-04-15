@@ -11,10 +11,21 @@ public class Shelf : MonoBehaviour, IInteractable
     [SerializeField] private int minItems = 2;
     [SerializeField] private int maxItems = 4;
 
+    [SerializeField] private int shelfStorageSize = 15;
+
     [Header ("현재 선반에 보관된 아이템들")]
-    [SerializeField] private List<ItemData> shelfInventory = new List<ItemData>();
+    [SerializeField] private InventorySlot[] shelfSlots;
 
     private bool isFarming = false;
+
+    void Awake()
+    {
+        shelfSlots = new InventorySlot[shelfStorageSize];
+        for (int i = 0; i < shelfStorageSize; i++)
+        {
+            shelfSlots[i] = new InventorySlot();
+        }
+    }
 
     //TODO : 각각 선반 고유 ID 생성을 통해 선반의 파밍 상태 확인(게임 끄고 켜도 유지)
     private void OnValidate()
@@ -35,23 +46,27 @@ public class Shelf : MonoBehaviour, IInteractable
             isFarming = true;
         }
 
+        InventoryManager.Instance.OpenStorage(shelfSlots);
+        //UIManager.Instance.OpenStorageUI();
         //TODO : 선반 UI 열기
 
     }
 
+    //선반에 최소, 최대 중 랜덤하게 아이템 생성하는 메서드
     private void GenerateRandomItem()
     {
         int itemCount = UnityEngine.Random.Range(minItems, maxItems + 1);
-        shelfInventory.Clear();
+        int currentCount = 0;
 
-        for (int i = 0; i < itemCount; i++)
+        for (int i = 0; i < shelfSlots.Length; i++)
         {
-            //newitem에 아이템카운트매니저에서 랜덤으로 아이템 하나 뽑아서 넣기
-            //TODO : 아이템 드로우 시 선반에 아이템 그려주기
+            if(currentCount >= itemCount) break;
+
             ItemData newItem = GlobalItemCountManager.Instance.DrawItem();
             if (newItem != null)
             {
-                shelfInventory.Add(newItem);
+                shelfSlots[i].item = newItem;
+                currentCount++;
             }
         }
     }
@@ -59,10 +74,14 @@ public class Shelf : MonoBehaviour, IInteractable
     //선반에서 아이템 획득 시 호출되는 메서드
     public void RemoveItem(ItemData itemToRemove)
     {
-        if(shelfInventory.Contains(itemToRemove))
+        for (int i = 0; i < shelfSlots.Length; i++)
         {
-            shelfInventory.Remove(itemToRemove);
-            Debug.Log($"선반에서 {itemToRemove.Name}이 제거 됨");
+            if(shelfSlots[i].item == itemToRemove)
+            {
+                shelfSlots[i].item = null;
+                Debug.Log($"선반에서 {itemToRemove.Name}제거");
+                break;
+            }
         }
     }
 }

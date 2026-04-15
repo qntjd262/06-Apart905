@@ -35,6 +35,7 @@ public class PlayerStat : MonoBehaviour
 
     public event Action<bool> OnInfectionStateBool;
 
+    
     void Awake()
     {
         if(CharacterDataManager.Instance != null && CharacterDataManager.Instance.selectedCharacterSO != null)
@@ -60,7 +61,6 @@ public class PlayerStat : MonoBehaviour
         infection = new StatCondition(100f);
         infection.currentValue = 0f;
     }
-
     void OnEnable()
     {
         PlayerGamemanager.OnGameStatChangeTime += DecreaseSurvivalStat;

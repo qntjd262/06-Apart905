@@ -24,7 +24,6 @@ public class ItemData : ScriptableObject
     public string Name;
     public int SpawnCount;
     public ItemType itemType;
-    public string iconPath;
     public Sprite icon;
     [TextArea] public string description;
 
@@ -41,7 +40,8 @@ public class EatableItemData : ItemData
 public class EquipItemData : ItemData
 {
     public float equipValue;
-    public string equipPrefabPath;
+    
+    public GameObject equipPrefab;
 }
 
 public class UseItemData : ItemData

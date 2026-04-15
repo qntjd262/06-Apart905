@@ -5,6 +5,8 @@ public class HUDController : MonoBehaviour
     private SurvivalGauge gauge;
     private PlayerStat playerStat;
 
+    private bool isInitialized = false;
+
     void Awake()
     {
         gauge = GetComponent<SurvivalGauge>();
@@ -12,12 +14,6 @@ public class HUDController : MonoBehaviour
 
     public void InitHUD()
     {
-        if (GameManager.Instance == null || GameManager.Instance.SelectedCharacterData == null)
-        {
-            Debug.LogWarning("HUD: 초기화할 캐릭터 데이터가 존재하지 않습니다.");
-            return;
-        }
-
         playerStat = FindFirstObjectByType<PlayerStat>();
         if (playerStat == null)
         {
@@ -26,15 +22,21 @@ public class HUDController : MonoBehaviour
         }
 
         // 초기값으로 게이지 세팅
-        gauge.UpdateStamina(playerStat.stamina.currentValue, playerStat.stamina.maxValue, false);
-        gauge.UpdateHunger(playerStat.hunger.currentValue, playerStat.hunger.maxValue);
-        gauge.UpdateThirst(playerStat.thirst.currentValue, playerStat.thirst.maxValue);
-        gauge.UpdateSanity(playerStat.infection.currentValue, playerStat.infection.maxValue);
+        if(gauge != null)
+        {
+            gauge.UpdateStamina(playerStat.stamina.currentValue, playerStat.stamina.maxValue, false);
+            gauge.UpdateHunger(playerStat.hunger.currentValue, playerStat.hunger.maxValue);
+            gauge.UpdateThirst(playerStat.thirst.currentValue, playerStat.thirst.maxValue);
+            gauge.UpdateSanity(playerStat.infection.currentValue, playerStat.infection.maxValue);
+        }
+
+        isInitialized = true;
+        Debug.Log("플레이어 스탯 ui 연동 완료");
     }
 
     void Update()
     {
-        if (playerStat == null || gauge == null) return;
+        if (!isInitialized || playerStat == null || gauge == null) return;
 
         gauge.UpdateStamina(playerStat.stamina.currentValue, playerStat.stamina.maxValue);
         gauge.UpdateHunger(playerStat.hunger.currentValue, playerStat.hunger.maxValue);

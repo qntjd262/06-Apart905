@@ -6,7 +6,8 @@ public static class Constants
     {
         Main,
         Game,
-        Ending
+        Ending,
+
     }
     public enum ESaveLoadType
     {
