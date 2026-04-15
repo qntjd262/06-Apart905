@@ -61,7 +61,7 @@ public class UIManager : Singleton<UIManager>
     //Test를 위하여 ESceneType.Game -> ESceneType.TestScene으로 변경
     private void Update()
     {
-        if (SceneManager.GetActiveScene().name != Constants.ESceneType.TestScene.ToString()) return;
+        if (SceneManager.GetActiveScene().name != Constants.ESceneType.Game.ToString()) return;
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {

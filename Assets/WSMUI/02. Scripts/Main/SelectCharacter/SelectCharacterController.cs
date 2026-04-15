@@ -181,7 +181,7 @@ public class SelectCharacterController : MonoBehaviour
         if (UIManager.Instance != null)
         {
             UIManager.Instance.CloseSelectCharacterPanel();
-            UIManager.Instance.LoadScene(Constants.ESceneType.TestScene);
+            UIManager.Instance.LoadScene(Constants.ESceneType.Game);
         }
 
     }
