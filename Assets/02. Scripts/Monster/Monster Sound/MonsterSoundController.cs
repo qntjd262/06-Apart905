@@ -15,21 +15,25 @@ public class MonsterSoundController : MonoBehaviour
 
     public void OnAttackedSound()
     {
-        _audioSource.PlayOneShot(monsterSoundSO.attackedSound);
+        _audioSource.clip = monsterSoundSO.attackedSound;
+        _audioSource.Play();
     }
 
     public void OnAttackSound()
     {
-        _audioSource.PlayOneShot(monsterSoundSO.attackSound);
+        _audioSource.clip = monsterSoundSO.attackSound;
+        _audioSource.Play();
     }
 
     public void OnGrowlSound()
     {
-        _audioSource.PlayOneShot(monsterSoundSO.growlSound);
+        _audioSource.clip = monsterSoundSO.growlSound;
+        _audioSource.Play();
     }
 
     public void OnRageSound()
     {
-        _audioSource.PlayOneShot(monsterSoundSO.attackSound);
+        _audioSource.clip = monsterSoundSO.rageSound;
+        _audioSource.Play();
     }
 }

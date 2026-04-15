@@ -710,11 +710,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 726232580332858897, guid: 17ea2d63191aba44688c1fc629a00a4d, type: 3}
       propertyPath: maxIdleTime
-      value: 50
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 726232580332858897, guid: 17ea2d63191aba44688c1fc629a00a4d, type: 3}
       propertyPath: minIdleTime
-      value: 50
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 726232580332858897, guid: 17ea2d63191aba44688c1fc629a00a4d, type: 3}
       propertyPath: playerLayer.m_Bits
@@ -723,6 +723,30 @@ PrefabInstance:
     - target: {fileID: 819825834002921135, guid: 17ea2d63191aba44688c1fc629a00a4d, type: 3}
       propertyPath: m_Name
       value: ZombieGirl_B
+      objectReference: {fileID: 0}
+    - target: {fileID: 819825834002921135, guid: 17ea2d63191aba44688c1fc629a00a4d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1127182238652781207, guid: 17ea2d63191aba44688c1fc629a00a4d, type: 3}
+      propertyPath: Loop
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1127182238652781207, guid: 17ea2d63191aba44688c1fc629a00a4d, type: 3}
+      propertyPath: m_Pitch
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1127182238652781207, guid: 17ea2d63191aba44688c1fc629a00a4d, type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3212055422348515476, guid: 17ea2d63191aba44688c1fc629a00a4d, type: 3}
+      propertyPath: bodyType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3212055422348515476, guid: 17ea2d63191aba44688c1fc629a00a4d, type: 3}
+      propertyPath: hairType
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7536548669312150792, guid: 17ea2d63191aba44688c1fc629a00a4d, type: 3}
       propertyPath: m_LocalPosition.x
@@ -764,6 +788,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8113786171135377169, guid: 17ea2d63191aba44688c1fc629a00a4d, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: cab93a35ff3847e4e9ee17e993404fd2, type: 2}
+    - target: {fileID: 8113786171135377169, guid: 17ea2d63191aba44688c1fc629a00a4d, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 2d9e9f2d2acc93f479e57687bc81d7f5, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2662,9 +2694,25 @@ PrefabInstance:
       propertyPath: playerLayer.m_Bits
       value: 1024
       objectReference: {fileID: 0}
+    - target: {fileID: 6309308828254376524, guid: 6f8b4d02b70cd264987e9cccd12575fe, type: 3}
+      propertyPath: Loop
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6309308828254376524, guid: 6f8b4d02b70cd264987e9cccd12575fe, type: 3}
+      propertyPath: m_Pitch
+      value: 0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 6309308828254376524, guid: 6f8b4d02b70cd264987e9cccd12575fe, type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 8332598093197692057, guid: 6f8b4d02b70cd264987e9cccd12575fe, type: 3}
       propertyPath: m_Name
       value: UrbanZombie_URP
+      objectReference: {fileID: 0}
+    - target: {fileID: 8332598093197692057, guid: 6f8b4d02b70cd264987e9cccd12575fe, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3520,7 +3568,7 @@ MonoBehaviour:
   groundPoint: {fileID: 3449361492718308738}
   monsterLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 2048
 --- !u!1 &3565304977277229138
 GameObject:
   m_ObjectHideFlags: 0
@@ -3564,7 +3612,7 @@ Transform:
   m_GameObject: {fileID: 7385607687269400623}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.13, y: 0, z: -1.5599995}
+  m_LocalPosition: {x: -1.55, y: 0, z: -9.97}
   m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -4058,13 +4106,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 603402847333668989, guid: 1e356580033863140b452cd11303ab4b, type: 3}
+      propertyPath: Loop
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 603402847333668989, guid: 1e356580033863140b452cd11303ab4b, type: 3}
+      propertyPath: m_Pitch
+      value: 0.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 603402847333668989, guid: 1e356580033863140b452cd11303ab4b, type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 1116840929889356448, guid: 1e356580033863140b452cd11303ab4b, type: 3}
       propertyPath: playerLayer.m_Bits
       value: 1024
       objectReference: {fileID: 0}
     - target: {fileID: 4559453170637643689, guid: 1e356580033863140b452cd11303ab4b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2
+      value: 0.048
       objectReference: {fileID: 0}
     - target: {fileID: 4559453170637643689, guid: 1e356580033863140b452cd11303ab4b, type: 3}
       propertyPath: m_LocalPosition.y
@@ -4072,7 +4132,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4559453170637643689, guid: 1e356580033863140b452cd11303ab4b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -2.8400002
+      value: -2.794
       objectReference: {fileID: 0}
     - target: {fileID: 4559453170637643689, guid: 1e356580033863140b452cd11303ab4b, type: 3}
       propertyPath: m_LocalRotation.w
@@ -4112,7 +4172,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8186094476854529674, guid: 1e356580033863140b452cd11303ab4b, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8186094476854529674, guid: 1e356580033863140b452cd11303ab4b, type: 3}
       propertyPath: m_TagString
@@ -4162,6 +4222,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 74628939336154185, guid: 56ac8c340a6e2314493358812a4c7a3d, type: 3}
+      propertyPath: Loop
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 74628939336154185, guid: 56ac8c340a6e2314493358812a4c7a3d, type: 3}
+      propertyPath: m_Pitch
+      value: 0.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 74628939336154185, guid: 56ac8c340a6e2314493358812a4c7a3d, type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 5152905152235290107, guid: 56ac8c340a6e2314493358812a4c7a3d, type: 3}
       propertyPath: m_Name
       value: Giant_Zombie_URP
@@ -4962,7 +5034,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &7424706723630209126
 Transform:
   m_ObjectHideFlags: 0
@@ -5208,6 +5280,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1405444344710065796, guid: fd046c2a00b9aea43a5a44fd42d1ba00, type: 3}
+      propertyPath: Loop
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405444344710065796, guid: fd046c2a00b9aea43a5a44fd42d1ba00, type: 3}
+      propertyPath: m_Pitch
+      value: 0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1405444344710065796, guid: fd046c2a00b9aea43a5a44fd42d1ba00, type: 3}
+      propertyPath: m_Resource
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 2267822840019833330, guid: fd046c2a00b9aea43a5a44fd42d1ba00, type: 3}
       propertyPath: m_LocalPosition.x
       value: -4.44
@@ -5475,9 +5559,9 @@ SceneRoots:
   - {fileID: 7424706723630209126}
   - {fileID: 3338229246116303464}
   - {fileID: 1152548074}
-  - {fileID: 5345611651094943825}
-  - {fileID: 8346838103133142897}
-  - {fileID: 5443697466807328099}
-  - {fileID: 1341009701344170167}
   - {fileID: 372762264}
+  - {fileID: 5345611651094943825}
+  - {fileID: 1341009701344170167}
+  - {fileID: 5443697466807328099}
+  - {fileID: 8346838103133142897}
   - {fileID: 3634821808439491289}
