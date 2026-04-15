@@ -1,12 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using TMPro;
 
-public class SlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
+public class SlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler, IPointerClickHandler
 {
     [SerializeField] private Image icon;
-    [SerializeField] private TextMeshProUGUI amountText;
 
     // 프로퍼티를 이용한 접근 제어
     public int SlotIndex { get; set; }
@@ -14,19 +12,21 @@ public class SlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 
     private static SlotUI draggingSlot;
 
+    public bool IsStorageSlot { get; set; }
+
+
     public void UpdateSlot(InventorySlot slotData)
     {
         if (slotData.IsEmpty)
         {
             icon.sprite = null;
             icon.color = new Color(1, 1, 1, 0);
-            amountText.text = "";
         }
         else
         {
-            icon.sprite = slotData.item.icon;
+            Sprite loadedSprite = Resources.Load<Sprite>(slotData.item.iconPath);
+            icon.sprite = loadedSprite;
             icon.color = new Color(1, 1, 1, 1);
-            amountText.text = slotData.amount > 1 ? slotData.amount.ToString() : "";
         }
     }
 
@@ -65,6 +65,37 @@ public class SlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         else if (draggingSlot.IsQuickSlot && this.IsQuickSlot)
         {
             InventoryManager.Instance.SwapItemWithinQuickSlot(draggingSlot.SlotIndex, this.SlotIndex);
+        }
+        else if (draggingSlot.IsStorageSlot && !this.IsStorageSlot && !this.IsQuickSlot)
+        {
+            InventoryManager.Instance.SwapItemBetweenStorageAndBag(draggingSlot.SlotIndex, this.SlotIndex);
+        }
+        else if (!draggingSlot.IsStorageSlot && !draggingSlot.IsQuickSlot && this.IsStorageSlot)
+        {
+            InventoryManager.Instance.SwapItemBetweenStorageAndBag(this.SlotIndex, draggingSlot.SlotIndex);
+        }
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Right)
+        {
+            if (icon.sprite != null)
+            {
+                PlayerStat player = GameObject.FindWithTag("Player").GetComponent<PlayerStat>();
+                InventoryManager.Instance.UseItem(SlotIndex, IsQuickSlot, player);
+            }
+        }
+    }
+
+    private void UseItem()
+    {
+        PlayerStat player = GameObject.FindWithTag("Player").GetComponent<PlayerStat>();
+
+        if (player != null)
+        {
+            InventoryManager.Instance.UseItem(SlotIndex, IsQuickSlot, player);
+            Debug.Log($"슬롯 {SlotIndex} (퀵슬롯 여부: {IsQuickSlot}) 아이템 사용 시도");
         }
     }
 }

@@ -21,6 +21,12 @@ public class InventoryUI : MonoBehaviour
             RefreshUI();
         }
 
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.inventoryPanel = this.gameObject;
+        }
+
+        gameObject.SetActive(true);  //false로 바꿔야됨
     }
 
     private void RefreshUI()

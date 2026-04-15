@@ -5,7 +5,7 @@ public class Attacked : ActionNode
 {
     // 피격 시간
     private float _hitTimer;
-    private float _hitDuration = 5f;
+    private float _hitDuration = 3f;
 
     // 진행 상태 변수
     private bool _isRunning;
@@ -34,9 +34,14 @@ public class Attacked : ActionNode
         playerTransform = _blackboard.Player.transform;
         selfTransform = _blackboard.Self.transform;
         _blackboard.Player = null;
+        _isRunning = true;
 
-        // TODO : 피격 애니메이션 실행
-        _blackboard.Animator.OnAttacked();
+        // 맞은 방향 계산
+        Vector3 dirToPlayer = (playerTransform.position - selfTransform.position).normalized;
+        float dot = Vector3.Dot(selfTransform.forward, dirToPlayer);
+
+        // angle이 0보다 크면 앞에서, 작으면 뒤에서 맞는 애니메이션 출력
+        _blackboard.Animator.OnAttacked(dot > 0);
     }
 
     public override NodeState OnUpdate()
@@ -56,7 +61,7 @@ public class Attacked : ActionNode
             _blackboard.Self.transform.rotation = Quaternion.Slerp(selfTransform.rotation, dirToPlayer, 1.5f * Time.deltaTime);
 
             // 아직 다 돌아보지 않았다면 계속 회전
-            if (Quaternion.Angle(_blackboard.Self.transform.rotation, dirToPlayer) > 40f)
+            if (Quaternion.Angle(_blackboard.Self.transform.rotation, dirToPlayer) > 30f)
             {
                 return NodeState.Running;
             }

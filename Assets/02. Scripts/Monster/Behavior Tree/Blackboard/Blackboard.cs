@@ -10,6 +10,9 @@ public class Blackboard
 
     // 적(플레이어) 관련
     public GameObject Player { get; set; }
+    // 적(플레이어) 발소리 여부 및 위치
+    public bool CanHearPlayer { get; set; }
+    public Vector3 SoundDirection{ get; set; }
 
     // 기본 데이터
     public GameObject Self { get; set; }

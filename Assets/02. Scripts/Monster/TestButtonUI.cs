@@ -10,7 +10,11 @@ public class TestButtonUI : MonoBehaviour
     {
         var blackboard = monsterAI.blackboard;
         monsterStat.TakeDamage(monsterStat.monsterStatSO.damage, player);
-        //blackboard.IsAttacked = true;
-        //blackboard.Player = player;
+    }
+
+    public void SetPlayerSound()
+    {
+        var blackboard = monsterAI.blackboard;
+        blackboard.Self.GetComponent<MonsterController>().CanHearPlayerSound(player.transform.position);
     }
 }
