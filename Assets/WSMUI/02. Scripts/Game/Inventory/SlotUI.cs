@@ -1,12 +1,10 @@
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using TMPro;
 
 public class SlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler, IPointerClickHandler
 {
     [SerializeField] private Image icon;
-    [SerializeField] private TextMeshProUGUI amountText;
 
     // 프로퍼티를 이용한 접근 제어
     public int SlotIndex { get; set; }
@@ -23,14 +21,12 @@ public class SlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
         {
             icon.sprite = null;
             icon.color = new Color(1, 1, 1, 0);
-            amountText.text = "";
         }
         else
         {
             Sprite loadedSprite = Resources.Load<Sprite>(slotData.item.iconPath);
             icon.sprite = loadedSprite;
             icon.color = new Color(1, 1, 1, 1);
-            amountText.text = slotData.amount > 1 ? slotData.amount.ToString() : "";
         }
     }
 

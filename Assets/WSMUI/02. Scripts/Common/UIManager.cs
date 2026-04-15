@@ -22,6 +22,7 @@ public class UIManager : Singleton<UIManager>
     [Header("UI Panels (Local)")]
     [SerializeField] public GameObject inventoryPanel;
     public GameObject pauseMenuPanel;
+    public GameObject gameOverPanel;
 
     [Header("Global Popup Panels")]
     [SerializeField] private GameObject selectCharacterPanel;
@@ -64,6 +65,7 @@ public class UIManager : Singleton<UIManager>
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (IsAnyGlobalPopupActive()) return;
+            if (gameOverPanel != null && gameOverPanel.activeSelf) return;
 
             if (inventoryPanel != null && inventoryPanel.activeSelf)
             {

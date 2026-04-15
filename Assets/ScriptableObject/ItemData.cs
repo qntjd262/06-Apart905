@@ -25,25 +25,9 @@ public class ItemData : ScriptableObject
     public int SpawnCount;
     public ItemType itemType;
     public string iconPath;
+    public Sprite icon;
     [TextArea] public string description;
 
-    [Header("스택 설정")]
-    public int maxStack = 1;
-
-    private void OnValidate()
-    {
-        // 1. 장착 아이템은 무조건 최대 스택을 1로 강제
-        if (itemType == ItemType.Equipable)
-        {
-            maxStack = 1;
-        }
-
-        // 2. 스택은 최소 1 이상이어야 함 (0이나 음수 방지)
-        if (maxStack < 1)
-        {
-            maxStack = 1;
-        }
-    }
 }
 
 public class EatableItemData : ItemData
