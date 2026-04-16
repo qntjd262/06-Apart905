@@ -20,17 +20,19 @@ public class SurvivalGauge : MonoBehaviour
 
     public void UpdateHunger(float current, float max)
     {
-        UpdateFillAmount(hungerRing, (current / max) * 0.5f);
+        float ratio = max > 0 ? current / max : 0f;
+        UpdateFillAmount(hungerRing, ratio * 0.5f);
     }
 
     public void UpdateThirst(float current, float max)
     {
-        UpdateFillAmount(thirstRing, (current / max) * 0.5f);
+        float ratio = max > 0 ? current / max : 0f;
+        UpdateFillAmount(thirstRing, ratio * 0.5f);
     }
 
     public void UpdateSanity(float current, float max)
     {
-        float ratio = current / max;
+        float ratio = max > 0 ? current / max : 0f;
         UpdateFillAmount(sanityGauge, ratio);
 
         if (ratio > 0.8f)
@@ -57,7 +59,7 @@ public class SurvivalGauge : MonoBehaviour
     {
         if (staminaSlider == null) return;
 
-        float targetValue = current / max;
+        float targetValue = max > 0 ? current / max : 0f;;
         
         // 슬라이더의 Value를 제어하는 트윈만 종료
         staminaSlider.DOKill();

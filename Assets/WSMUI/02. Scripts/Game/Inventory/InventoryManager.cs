@@ -123,6 +123,8 @@ public class InventoryManager : Singleton<InventoryManager>
 
     private void ApplyEffect(PlayerStat player, EatableType type, float value)
     {
+        Debug.Log($"[아이템 효과 발동] 타입: {type}, 회복/감소량: {value}");
+
         StatCondition targetStat = null;
 
         switch (type)
@@ -136,6 +138,9 @@ public class InventoryManager : Singleton<InventoryManager>
 
         if (targetStat != null)
         {
+            //로그찍기 위함
+            float before = targetStat.currentValue;
+
             // 감염도(Infection)인 경우에만 수치를 뺌
             if (type == EatableType.Infection)
             {
@@ -146,9 +151,13 @@ public class InventoryManager : Singleton<InventoryManager>
                 targetStat.currentValue += value;
             }
 
+            Debug.Log($"[{type}] 변경 전: {before} -> 변경 후: {targetStat.currentValue} (최대치: {targetStat.maxValue})");
+
             // 스탯이 0 ~ 최대값 범위를 벗어나지 않게 고정
             targetStat.currentValue = Mathf.Clamp(targetStat.currentValue, 0, targetStat.maxValue);
+            Debug.Log($"{type} 스탯 변경됨, 현재 수치 : {targetStat.currentValue}");
         }
+
     }
 
     public void SwapItemBetweenBagAndQuickSlot(int bagIndex, int quickIndex)
