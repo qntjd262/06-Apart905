@@ -36,4 +36,10 @@ public class MonsterSoundController : MonoBehaviour
         _audioSource.clip = monsterSoundSO.rageSound;
         _audioSource.Play();
     }
+    
+    public void OnMoanSound()
+    {
+        _audioSource.clip = monsterSoundSO.moanSound; ;
+        _audioSource.Play();
+    }
 }

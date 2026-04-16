@@ -51,6 +51,7 @@ public class LookAround : ActionNode
     {
         base.OnStop();
         _blackboard.NavMeshAgent.updateRotation = true;
+        _blackboard.HasLostTarget = false;
         _blackboard.Self.transform.rotation = Quaternion.Euler(0f, _currentAngle, 0f);
     }
 }
