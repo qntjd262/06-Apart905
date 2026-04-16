@@ -10,7 +10,7 @@ public class MoveChecker : MonoBehaviour
         if(other.CompareTag("Player"))
         {/*
             if (_isMoveUp)
-                other.GetComponent<Player>().PlayerState;
+                other.GetComponent<Player>().state = PlayerState.   ;
             else
                 other.GetComponent<Player>().MoveDown();*/
         }
