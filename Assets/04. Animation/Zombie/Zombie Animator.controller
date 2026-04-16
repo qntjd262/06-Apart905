@@ -64,7 +64,7 @@ AnimatorStateMachine:
     m_Position: {x: 560, y: 50, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -4552270798028587995}
-    m_Position: {x: 550, y: 160, z: 0}
+    m_Position: {x: 560, y: 170, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
@@ -107,7 +107,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Hit On Back Of Head
+  m_Name: Zombie_Attacked_Back
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions:
@@ -121,8 +121,8 @@ AnimatorState:
   m_MirrorParameterActive: 0
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
-  m_Motion: {fileID: 7400000, guid: e34cb171d73a77441b4851634c30d0e3, type: 2}
-  m_Tag: 
+  m_Motion: {fileID: 7400000, guid: c66ee9e454eca674b9736aa891057029, type: 2}
+  m_Tag: Attacked
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
@@ -176,7 +176,7 @@ AnimatorState:
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
   m_Motion: {fileID: 7400000, guid: 29f4b28bab0a4fe4fa68423c7b9e7a6a, type: 2}
-  m_Tag: 
+  m_Tag: Idle
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
@@ -353,7 +353,7 @@ AnimatorState:
   m_CycleOffsetParameterActive: 0
   m_TimeParameterActive: 0
   m_Motion: {fileID: 7400000, guid: 461cfb59c59168a448b7c1d0b5aa74b4, type: 2}
-  m_Tag: 
+  m_Tag: Attacked
   m_SpeedParameter: 
   m_MirrorParameter: 
   m_CycleOffsetParameter: 

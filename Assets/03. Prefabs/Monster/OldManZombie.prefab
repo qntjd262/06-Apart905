@@ -5562,6 +5562,7 @@ GameObject:
   - component: {fileID: 6020115114721299926}
   - component: {fileID: 6849650173668389061}
   - component: {fileID: 1405444344710065796}
+  - component: {fileID: 8014678028672155040}
   m_Layer: 11
   m_Name: OldManZombie
   m_TagString: Monster
@@ -5676,7 +5677,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5936c6c8758bfa4479c689ed44ea1dbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  monsterStatSO: {fileID: 11400000, guid: 8aa57cf68793caf43acd214ec17a2ff3, type: 2}
+  monsterStatSO: {fileID: 11400000, guid: d37d8cfa5468d92428324c5b5e25a2d6, type: 2}
   currentHealth: 0
 --- !u!114 &5675343734983947587
 MonoBehaviour:
@@ -5702,7 +5703,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d298f02eba8942e4b873364b9d170fac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  monsterSoundSO: {fileID: 11400000, guid: 3ac25ece53c38d14eb2dfa2c4cf1475f, type: 2}
+  monsterSoundSO: {fileID: 11400000, guid: 62398b8db70208f418a7dc87ecbeed9d, type: 2}
 --- !u!136 &6020115114721299926
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -5761,7 +5762,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 1
-  m_Volume: 0.698
+  m_Volume: 0.356
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -5770,7 +5771,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 15
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -5805,7 +5806,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -5845,6 +5846,33 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!54 &8014678028672155040
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2365732822441387037}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &2409434665630356746
 GameObject:
   m_ObjectHideFlags: 0

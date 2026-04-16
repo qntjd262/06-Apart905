@@ -103,7 +103,6 @@ public class TestMonsterAI : MonoBehaviour
                     new LookAround(4f, 40f, blackboard)
                 ),
 
-
                 // 정찰 및 대기
                 new MemorySequenceNode
                 (
@@ -117,7 +116,8 @@ public class TestMonsterAI : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log(blackboard.MonsterState);
+        //Debug.Log(blackboard.MonsterState);
+        Debug.Log(blackboard.HasLostTarget);
         _rootNode.Evaluate(); // 매 프레임마다 Behavior Tree 평가
     }
 
