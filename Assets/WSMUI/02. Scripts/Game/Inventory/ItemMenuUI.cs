@@ -21,6 +21,13 @@ public class ItemMenuUI : Singleton<ItemMenuUI>
 
     public void ShowMenu(SlotUI slot, InventorySlot slotData)
     {
+        Canvas mainCanvas = UnityEngine.Object.FindAnyObjectByType<Canvas>();
+        if(mainCanvas != null)
+        {
+            transform.SetParent(mainCanvas.transform, false);
+        }
+        transform.SetAsLastSibling();
+
         _targetSlotIndex = slot.SlotIndex;
         _isTargetQuickSlot = slot.IsQuickSlot;
 

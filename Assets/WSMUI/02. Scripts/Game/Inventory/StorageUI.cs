@@ -19,6 +19,8 @@ public class StorageUI : MonoBehaviour
         if (InventoryManager.Instance != null)
         {
             InventoryManager.Instance.OnStorageUpdated += RefreshUI;
+
+            RefreshUI();
         }
     }
 

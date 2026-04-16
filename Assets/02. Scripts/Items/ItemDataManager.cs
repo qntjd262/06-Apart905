@@ -83,8 +83,8 @@ public class ItemDataManager : MonoBehaviour
             {
                 var eatItem = ScriptableObject.CreateInstance<EatableItemData>();
                 if(Enum.TryParse(row[4].Trim(), out EatableType t1)) eatItem.eatableType_1 = t1;
-                if(float.TryParse(row[5].Trim(), out float v1)) eatItem.value_1 = v1;
-                if(Enum.TryParse(row[6].Trim(), out EatableType t2)) eatItem.eatableType_2 = t2;
+                if(Enum.TryParse(row[5].Trim(), out EatableType t2)) eatItem.eatableType_2 = t2;
+                if(float.TryParse(row[6].Trim(), out float v1)) eatItem.value_1 = v1;
                 if(float.TryParse(row[7].Trim(), out float v2)) eatItem.value_2 = v2;
 
                 eatItem.description = row.Length > 8 ? row[8].Trim() : "";

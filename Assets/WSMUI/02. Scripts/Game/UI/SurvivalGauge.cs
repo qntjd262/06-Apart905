@@ -59,7 +59,7 @@ public class SurvivalGauge : MonoBehaviour
     {
         if (staminaSlider == null) return;
 
-        float targetValue = max > 0 ? current / max : 0f;
+        float targetValue = max > 0 ? current / max : 0f;;
         
         // 슬라이더의 Value를 제어하는 트윈만 종료
         staminaSlider.DOKill();
