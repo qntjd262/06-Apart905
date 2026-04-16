@@ -1,13 +1,15 @@
-using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(Animator))]
 [RequireComponent(typeof(NavMeshAgent))]
+[RequireComponent(typeof(Rigidbody))]
 public class MonsterAnimator : MonoBehaviour
 {   
     private Animator _animator;
     private NavMeshAgent _navMeshAgent;
+    private Rigidbody _rigidbody;
 
     private MonsterSoundController _soundController;
 
@@ -23,6 +25,7 @@ public class MonsterAnimator : MonoBehaviour
         _animator = GetComponent<Animator>();
         _navMeshAgent = GetComponent<NavMeshAgent>();
         _soundController = GetComponent<MonsterSoundController>();
+        _rigidbody = GetComponent<Rigidbody>();
 
         _animator.applyRootMotion = true;
         _navMeshAgent.updatePosition = false;
@@ -41,6 +44,7 @@ public class MonsterAnimator : MonoBehaviour
     public void OnWalk()
     {
         _animator.SetBool(MonsterAniParamIsMoving, true);
+        _soundController.OnGrowlSound();
     }
 
     public void OnAttack()
@@ -48,7 +52,6 @@ public class MonsterAnimator : MonoBehaviour
         _animator.SetTrigger(MonsterAniParamAttack);
         _animator.SetBool(MonsterAniParamIsMoving, false);
         _soundController.OnAttackSound();
-
     }
 
     public void OnIdle()
@@ -62,11 +65,23 @@ public class MonsterAnimator : MonoBehaviour
         _animator.SetTrigger(MonsterAniParamAttacked);
         _animator.ResetTrigger(MonsterAniParamAttack);
         _soundController.OnAttackedSound();
+        _rigidbody.isKinematic = false;
+
+        StartCoroutine(SetKinematicTrue());
+    }
+
+    IEnumerator SetKinematicTrue()
+    {
+        while(_animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1f)
+        {
+            yield return null;
+        }
+
+        _rigidbody.isKinematic = true;
     }
 
     public void OnDeath()
     {
         _animator.SetTrigger(MonsterAniParamDeath);
-
     }
 }

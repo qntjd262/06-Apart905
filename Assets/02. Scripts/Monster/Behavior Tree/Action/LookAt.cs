@@ -18,7 +18,6 @@ public class LookAt : ActionNode
     {
         // getDir로 방향을 받아옴
         _soundDirection = _getDirection();
-        Debug.Log(_soundDirection);
         // NavMeshAgent 회전 잠금
         _blackboard.NavMeshAgent.updateRotation = false;
     }
