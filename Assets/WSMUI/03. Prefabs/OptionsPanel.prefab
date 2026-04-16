@@ -220,6 +220,7 @@ GameObject:
   - component: {fileID: 1600880588778002091}
   - component: {fileID: 4148997796894606284}
   - component: {fileID: 4328475652326791051}
+  - component: {fileID: 3387546122658386308}
   m_Layer: 5
   m_Name: ConfirmButton
   m_TagString: Untagged
@@ -329,6 +330,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3387546122658386308
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1475068191731222162}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa3b2a7362d100843bcccc655357c442, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sfxKey: button_click
+  hoverSfxKey: button_hover
 --- !u!1 &1475156739687064324
 GameObject:
   m_ObjectHideFlags: 0
@@ -1702,6 +1717,7 @@ GameObject:
   - component: {fileID: 4375585209282611063}
   - component: {fileID: 2631087092644025714}
   - component: {fileID: 4573697979443935091}
+  - component: {fileID: 7489386485396018080}
   m_Layer: 5
   m_Name: ReturnButton
   m_TagString: Untagged
@@ -1811,6 +1827,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7489386485396018080
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5131541103727616779}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa3b2a7362d100843bcccc655357c442, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sfxKey: button_click
+  hoverSfxKey: button_hover
 --- !u!1 &5323875982450802146
 GameObject:
   m_ObjectHideFlags: 0
