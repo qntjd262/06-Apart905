@@ -23,7 +23,7 @@ public class OptionsController : MonoBehaviour
     {
         if (UIManager.Instance != null)
         {
-            UIManager.Instance.OpenPopupWithEffects("OPTIONS");
+            UIManager.Instance.OpenPopupWithEffects("설정");
         }
 
         if (tabPanels != null && tabPanels.Length > 0)

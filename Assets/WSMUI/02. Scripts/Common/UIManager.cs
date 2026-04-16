@@ -21,6 +21,7 @@ public class UIManager : Singleton<UIManager>
 
     [Header("UI Panels (Local)")]
     [SerializeField] public GameObject inventoryPanel;
+    [SerializeField] public GameObject storagePanel;
     public GameObject pauseMenuPanel;
     public GameObject gameOverPanel;
 
@@ -61,20 +62,36 @@ public class UIManager : Singleton<UIManager>
     //Test를 위하여 ESceneType.Game -> ESceneType.TestScene으로 변경
     private void Update()
     {
-        if (SceneManager.GetActiveScene().name != Constants.ESceneType.Game.ToString()) return;
+        if (SceneManager.GetActiveScene().name != Constants.ESceneType.TestScene.ToString()) return;
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (IsAnyGlobalPopupActive()) return;
             if (gameOverPanel != null && gameOverPanel.activeSelf) return;
-
-            if (inventoryPanel != null && inventoryPanel.activeSelf)
+            // 보관함이 열려있다면 (인벤토리도 같이 열려있는 상태)
+            if (storagePanel != null && storagePanel.activeSelf)
+            {
+                // 이 함수 하나로 storagePanel과 inventoryPanel이 동시에 꺼집니다.
+                ToggleStorage();
+            }
+            // 보관함은 없고 인벤토리만 단독으로 열려있을 때
+            else if (inventoryPanel != null && inventoryPanel.activeSelf)
             {
                 ToggleInventory();
             }
             else if (pauseMenuPanel != null)
             {
                 TogglePauseMenu();
+            }
+        }
+
+        // 2. E 키 처리 (상호작용 및 닫기)
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            // 보관함이 열려있는 상태라면 닫아줌 (인벤토리도 같이 닫힘)
+            if (storagePanel != null && storagePanel.activeSelf)
+            {
+                ToggleStorage();
             }
         }
 
@@ -203,6 +220,37 @@ public class UIManager : Singleton<UIManager>
         }
     }
 
+
+    public void ToggleStorage(InventorySlot[] slots = null)
+    {
+        if (storagePanel == null || inventoryPanel == null) return;
+
+        // 현재 보관함 상태의 반대로 설정 (열려있으면 닫고, 닫혀있으면 엶)
+        bool isNowActive = !storagePanel.activeSelf;
+
+        // 보관함과 인벤토리를 동시에 활성화/비활성화
+        storagePanel.SetActive(isNowActive);
+        inventoryPanel.SetActive(isNowActive);
+
+        if (isNowActive && slots != null)
+        {
+            InventoryManager.Instance.OpenStorage(slots);
+        }
+        else if (!isNowActive)
+        {
+            InventoryManager.Instance.OpenStorage(null); // CloseStorage() 역할
+        }
+
+        // HUD 제어 (두 창 중 하나라도 열려있으면 HUD는 숨김)
+        if (_hudController == null)
+            _hudController = FindFirstObjectByType<HUDController>(FindObjectsInactive.Include);
+
+        if (_hudController != null)
+        {
+            _hudController.gameObject.SetActive(!isNowActive);
+        }
+    }
+
     private void InitializeInGameUI()
     {
         if (_hudController == null)
@@ -240,7 +288,7 @@ public class UIManager : Singleton<UIManager>
             }
 
             // 2. 검은 화면에서 로딩 패널 즉시 등장
-            OpenPopupWithEffects("LOADING");
+            OpenPopupWithEffects("로딩 중...");
             loadingPanelPrefab.gameObject.SetActive(true);
             loadingPanelPrefab.SetProgress(0f);
 
@@ -274,8 +322,6 @@ public class UIManager : Singleton<UIManager>
             loadingPanelPrefab.gameObject.SetActive(false);
             CloseAllGlobalPopups();
         }
-
-        // 5. 화면 다시 밝게 (OnSceneLoaded의 FadeIn과 중복되므로 제거)
     }
     private bool IsAnyGlobalPopupActive()
     {
@@ -330,6 +376,10 @@ public class UIManager : Singleton<UIManager>
         InventoryUI invUI = GameObject.FindAnyObjectByType<InventoryUI>(FindObjectsInactive.Include);
         if (invUI != null) inventoryPanel = invUI.gameObject;
         if (inventoryPanel != null) inventoryPanel.SetActive(false);
+
+        StorageUI storUI = GameObject.FindAnyObjectByType<StorageUI>(FindObjectsInactive.Include);
+        if (storUI != null) storagePanel = storUI.gameObject;
+        if (storagePanel != null) storagePanel.SetActive(false);
 
         FadeIn(1f, () =>
      {

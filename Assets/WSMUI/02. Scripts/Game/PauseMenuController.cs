@@ -15,7 +15,7 @@ public class PauseMenuController : MonoBehaviour
 
     private void OnEnable()
     {
-        if (UIManager.Instance != null) UIManager.Instance.OpenPopupWithEffects("PAUSE MENU");
+        if (UIManager.Instance != null) UIManager.Instance.OpenPopupWithEffects("일시정지");
     }
 
     private void OnDisable()
@@ -70,12 +70,12 @@ public class PauseMenuController : MonoBehaviour
         // SetActive(false) 전에 LoadScene 먼저 → OnDisable 타이밍 문제 제거
         if (UIManager.Instance != null)
         {
-            UIManager.Instance.LoadScene(Constants.ESceneType.Main);
+            UIManager.Instance.LoadScene(Constants.ESceneType.TestMainScene);
             gameObject.SetActive(false); // LoadScene 이후에 끄기
             return;
         }
 
         Time.timeScale = 1f;
-        SceneManager.LoadScene(Constants.ESceneType.Main.ToString());
+        SceneManager.LoadScene(Constants.ESceneType.TestMainScene.ToString());
     }
 }
