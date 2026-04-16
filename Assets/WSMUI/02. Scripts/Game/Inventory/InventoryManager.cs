@@ -95,10 +95,7 @@ public class InventoryManager : Singleton<InventoryManager>
                 BagSlots[i].item = itemToAdd;
                 BagSlots[i].amount = 1;
 
-                if(QuestManager.Instance != null)
-                {
-                    QuestManager.Instance.NotifyEvent(QuestType.ItemCollection, itemToAdd.itemName, 1);
-                }
+                SyncQuestAndUI(itemToAdd.itemName);
 
                 OnBagUpdated?.Invoke();
                 return true;
@@ -136,6 +133,7 @@ public class InventoryManager : Singleton<InventoryManager>
         if (targetSlot.item == null || targetSlot.IsEmpty) return;
 
         ItemData item = targetSlot.item;
+        string itemName = item.itemName;
 
         if (item.type == ItemType.Eatable)
         {
@@ -145,6 +143,9 @@ public class InventoryManager : Singleton<InventoryManager>
             }
 
             targetSlot.item = null; 
+            targetSlot.amount = 0;
+
+            SyncQuestAndUI(itemName);
 
             if (isQuickSlot) OnQuickSlotUpdated?.Invoke();
             else OnBagUpdated?.Invoke();
@@ -173,6 +174,8 @@ public class InventoryManager : Singleton<InventoryManager>
             }
             if (remainingToRemove <= 0) break;
         }
+
+        SyncQuestAndUI(itemName);
 
         OnBagUpdated?.Invoke();
         OnQuickSlotUpdated?.Invoke(); // 퀵슬롯 적용
@@ -272,5 +275,25 @@ public class InventoryManager : Singleton<InventoryManager>
         ItemData tempItem = slot1.item;
         slot1.item = slot2.item;
         slot2.item = tempItem;
+    }
+
+    private void SyncQuestAndUI(string itemName)
+    {
+        if (QuestManager.Instance != null)
+    {
+        //현재 남은 개수 확인
+        int currentCount = GetItemCount(itemName);
+        
+        //당 아이템 관련 퀘스트 찾아서 데이터 동기화
+        var targetQuest = QuestManager.Instance.activeQuests.Find(q => q.targetID == itemName);
+        if (targetQuest != null)
+        {
+            targetQuest.ForceSyncProgress(currentCount);
+        }
+
+        //퀘스트 UI 새로고침
+        QuestUI ui = FindObjectOfType<QuestUI>(true);
+        if (ui != null) ui.RefreshQuestList();
+    }
     }
 }
