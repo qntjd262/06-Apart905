@@ -13,6 +13,8 @@ public class InventoryUI : MonoBehaviour
         {
             uiSlots[i].SlotIndex = i;
             uiSlots[i].IsQuickSlot = false;
+
+            uiSlots[i].IsStorageSlot = false;
         }
 
         if (InventoryManager.Instance != null)
