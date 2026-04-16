@@ -304,8 +304,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 35
-  m_fontSizeBase: 35
+  m_fontSize: 30
+  m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -360,6 +360,7 @@ GameObject:
   - component: {fileID: 2553290667334962278}
   - component: {fileID: 6469759756087065892}
   - component: {fileID: 1223234931792696053}
+  - component: {fileID: 4207098353551272196}
   m_Layer: 5
   m_Name: LoadButton
   m_TagString: Untagged
@@ -469,6 +470,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &4207098353551272196
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1459315237136804038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa3b2a7362d100843bcccc655357c442, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sfxKey: button_click
+  hoverSfxKey: button_hover
 --- !u!1 &1571780071429738801
 GameObject:
   m_ObjectHideFlags: 0
@@ -561,8 +576,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 35
-  m_fontSizeBase: 35
+  m_fontSize: 30
+  m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1407,6 +1422,7 @@ GameObject:
   - component: {fileID: 198946741327946049}
   - component: {fileID: 5011000603294203600}
   - component: {fileID: 4944964515645747771}
+  - component: {fileID: 121401800072736843}
   m_Layer: 5
   m_Name: SaveButton
   m_TagString: Untagged
@@ -1516,6 +1532,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &121401800072736843
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7021659776790673568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa3b2a7362d100843bcccc655357c442, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sfxKey: button_click
+  hoverSfxKey: button_hover
 --- !u!1 &8317643930402209340
 GameObject:
   m_ObjectHideFlags: 0
@@ -1573,6 +1603,7 @@ GameObject:
   - component: {fileID: 3384114320402237850}
   - component: {fileID: 8443814956432206165}
   - component: {fileID: 3169297892991346904}
+  - component: {fileID: 2094688509979344200}
   m_Layer: 5
   m_Name: ReturnButton
   m_TagString: Untagged
@@ -1694,3 +1725,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &2094688509979344200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8335401543774308104}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa3b2a7362d100843bcccc655357c442, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sfxKey: button_click
+  hoverSfxKey: button_hover
