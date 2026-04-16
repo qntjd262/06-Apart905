@@ -1,7 +1,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem.iOS;
 using UnityEngine.Networking;
 
 public class ItemDataManager : MonoBehaviour
@@ -16,6 +18,10 @@ public class ItemDataManager : MonoBehaviour
     [Header("아이템 데이터베이스")]
     public Dictionary<string, ItemData> itemDB = new Dictionary<string, ItemData>();
     public List<ItemData> allItemList = new List<ItemData>();
+
+    [Header("아이템 에셋 모음")]
+    [SerializeField] private Sprite[] allItemIcons;
+    [SerializeField] private GameObject[] allItemPrefabs;
 
     void Awake()
     {
@@ -71,6 +77,7 @@ public class ItemDataManager : MonoBehaviour
             string[] row = lines[i].Split(',');
 
             ItemData newItem = null;
+            string currentItemID = row[0].Trim();
 
             if(type == ItemType.Eatable)
             {
@@ -80,32 +87,33 @@ public class ItemDataManager : MonoBehaviour
                 if(Enum.TryParse(row[6].Trim(), out EatableType t2)) eatItem.eatableType_2 = t2;
                 if(float.TryParse(row[7].Trim(), out float v2)) eatItem.value_2 = v2;
 
-                eatItem.iconPath = row[8].Trim();
-                eatItem.description = row.Length > 9 ? row[9].Trim() : "";
+                eatItem.description = row.Length > 8 ? row[8].Trim() : "";
                 newItem = eatItem;
             }
             else if(type == ItemType.Equipable)
             {
                 var equipItem = ScriptableObject.CreateInstance<EquipItemData>();
                 if(float.TryParse(row[4].Trim(),out float v1)) equipItem.equipValue = v1;
-                equipItem.equipPrefabPath = row[5].Trim();
-                equipItem.iconPath = row[6].Trim();
-                equipItem.description = row.Length > 7 ? row[7].Trim() : "";
+                equipItem.description = row.Length > 5 ? row[5].Trim() : "";
+
+                equipItem.equipPrefab = FindPrefabByID(currentItemID);
+
                 newItem = equipItem;
             }
             else if(type == ItemType.Useable)
             {
                 var useItem = ScriptableObject.CreateInstance<UseItemData>();
-                useItem.iconPath = row[4].Trim();
-                useItem.description = row.Length > 5 ? row[5].Trim() : "";
+                useItem.description = row.Length > 4 ? row[4].Trim() : "";
                 newItem = useItem;
             }
 
-            newItem.ID = row[0].Trim();
+            newItem.ID = currentItemID;
             newItem.Name = row[1].Trim();
             if(int.TryParse(row[2].Trim(), out int spawnCount)) newItem.SpawnCount = spawnCount;
             newItem.itemType = type;
 
+            newItem.icon = FindIconByID(currentItemID);
+            
             if (!itemDB.ContainsKey(newItem.ID))
             {
                 itemDB.Add(newItem.ID, newItem);
@@ -116,6 +124,31 @@ public class ItemDataManager : MonoBehaviour
                 Debug.LogWarning($"[{type}] ID 중복 발생! 제외됨: {newItem.ID}");
             }
         }
-       
+    }
+
+    private Sprite FindIconByID(string id)
+    {
+        foreach(Sprite spr in allItemIcons)
+        {
+            if(spr != null && spr.name == id)
+            {
+                return spr;
+            }
+        }
+        Debug.Log($"아이콘 매칭 실패 : {id}");
+        return null;
+    }
+
+    private GameObject FindPrefabByID(string id)
+    {
+        foreach(GameObject prefab in allItemPrefabs)
+        {
+            if(prefab != null && prefab.name == id)
+            {
+                return prefab;
+            }
+        }
+        Debug.Log($"프리팹 매칭 실패 : {id}");
+        return null;
     }
 }

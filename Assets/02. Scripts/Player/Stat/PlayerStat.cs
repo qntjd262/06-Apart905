@@ -35,6 +35,7 @@ public class PlayerStat : MonoBehaviour
 
     public event Action<bool> OnInfectionStateBool;
 
+    
     void Awake()
     {
         // 인벤토리 매니저의 Player 변수에 자기 자신(this)을 할당
@@ -75,7 +76,6 @@ public class PlayerStat : MonoBehaviour
         infection = new StatCondition(100f);
         infection.currentValue = 0f;
     }
-
     void OnEnable()
     {
         PlayerGamemanager.OnGameStatChangeTime += DecreaseSurvivalStat;
