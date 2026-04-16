@@ -41,7 +41,7 @@ public class SaveLoadController : MonoBehaviour
         loadButton.interactable = false;
 
         // 핵심: 현재 모드에 따라 제목 문자열을 결정한 뒤 UIManager로 넘긴다
-        string windowTitle = isSaveMode ? "SAVE FILES" : "LOAD FILES";
+        string windowTitle = isSaveMode ? "저장하기" : "불러오기";
         UIManager.Instance.OpenPopupWithEffects(windowTitle);
 
         RefreshSlots();

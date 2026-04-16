@@ -40,7 +40,7 @@ public class SelectCharacterController : MonoBehaviour
     private void OnEnable()
     {
         if (UIManager.Instance != null)
-            UIManager.Instance.OpenPopupWithEffects("CHARACTER SELECT");
+            UIManager.Instance.OpenPopupWithEffects("캐릭터 선택");
         currentIndex = 0;
         UpdateUI(true);
     }
@@ -181,7 +181,7 @@ public class SelectCharacterController : MonoBehaviour
         if (UIManager.Instance != null)
         {
             UIManager.Instance.CloseSelectCharacterPanel();
-            UIManager.Instance.LoadScene(Constants.ESceneType.Game);
+            UIManager.Instance.LoadScene(Constants.ESceneType.TestScene);
         }
 
     }

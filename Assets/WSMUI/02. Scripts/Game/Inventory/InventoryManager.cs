@@ -15,6 +15,8 @@ public class InventoryManager : Singleton<InventoryManager>
     public Action OnQuickSlotUpdated;
     public Action OnStorageUpdated;
 
+    public PlayerStat Player { get; set; }
+
     protected override void Awake()
     {
         base.Awake();
@@ -42,9 +44,8 @@ public class InventoryManager : Singleton<InventoryManager>
             if (BagSlots[i].item == null)
             {
                 BagSlots[i].item = itemToAdd;
-                BagSlots[i].amount = 1;
 
-                if(QuestManager.Instance != null)
+                if (QuestManager.Instance != null)
                 {
                     QuestManager.Instance.NotifyEvent(QuestType.ItemCollection, itemToAdd.Name, 1);
                 }
@@ -57,64 +58,23 @@ public class InventoryManager : Singleton<InventoryManager>
         return false;
     }
 
-    /*
-    public bool AddItem(ItemData itemToAdd, int amount)
-    {
-        if (itemToAdd.maxStack > 1)
-        {
-            for (int i = 0; i < bagSize; i++)
-            {
-                if (!BagSlots[i].IsEmpty && BagSlots[i].item == itemToAdd && BagSlots[i].amount < itemToAdd.maxStack)
-                {
-                    int spaceLeft = itemToAdd.maxStack - BagSlots[i].amount;
-                    int amountToAdd = Mathf.Min(spaceLeft, amount);
-                    BagSlots[i].amount += amountToAdd;
-                    amount -= amountToAdd;
-
-                    if (amount <= 0)
-                    {
-                        OnBagUpdated?.Invoke();
-                        return true;
-                    }
-                }
-            }
-        }
-
-        if (amount > 0)
-        {
-            for (int i = 0; i < bagSize; i++)
-            {
-                if (BagSlots[i].IsEmpty)
-                {
-                    BagSlots[i].item = itemToAdd;
-                    BagSlots[i].amount = amount;
-                    OnBagUpdated?.Invoke();
-                    return true;
-                }
-            }
-        }
-
-        Debug.Log("가방이 꽉 차서 아이템을 획득할 수 없습니다.");
-        return false;
-    }
-    */
-
     public int GetItemCount(string itemName)
     {
         int count = 0;
-        foreach(var slot in BagSlots)
+        // 가방 확인
+        foreach (var slot in BagSlots)
         {
-            if(slot.item != null && slot.item.Name == itemName)
+            if (slot.item != null && slot.item.Name == itemName)
             {
-                count += slot.amount;
+                count++; // amount 참조 대신 카운트만 증가
             }
         }
-        //퀵슬롯용
-        foreach(var slot in QuickSlots)
+        // 퀵슬롯 확인
+        foreach (var slot in QuickSlots)
         {
-            if(slot.item != null && slot.item.Name == itemName)
+            if (slot.item != null && slot.item.Name == itemName)
             {
-                count += slot.amount;
+                count++;
             }
         }
         return count;
@@ -130,43 +90,35 @@ public class InventoryManager : Singleton<InventoryManager>
 
         if (item is EatableItemData eatItem)
         {
-            if(eatItem.eatableType_1 != EatableType.None)
+            if (eatItem.eatableType_1 != EatableType.None)
                 ApplyEffect(player, eatItem.eatableType_1, eatItem.value_1);
-            if(eatItem.eatableType_2 != EatableType.None)
+            if (eatItem.eatableType_2 != EatableType.None)
                 ApplyEffect(player, eatItem.eatableType_2, eatItem.value_2);
 
-            targetSlot.item = null; 
+            targetSlot.item = null;
 
             if (isQuickSlot) OnQuickSlotUpdated?.Invoke();
             else OnBagUpdated?.Invoke();
         }
     }
 
-    public void RemoveItem(string itemName, int amount)
+    public void RemoveItem(string itemName, int countToRemove)
     {
-        int remainingToRemove = amount;
+        int removedCount = 0;
 
         for (int i = 0; i < bagSize; i++)
         {
             if (BagSlots[i].item != null && BagSlots[i].item.Name == itemName)
             {
-                if (BagSlots[i].amount > remainingToRemove)
-                {
-                    BagSlots[i].amount -= remainingToRemove;
-                    remainingToRemove = 0;
-                }
-                else
-                {
-                    remainingToRemove -= BagSlots[i].amount;
-                    BagSlots[i].item = null;
-                    BagSlots[i].amount = 0;
-                }
+                BagSlots[i].item = null;
+                removedCount++;
+
+                if (removedCount >= countToRemove) break;
             }
-            if (remainingToRemove <= 0) break;
         }
 
         OnBagUpdated?.Invoke();
-        OnQuickSlotUpdated?.Invoke(); // 퀵슬롯 적용
+        OnQuickSlotUpdated?.Invoke();
     }
 
     private void ApplyEffect(PlayerStat player, EatableType type, float value)
@@ -177,8 +129,8 @@ public class InventoryManager : Singleton<InventoryManager>
         {
             case EatableType.Hunger: targetStat = player.hunger; break;
             case EatableType.Thirst: targetStat = player.thirst; break;
-            case EatableType.Health: targetStat = player.hp;     break;
-            case EatableType.Stamina:targetStat = player.stamina; break;
+            case EatableType.Health: targetStat = player.hp; break;
+            case EatableType.Stamina: targetStat = player.stamina; break;
             case EatableType.Infection: targetStat = player.infection; break;
         }
 
@@ -254,15 +206,27 @@ public class InventoryManager : Singleton<InventoryManager>
         OnStorageUpdated?.Invoke();
     }
 
+    public void DiscardItem(int index, bool isQuickSlot)
+    {
+        InventorySlot targetSlot = isQuickSlot ? QuickSlots[index] : BagSlots[index];
+
+        if (targetSlot.item != null)
+        {
+            Debug.Log($"{targetSlot.item.Name}을(를) 버렸습니다.");
+            targetSlot.item = null; // 아이템 삭제
+
+            // UI 갱신 알림
+            if (isQuickSlot) OnQuickSlotUpdated?.Invoke();
+            else OnBagUpdated?.Invoke();
+        }
+    }
+
     private void SwapSlots(InventorySlot slot1, InventorySlot slot2)
     {
         ItemData tempItem = slot1.item;
-        int tempAmount = slot1.amount;
 
         slot1.item = slot2.item;
-        slot1.amount = slot2.amount;
 
         slot2.item = tempItem;
-        slot2.amount = tempAmount;
     }
 }
