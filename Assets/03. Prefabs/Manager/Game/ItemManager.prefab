@@ -1,0 +1,88 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3375911778246523811
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2956186491052033869}
+  - component: {fileID: 1973239739531597370}
+  - component: {fileID: 4158010222720945488}
+  m_Layer: 0
+  m_Name: ItemManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2956186491052033869
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3375911778246523811}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 10.843388, y: 1.6311651, z: -47.942093}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1973239739531597370
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3375911778246523811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3995202ed2a860345b27b06b089bca5f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4158010222720945488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3375911778246523811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a3acb4e740150b418f88dd3e1d82730, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  eatItemCsvUrl: https://docs.google.com/spreadsheets/d/e/2PACX-1vT4U4_4nxPvI1TD9RGs0fVEZv3vmIRNjUeNpPgdod62Gr3Kt0VP61e9D_cVFaAs0Q/pub?gid=195872406&single=true&output=csv
+  equipItemCsvUrl: https://docs.google.com/spreadsheets/d/e/2PACX-1vT4U4_4nxPvI1TD9RGs0fVEZv3vmIRNjUeNpPgdod62Gr3Kt0VP61e9D_cVFaAs0Q/pub?gid=1711219477&single=true&output=csv
+  useItemCsvUrl: https://docs.google.com/spreadsheets/d/e/2PACX-1vT4U4_4nxPvI1TD9RGs0fVEZv3vmIRNjUeNpPgdod62Gr3Kt0VP61e9D_cVFaAs0Q/pub?gid=1830928452&single=true&output=csv
+  allItemList: []
+  allItemIcons:
+  - {fileID: 21300000, guid: 489b4290999e23d4a835ab429859966b, type: 3}
+  - {fileID: 21300000, guid: 489b4290999e23d4a835ab429859966b, type: 3}
+  - {fileID: 21300000, guid: 87c2ce357fb8ffa439b3527880c34952, type: 3}
+  - {fileID: 21300000, guid: bfc050dc6e7daf445bf5bbd325a9720a, type: 3}
+  - {fileID: 21300000, guid: 62550df67a999b64c8c9cf78434bfb2c, type: 3}
+  - {fileID: 21300000, guid: 0e5003095ed47854d8b1468faee2a3d7, type: 3}
+  - {fileID: 21300000, guid: 39039b742043211489b396610d2a961c, type: 3}
+  - {fileID: 21300000, guid: 260d43aadf7f1fd44bce4edaa9438b77, type: 3}
+  - {fileID: 21300000, guid: 4a12e316870171e48a3699544040f08e, type: 3}
+  - {fileID: 21300000, guid: 1b23478e02714e94dac3b0a605a41382, type: 3}
+  - {fileID: 21300000, guid: e22341e7564cdfe46af6deee5a31b8f3, type: 3}
+  - {fileID: 21300000, guid: ee424fee3a31ca84380cfcc35bd06f00, type: 3}
+  - {fileID: 21300000, guid: e629633840b38474696fd5dc768969d2, type: 3}
+  - {fileID: 21300000, guid: 704add2d6296d4440a5dbe85416d514c, type: 3}
+  - {fileID: 21300000, guid: 8cd2cc5a8a9fbba41989659e56c9d566, type: 3}
+  - {fileID: 21300000, guid: a12d5e4aff529884cac8c38bd462f37a, type: 3}
+  - {fileID: 21300000, guid: 7475ec0628b18e845be7065f02db229e, type: 3}
+  - {fileID: 21300000, guid: 5d15f1bc1f8850b4fb0db5522ee27442, type: 3}
+  allItemPrefabs:
+  - {fileID: 2931179796092839377, guid: 4b0651b760dbafb4886b6a78f81d7182, type: 3}
+  - {fileID: 4204010582181540067, guid: 4c1fb416951b4c24b9970cd30e313222, type: 3}
+  - {fileID: 1486738455403128141, guid: a44c9950bf8b0324388331efb81eb0d8, type: 3}
+  - {fileID: 8351158881006838132, guid: 8da0f85afce196c4cbedd97466413679, type: 3}
+  - {fileID: 3603974359348071744, guid: f7db2115833de774a96532fd31a79d76, type: 3}
