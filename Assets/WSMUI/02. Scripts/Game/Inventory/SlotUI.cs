@@ -50,29 +50,35 @@ public class SlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
     {
         if (draggingSlot == null || draggingSlot == this) return;
 
-        if (!draggingSlot.IsQuickSlot && this.IsQuickSlot)
+        // 1. 퀵슬롯 관련 스왑
+        if (draggingSlot.IsQuickSlot || this.IsQuickSlot)
         {
-            InventoryManager.Instance.SwapItemBetweenBagAndQuickSlot(draggingSlot.SlotIndex, this.SlotIndex);
+            if (draggingSlot.IsStorageSlot || this.IsStorageSlot)
+            {
+                Debug.Log("창고와 퀵슬롯 간의 직접 이동은 불가능합니다.");
+                return;
+            }
+
+            // 가방 <-> 퀵슬롯 혹은 퀵슬롯 간 스왑
+            if (!draggingSlot.IsQuickSlot && this.IsQuickSlot)
+                InventoryManager.Instance.SwapItemBetweenBagAndQuickSlot(draggingSlot.SlotIndex, this.SlotIndex);
+            else if (draggingSlot.IsQuickSlot && !this.IsQuickSlot)
+                InventoryManager.Instance.SwapItemBetweenBagAndQuickSlot(this.SlotIndex, draggingSlot.SlotIndex);
+            else if (draggingSlot.IsQuickSlot && this.IsQuickSlot)
+                InventoryManager.Instance.SwapItemWithinQuickSlot(draggingSlot.SlotIndex, this.SlotIndex);
         }
-        else if (draggingSlot.IsQuickSlot && !this.IsQuickSlot)
+        // 2. 창고 관련 스왑
+        else if (draggingSlot.IsStorageSlot || this.IsStorageSlot)
         {
-            InventoryManager.Instance.SwapItemBetweenBagAndQuickSlot(this.SlotIndex, draggingSlot.SlotIndex);
+            if (draggingSlot.IsStorageSlot && !this.IsStorageSlot)
+                InventoryManager.Instance.SwapItemBetweenStorageAndBag(draggingSlot.SlotIndex, this.SlotIndex);
+            else if (!draggingSlot.IsStorageSlot && this.IsStorageSlot)
+                InventoryManager.Instance.SwapItemBetweenStorageAndBag(this.SlotIndex, draggingSlot.SlotIndex);
         }
-        else if (!draggingSlot.IsQuickSlot && !this.IsQuickSlot)
+        // 3. 일반 가방 내 스왑
+        else
         {
             InventoryManager.Instance.SwapItemWithinBag(draggingSlot.SlotIndex, this.SlotIndex);
-        }
-        else if (draggingSlot.IsQuickSlot && this.IsQuickSlot)
-        {
-            InventoryManager.Instance.SwapItemWithinQuickSlot(draggingSlot.SlotIndex, this.SlotIndex);
-        }
-        else if (draggingSlot.IsStorageSlot && !this.IsStorageSlot && !this.IsQuickSlot)
-        {
-            InventoryManager.Instance.SwapItemBetweenStorageAndBag(draggingSlot.SlotIndex, this.SlotIndex);
-        }
-        else if (!draggingSlot.IsStorageSlot && !draggingSlot.IsQuickSlot && this.IsStorageSlot)
-        {
-            InventoryManager.Instance.SwapItemBetweenStorageAndBag(this.SlotIndex, draggingSlot.SlotIndex);
         }
     }
 
@@ -80,22 +86,27 @@ public class SlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
     {
         if (eventData.button == PointerEventData.InputButton.Right)
         {
-            if (icon.sprite != null)
+            if (IsStorageSlot || icon.sprite == null || IsQuickSlot)
             {
-                PlayerStat player = GameObject.FindWithTag("Player").GetComponent<PlayerStat>();
-                InventoryManager.Instance.UseItem(SlotIndex, IsQuickSlot, player);
+                // 만약 퀵슬롯에서 우클릭했을 때 '해제' 기능을 넣고 싶다면 여기에 작성
+                if (IsQuickSlot)
+                {
+                    Debug.Log("퀵슬롯 아이템은 가방에서 관리하거나 단축키를 이용하세요.");
+                }
+                return;
+            }
+            InventorySlot slotData = InventoryManager.Instance.BagSlots[SlotIndex];
+
+            if (slotData != null && slotData.item != null)
+            {
+                if (slotData.item.itemType == ItemType.Useable)
+                {
+                    Debug.Log("퀘스트 아이템은 조작할 수 없습니다.");
+                    return;
+                }
+                ItemMenuUI.Instance.ShowMenu(this, slotData);
             }
         }
     }
 
-    private void UseItem()
-    {
-        PlayerStat player = GameObject.FindWithTag("Player").GetComponent<PlayerStat>();
-
-        if (player != null)
-        {
-            InventoryManager.Instance.UseItem(SlotIndex, IsQuickSlot, player);
-            Debug.Log($"슬롯 {SlotIndex} (퀵슬롯 여부: {IsQuickSlot}) 아이템 사용 시도");
-        }
-    }
 }

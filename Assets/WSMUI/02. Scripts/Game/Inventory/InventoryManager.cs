@@ -15,6 +15,8 @@ public class InventoryManager : Singleton<InventoryManager>
     public Action OnQuickSlotUpdated;
     public Action OnStorageUpdated;
 
+    public PlayerStat Player { get; set; }
+
     protected override void Awake()
     {
         base.Awake();
@@ -202,6 +204,21 @@ public class InventoryManager : Singleton<InventoryManager>
     {
         CurrentStorageSlots = null;
         OnStorageUpdated?.Invoke();
+    }
+
+    public void DiscardItem(int index, bool isQuickSlot)
+    {
+        InventorySlot targetSlot = isQuickSlot ? QuickSlots[index] : BagSlots[index];
+
+        if (targetSlot.item != null)
+        {
+            Debug.Log($"{targetSlot.item.Name}을(를) 버렸습니다.");
+            targetSlot.item = null; // 아이템 삭제
+
+            // UI 갱신 알림
+            if (isQuickSlot) OnQuickSlotUpdated?.Invoke();
+            else OnBagUpdated?.Invoke();
+        }
     }
 
     private void SwapSlots(InventorySlot slot1, InventorySlot slot2)

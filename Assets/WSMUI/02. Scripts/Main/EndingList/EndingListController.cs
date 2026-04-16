@@ -20,7 +20,7 @@ public class EndingListController : MonoBehaviour
     {
         if (UIManager.Instance != null)
         {
-            UIManager.Instance.OpenPopupWithEffects("ENDING LIST");
+            UIManager.Instance.OpenPopupWithEffects("엔딩리스트");
         }
     }
 

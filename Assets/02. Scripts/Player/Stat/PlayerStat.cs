@@ -17,7 +17,7 @@ public class PlayerStat : MonoBehaviour
 
     public float AttackPower
     {
-        get { return attackPower;}
+        get { return attackPower; }
     }
 
     [Header("현재 생존 상태")]
@@ -37,7 +37,22 @@ public class PlayerStat : MonoBehaviour
 
     void Awake()
     {
-        if(CharacterDataManager.Instance != null && CharacterDataManager.Instance.selectedCharacterSO != null)
+        // 인벤토리 매니저의 Player 변수에 자기 자신(this)을 할당
+        if (InventoryManager.Instance != null)
+        {
+            InventoryManager.Instance.Player = this;
+        }
+    }
+
+    void Start() // 데이터 매니저 참조는 Start가 안전합니다.
+    {
+        InitializeStats();
+    }
+
+    private void InitializeStats()
+    {
+
+        if (CharacterDataManager.Instance != null && CharacterDataManager.Instance.selectedCharacterSO != null)
         {
             CharacterStatSO myData = CharacterDataManager.Instance.selectedCharacterSO;
 
@@ -76,10 +91,10 @@ public class PlayerStat : MonoBehaviour
     public void TakeDamage(float damage)
     {
         hp.DecreaseStat(damage);
-        
+
         AddInfection();
 
-        if(hp.currentValue <= 0)
+        if (hp.currentValue <= 0)
         {
             Die();
         }
@@ -95,15 +110,15 @@ public class PlayerStat : MonoBehaviour
     {
         int targetStage = 0;
 
-        if(infection.currentValue >= 80f) targetStage = 3;
-        else if(infection.currentValue >= 50f) targetStage = 2;
-        else if(infection.currentValue >= 30f) targetStage = 1;
+        if (infection.currentValue >= 80f) targetStage = 3;
+        else if (infection.currentValue >= 50f) targetStage = 2;
+        else if (infection.currentValue >= 30f) targetStage = 1;
 
-        if(currentInfectionStage == 0 && targetStage > 0)
+        if (currentInfectionStage == 0 && targetStage > 0)
         {
             OnInfectionStateBool?.Invoke(true);
         }
-        else if(currentInfectionStage == 1 && targetStage == 0)
+        else if (currentInfectionStage == 1 && targetStage == 0)
         {
             OnInfectionStateBool?.Invoke(false);
         }
@@ -124,7 +139,7 @@ public class PlayerStat : MonoBehaviour
         hunger.DecreaseStat(HungerDecreaseRate);
         thirst.DecreaseStat(ThirstDecreaseRate);
 
-        if(hunger.currentValue <= 0 || thirst.currentValue <= 0 || infection.currentValue >= 100f)
+        if (hunger.currentValue <= 0 || thirst.currentValue <= 0 || infection.currentValue >= 100f)
         {
             Debug.Log("허기 또는 갈증이 0 이하 체력깍임");
             hp.DecreaseStat(5f);
