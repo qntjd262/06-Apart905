@@ -7,6 +7,7 @@ public class PlayerController : MonoBehaviour
     private PlayerMove playerMove;
     private PlayerLook playerLook;
     private PlayerAttack playerAttack;
+    private PlayerEquip playerEquip;
 
 
     [Header("플레이어 상태")]
@@ -22,6 +23,7 @@ public class PlayerController : MonoBehaviour
         playerMove = GetComponent<PlayerMove>();
         playerLook = GetComponent<PlayerLook>();
         playerAttack = GetComponent<PlayerAttack>();
+        playerEquip = GetComponent<PlayerEquip>();
     }
     void Start()
     {
@@ -81,6 +83,8 @@ public class PlayerController : MonoBehaviour
 
         playerMove.Move(h, v, isRunning, isCrouch);
 
+        HandleQuickSlotItemEquip();
+
         //플레이어 공격
         if (Input.GetMouseButtonDown(0))
         {   
@@ -89,4 +93,16 @@ public class PlayerController : MonoBehaviour
         }
 
     }
+
+    private void HandleQuickSlotItemEquip()
+    {
+        if(playerEquip == null) return;
+
+        if(Input.GetKeyDown(KeyCode.Alpha1)) playerEquip.EquipFromQuickSlot(0);
+        else if(Input.GetKeyDown(KeyCode.Alpha2)) playerEquip.EquipFromQuickSlot(1);
+        else if(Input.GetKeyDown(KeyCode.Alpha3)) playerEquip.EquipFromQuickSlot(2);
+        else if(Input.GetKeyDown(KeyCode.Alpha4)) playerEquip.EquipFromQuickSlot(3);
+        else if(Input.GetKeyDown(KeyCode.Alpha5)) playerEquip.EquipFromQuickSlot(4);
+    }
+    
 }
