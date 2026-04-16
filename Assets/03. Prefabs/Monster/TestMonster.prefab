@@ -211,15 +211,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b2d16a51fcd19474eac0cd4a5b9d8998, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  monsterStatData: {fileID: 11400000, guid: 8aa57cf68793caf43acd214ec17a2ff3, type: 2}
-  _detectRadius: 10
-  _playerLayer:
+  detectRadius: 10
+  playerLayer:
     serializedVersion: 2
-    m_Bits: 0
-  _detectAngle: 50
-  _center: {fileID: 0}
+    m_Bits: 1024
+  detectAngle: 60
+  center: {fileID: 0}
   _chaseInterval: 0.5
+  _chaseDuration: 3
   _halfExtents: {x: 0, y: 0, z: 0}
+  _waitTime: 0
+  offset: {x: 0, y: 0, z: 0}
   minPatrolTime: 3
   maxPatrolTime: 5
   patrolRadius: 15

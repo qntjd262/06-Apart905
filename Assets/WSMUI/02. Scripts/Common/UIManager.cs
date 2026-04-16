@@ -1,25 +1,57 @@
-using System.Collections;
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 using System;
+using System.Collections;
+using DG.Tweening;
+using TMPro;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class UIManager : Singleton<UIManager>
 {
-    public Canvas Canvas => GetCanvas();
+    [Header("Canvases")]
+    [SerializeField] private Canvas globalCanvas;
+    [SerializeField] private Canvas hudCanvas;
 
-    [Header("UI Panels")]
-    public GameObject inventoryPanel; // 씬 전환 시 참조를 다시 할당할 수 있도록 public 오픈
+    public Canvas CurrentCanvas => hudCanvas != null ? hudCanvas : globalCanvas;
 
-    // HUD 초기화 처리를 위한 참조
+    [Header("Global Effects")]
+    [SerializeField] private GameObject dimBackground;
+    [SerializeField] private GameObject cinematicBars;
+    [SerializeField] private TextMeshProUGUI globalWindowTitleText;
+
+    [Header("UI Panels (Local)")]
+    [SerializeField] public GameObject inventoryPanel;
+    [SerializeField] public GameObject storagePanel;
+    public GameObject pauseMenuPanel;
+    public GameObject gameOverPanel;
+
+    [Header("Global Popup Panels")]
+    [SerializeField] private GameObject selectCharacterPanel;
+    [SerializeField] private GameObject saveLoadPanel;
+    [SerializeField] private GameObject endingListPanel;
+    [SerializeField] private GameObject optionPanel;
+    [SerializeField] private LoadingPanelController loadingPanelPrefab;
+
+    [Header("Fade")]
+    [SerializeField] private CanvasGroup fadeCanvasGroup;
+
     private HUDController _hudController;
+    private int activePopupCount = 0;
+
+    public bool IsAnyPopupOpen => activePopupCount > 0;
 
     protected override void Awake()
     {
         base.Awake();
+
+        if (Instance == this && globalCanvas == null)
+        {
+            globalCanvas = GetComponentInChildren<Canvas>();
+        }
+
     }
 
-    void Start()
+    private void Start()
     {
         if (GameManager.Instance != null)
         {
@@ -27,107 +59,333 @@ public class UIManager : Singleton<UIManager>
         }
     }
 
+    //Test를 위하여 ESceneType.Game -> ESceneType.TestScene으로 변경
     private void Update()
     {
-        if (SceneManager.GetActiveScene().name == Constants.ESceneType.Game.ToString())
+        if (SceneManager.GetActiveScene().name != Constants.ESceneType.TestScene.ToString()) return;
+
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            if (inventoryPanel != null && (Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.Tab)))
+            if (IsAnyGlobalPopupActive()) return;
+            if (gameOverPanel != null && gameOverPanel.activeSelf) return;
+            // 보관함이 열려있다면 (인벤토리도 같이 열려있는 상태)
+            if (storagePanel != null && storagePanel.activeSelf)
+            {
+                // 이 함수 하나로 storagePanel과 inventoryPanel이 동시에 꺼집니다.
+                ToggleStorage();
+            }
+            // 보관함은 없고 인벤토리만 단독으로 열려있을 때
+            else if (inventoryPanel != null && inventoryPanel.activeSelf)
             {
                 ToggleInventory();
             }
+            else if (pauseMenuPanel != null)
+            {
+                TogglePauseMenu();
+            }
+        }
+
+        // 2. E 키 처리 (상호작용 및 닫기)
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            // 보관함이 열려있는 상태라면 닫아줌 (인벤토리도 같이 닫힘)
+            if (storagePanel != null && storagePanel.activeSelf)
+            {
+                ToggleStorage();
+            }
+        }
+
+        //playercontroller에서 인벤토리 토글 담당
+        /*
+        bool isPaused = pauseMenuPanel != null && pauseMenuPanel.activeSelf;
+        bool isBlockedByPopup = IsAnyGlobalPopupActive();
+        if (!isPaused && !isBlockedByPopup && (Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.Tab)))
+        {
+            if (inventoryPanel != null) ToggleInventory();
+        }
+        */
+    }
+
+    public void OpenSelectCharacterPanel()
+    {
+        if (selectCharacterPanel != null)
+        {
+            selectCharacterPanel.SetActive(true);
         }
     }
 
-    private void ToggleInventory()
+    public void CloseSelectCharacterPanel()
     {
-        bool isPanelActive = inventoryPanel.activeSelf;
-        inventoryPanel.SetActive(!isPanelActive);
+        if (selectCharacterPanel != null)
+            selectCharacterPanel.SetActive(false);
+    }
 
-        //커서 상태 나중에 수정
-        // if (!isPanelActive)
-        // {
-        //     Cursor.lockState = CursorLockMode.None;
-        //     Cursor.visible = true;
-        // }
-        // else
-        // {
-        //     Cursor.lockState = CursorLockMode.Locked;
-        //     Cursor.visible = false;
-        // }
+    public void OpenSaveLoadPanelAsLoadMode()
+    {
+        if (saveLoadPanel != null)
+        {
+            SaveLoadController controller = saveLoadPanel.GetComponent<SaveLoadController>();
+            if (controller != null)
+            {
+                controller.currentMode = Constants.ESaveLoadType.Load;
+            }
+
+            saveLoadPanel.SetActive(true);
+        }
+    }
+
+    public void OpenEndingListPanel()
+    {
+        if (endingListPanel != null)
+        {
+            endingListPanel.SetActive(true);
+        }
+    }
+
+    public void OpenOptionPanel()
+    {
+        if (optionPanel != null)
+        {
+            optionPanel.SetActive(true);
+        }
+    }
+
+    public void OpenPopupWithEffects(string title)
+    {
+        activePopupCount++;
+
+        if (activePopupCount == 1)
+        {
+            if (dimBackground != null) dimBackground.SetActive(true);
+            if (cinematicBars != null) cinematicBars.SetActive(true);
+        }
+
+        if (globalWindowTitleText != null && !string.IsNullOrEmpty(title))
+        {
+            globalWindowTitleText.text = title;
+        }
+    }
+
+    public void ClosePopupWithEffects()
+    {
+        activePopupCount--;
+
+        if (activePopupCount <= 0)
+        {
+            activePopupCount = 0;
+
+            if (dimBackground != null) dimBackground.SetActive(false);
+            if (cinematicBars != null) cinematicBars.SetActive(false);
+            if (globalWindowTitleText != null) globalWindowTitleText.text = string.Empty;
+        }
+    }
+
+    public void TogglePauseMenu()
+    {
+        if (pauseMenuPanel == null) return;
+
+        bool isPaused = !pauseMenuPanel.activeSelf;
+        pauseMenuPanel.SetActive(isPaused);
+        Time.timeScale = isPaused ? 0f : 1f;
+    }
+
+    public void ShowPauseMenuWithoutChangingTimeScale()
+    {
+        if (pauseMenuPanel != null && !pauseMenuPanel.activeSelf)
+        {
+            pauseMenuPanel.SetActive(true);
+        }
+    }
+
+    public void ToggleInventory()
+    {
+        if (inventoryPanel == null)
+        {
+            Debug.LogError("UIManager: inventoryPanel reference is missing.");
+            return;
+        }
+
+        bool isNowActive = !inventoryPanel.activeSelf;
+
+        inventoryPanel.SetActive(isNowActive);
+
+        if (_hudController == null)
+        {
+            _hudController = FindFirstObjectByType<HUDController>(FindObjectsInactive.Include);
+        }
+
+        if (_hudController != null)
+        {
+            _hudController.gameObject.SetActive(!isNowActive);
+        }
+    }
+
+
+    public void ToggleStorage(InventorySlot[] slots = null)
+    {
+        if (storagePanel == null || inventoryPanel == null) return;
+
+        // 현재 보관함 상태의 반대로 설정 (열려있으면 닫고, 닫혀있으면 엶)
+        bool isNowActive = !storagePanel.activeSelf;
+
+        // 보관함과 인벤토리를 동시에 활성화/비활성화
+        storagePanel.SetActive(isNowActive);
+        inventoryPanel.SetActive(isNowActive);
+
+        if (isNowActive && slots != null)
+        {
+            InventoryManager.Instance.OpenStorage(slots);
+        }
+        else if (!isNowActive)
+        {
+            InventoryManager.Instance.OpenStorage(null); // CloseStorage() 역할
+        }
+
+        // HUD 제어 (두 창 중 하나라도 열려있으면 HUD는 숨김)
+        if (_hudController == null)
+            _hudController = FindFirstObjectByType<HUDController>(FindObjectsInactive.Include);
+
+        if (_hudController != null)
+        {
+            _hudController.gameObject.SetActive(!isNowActive);
+        }
     }
 
     private void InitializeInGameUI()
     {
         if (_hudController == null)
+        {
             _hudController = FindFirstObjectByType<HUDController>();
+        }
 
         if (_hudController != null)
         {
             _hudController.InitHUD();
-            Debug.Log("UIManager: HUD 초기화 완료");
         }
     }
 
-    public void LoadScene(Constants.ESceneType sceneType)
+    public void LoadScene(Constants.ESceneType sceneType, bool withLoadingPanel = true)
     {
-        StartCoroutine(LoadSceneAsync(sceneType));
+        StartCoroutine(LoadSceneAsync(sceneType, withLoadingPanel));
     }
 
-    private IEnumerator LoadSceneAsync(Constants.ESceneType sceneType)
+    private IEnumerator LoadSceneAsync(Constants.ESceneType sceneType, bool withLoadingPanel = true)
     {
-        var loadingPanelPrefab = Resources.Load<GameObject>("Loading Panel");
-        if (loadingPanelPrefab == null)
+        Time.timeScale = 1f;
+
+        // 1. 화면 검게
+        bool fadeDone = false;
+        FadeOut(0.5f, () => fadeDone = true);
+        yield return new WaitUntil(() => fadeDone);
+
+        if (withLoadingPanel)
         {
-            Debug.LogError("Loading Panel 프리팹을 찾을 수 없습니다.");
-            yield break;
+            if (loadingPanelPrefab == null)
+            {
+                Debug.LogError("UIManager: loadingPanelPrefab reference is missing.");
+                SceneManager.LoadScene(sceneType.ToString());
+                yield break;
+            }
+
+            // 2. 검은 화면에서 로딩 패널 즉시 등장
+            OpenPopupWithEffects("로딩 중...");
+            loadingPanelPrefab.gameObject.SetActive(true);
+            loadingPanelPrefab.SetProgress(0f);
+
+            // 3. 화면 다시 밝게
+            fadeDone = false;
+            FadeIn(0.5f, () => fadeDone = true);
+            yield return new WaitUntil(() => fadeDone);
         }
-
-        var loadingPanelObject = Instantiate(loadingPanelPrefab, Canvas.transform);
-        var loadingPanelController = loadingPanelObject.GetComponent<LoadingPanelController>();
-
-        bool showDone = false;
-        loadingPanelController.Show(() => showDone = true);
-        yield return new WaitUntil(() => showDone);
 
         AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(sceneType.ToString());
         asyncOperation.allowSceneActivation = false;
 
         while (asyncOperation.progress < 0.9f)
         {
-            loadingPanelController.SetProgress(asyncOperation.progress);
+            if (withLoadingPanel) loadingPanelPrefab.SetProgress(asyncOperation.progress);
             yield return null;
         }
 
-        loadingPanelController.SetProgress(1f);
-        asyncOperation.allowSceneActivation = true;
+        if (withLoadingPanel) loadingPanelPrefab.SetProgress(1f);
 
+        // 4. 화면 검게
+        fadeDone = false;
+        FadeOut(0.5f, () => fadeDone = true);
+        yield return new WaitUntil(() => fadeDone);
+
+        asyncOperation.allowSceneActivation = true;
         yield return new WaitUntil(() => asyncOperation.isDone);
 
-        Destroy(loadingPanelObject);
+        if (withLoadingPanel)
+        {
+            loadingPanelPrefab.gameObject.SetActive(false);
+            CloseAllGlobalPopups();
+        }
+    }
+    private bool IsAnyGlobalPopupActive()
+    {
+        return (saveLoadPanel != null && saveLoadPanel.activeSelf)
+            || (optionPanel != null && optionPanel.activeSelf)
+            || (selectCharacterPanel != null && selectCharacterPanel.activeSelf)
+            || (endingListPanel != null && endingListPanel.activeSelf);
     }
 
-    private Canvas GetCanvas()
+    private void CloseAllGlobalPopups()
     {
-        var canvasObject = GameObject.FindGameObjectWithTag("Canvas");
-        if (canvasObject == null)
-        {
-            canvasObject = new GameObject("Canvas");
-            canvasObject.tag = "Canvas";
+        if (selectCharacterPanel != null) selectCharacterPanel.SetActive(false);
+        if (saveLoadPanel != null) saveLoadPanel.SetActive(false);
+        if (endingListPanel != null) endingListPanel.SetActive(false);
+        if (optionPanel != null) optionPanel.SetActive(false);
 
-            var canvas = canvasObject.AddComponent<Canvas>();
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        activePopupCount = 0;
+        if (dimBackground != null) dimBackground.SetActive(false);
+        if (cinematicBars != null) cinematicBars.SetActive(false);
+        if (globalWindowTitleText != null) globalWindowTitleText.text = string.Empty;
+    }
 
-            canvasObject.AddComponent<CanvasScaler>();
-            canvasObject.AddComponent<GraphicRaycaster>();
+    public void FadeIn(float duration = 0.5f, Action onComplete = null)
+    {
+        fadeCanvasGroup.alpha = 1f;
+        fadeCanvasGroup.gameObject.SetActive(true);
+        fadeCanvasGroup.DOFade(0f, duration)
+            .SetUpdate(true)
+            .OnComplete(() =>
+            {
+                fadeCanvasGroup.gameObject.SetActive(false);
+                onComplete?.Invoke();
+            });
+    }
 
-            return canvas;
-        }
-        return canvasObject.GetComponent<Canvas>();
+    public void FadeOut(float duration = 0.5f, Action onComplete = null)
+    {
+        fadeCanvasGroup.alpha = 0f;
+        fadeCanvasGroup.gameObject.SetActive(true);
+        fadeCanvasGroup.DOFade(1f, duration)
+            .SetUpdate(true)
+            .OnComplete(() => onComplete?.Invoke());
     }
 
     protected override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        _hudController = FindFirstObjectByType<HUDController>();
+        CloseAllGlobalPopups();
+        GameObject sceneCanvasObj = GameObject.FindGameObjectWithTag("Canvas");
+        if (sceneCanvasObj != null) hudCanvas = sceneCanvasObj.GetComponent<Canvas>();
+
+        // inventoryPanel만 재탐색
+        InventoryUI invUI = GameObject.FindAnyObjectByType<InventoryUI>(FindObjectsInactive.Include);
+        if (invUI != null) inventoryPanel = invUI.gameObject;
+        if (inventoryPanel != null) inventoryPanel.SetActive(false);
+
+        StorageUI storUI = GameObject.FindAnyObjectByType<StorageUI>(FindObjectsInactive.Include);
+        if (storUI != null) storagePanel = storUI.gameObject;
+        if (storagePanel != null) storagePanel.SetActive(false);
+
+        FadeIn(1f, () =>
+     {
+         if (SoundManager.Instance != null)
+             SoundManager.Instance.PlaySceneBGM(scene.name);
+     });
     }
 
     protected override void OnSceneUnloaded(Scene scene) { }

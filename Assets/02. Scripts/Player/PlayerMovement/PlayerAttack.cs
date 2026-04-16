@@ -17,6 +17,10 @@ public class PlayerAttack : MonoBehaviour
     private float attackCoolDown = 1.45f;
     public bool isAttacking {get; private set;}
 
+    [Header("공격 소음")]
+    private PlayerNoise playerNoise;
+    private float attackNoiseRadius = 10f;
+
     private Animator anim;
 
     void Start()
@@ -29,6 +33,8 @@ public class PlayerAttack : MonoBehaviour
     {
         //TODO : playerstat.cs에서 캐릭터 스탯 가져오기
         playerStat = GetComponent<PlayerStat>();
+
+        playerNoise = GetComponent<PlayerNoise>();
     }
 
     public void Attack()
@@ -48,6 +54,7 @@ public class PlayerAttack : MonoBehaviour
 
         //attackDelay = 애니메이션 동작 타임 제어
         yield return new WaitForSeconds(attackDelay);
+        if(playerNoise != null) playerNoise.TriggerOneShotNoise(attackNoiseRadius);
 
         AttackRayCast();
 
@@ -60,6 +67,7 @@ public class PlayerAttack : MonoBehaviour
     //공격 판정 + 데미지 적용
     private void AttackRayCast()
     {
+        
         if(cameraPos == null) return;
 
         Ray ray = new Ray(cameraPos.position, cameraPos.forward);
@@ -71,11 +79,12 @@ public class PlayerAttack : MonoBehaviour
             //TODO : 몬스터 데미지 적용 + 애니메이션에서 Attack()함수 호출하기
             if (hit.collider.CompareTag("Monster"))
             {
-                MonsterTest monsterTest = hit.collider.GetComponent<MonsterTest>();
+                MonsterController monster = hit.collider.GetComponent<MonsterController>();
 
-                if(monsterTest != null)
+                if(monster != null && playerStat != null)
                 {
-                    monsterTest.TakeDamage(playerStat.AttackPower);
+                    monster.TakeDamage(playerStat.AttackPower, this.gameObject);
+                    Debug.Log("공격 성공");
                 }
             }
         }

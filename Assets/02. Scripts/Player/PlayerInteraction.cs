@@ -31,6 +31,7 @@ public class PlayerInteraction : MonoBehaviour
                 //E 키를 누르면 상호작용 실행
                 if (Input.GetKeyDown(KeyCode.E))
                 {
+                    Debug.Log($"[E] 키 입력 감지! {hit.collider.gameObject.name}와 상호작용을 시도합니다.");
                     interactable.Interact(playerStat);
                 }
             }

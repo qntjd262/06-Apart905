@@ -8,8 +8,13 @@ public class PlayerController : MonoBehaviour
     private PlayerLook playerLook;
     private PlayerAttack playerAttack;
 
+
     [Header("플레이어 상태")]
     public bool isDead =false;
+
+    //[Header("인벤토리 세팅")]
+    
+
     
 
     void Awake()
@@ -20,13 +25,35 @@ public class PlayerController : MonoBehaviour
     }
     void Start()
     {
-        //Cursor.lockState = CursorLockMode.Locked;
-        //Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     void Update()
     {
         if(isDead) return;
+        
+        if (Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.Tab))
+        {
+            UIManager.Instance.ToggleInventory();
+        }
+
+        bool isInventoryOpen = UIManager.Instance.inventoryPanel.activeSelf;
+
+        if (isInventoryOpen)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+
+            return;
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+            
+        
 
         //플레이어 회전 + 카메라
         float mouseX = Input.GetAxis("Mouse X");
@@ -60,5 +87,6 @@ public class PlayerController : MonoBehaviour
             //TODO : 공격 애니메이션을 통해 해당 애니메이션 지점에서 Attack()함수 실행하기
             playerAttack.Attack();
         }
+
     }
 }

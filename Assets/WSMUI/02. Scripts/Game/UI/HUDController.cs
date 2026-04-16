@@ -3,32 +3,44 @@ using UnityEngine;
 public class HUDController : MonoBehaviour
 {
     private SurvivalGauge gauge;
+    private PlayerStat playerStat;
+
+    private bool isInitialized = false;
 
     void Awake()
     {
-        // Start가 아닌 Awake에서 컴포넌트를 캐싱해야 안전하다.
         gauge = GetComponent<SurvivalGauge>();
-    }
-
-    void Start()
-    {
-        InitHUD();
     }
 
     public void InitHUD()
     {
-        if (GameManager.Instance == null || GameManager.Instance.SelectedCharacterData == null)
+        playerStat = FindFirstObjectByType<PlayerStat>();
+        if (playerStat == null)
         {
-            Debug.LogWarning("HUD: 초기화할 캐릭터 데이터가 존재하지 않습니다.");
+            Debug.LogWarning("HUD: PlayerStat을 찾을 수 없습니다.");
             return;
         }
 
-        var data = GameManager.Instance.SelectedCharacterData;
+        // 초기값으로 게이지 세팅
+        if(gauge != null)
+        {
+            gauge.UpdateStamina(playerStat.stamina.currentValue, playerStat.stamina.maxValue, false);
+            gauge.UpdateHunger(playerStat.hunger.currentValue, playerStat.hunger.maxValue);
+            gauge.UpdateThirst(playerStat.thirst.currentValue, playerStat.thirst.maxValue);
+            gauge.UpdateSanity(playerStat.infection.currentValue, playerStat.infection.maxValue);
+        }
 
-        // 플레이어 연동 시 주석 해제 필수
-        // gauge.UpdateStamina(data.maxStamina, data.maxStamina, false);
-        // gauge.UpdateHunger(data.maxHunger, data.maxHunger);
-        // gauge.UpdateThirst(data.maxThirst, data.maxThirst);
-        // gauge.UpdateSanity(0, data.maxSanity); 
+        isInitialized = true;
+        Debug.Log("플레이어 스탯 ui 연동 완료");
+    }
+
+    void Update()
+    {
+        if (!isInitialized || playerStat == null || gauge == null) return;
+
+        gauge.UpdateStamina(playerStat.stamina.currentValue, playerStat.stamina.maxValue);
+        gauge.UpdateHunger(playerStat.hunger.currentValue, playerStat.hunger.maxValue);
+        gauge.UpdateThirst(playerStat.thirst.currentValue, playerStat.thirst.maxValue);
+        gauge.UpdateSanity(playerStat.infection.currentValue, playerStat.infection.maxValue);
     }
 }
