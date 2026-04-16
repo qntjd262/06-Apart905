@@ -8,8 +8,8 @@ public static class Constants
         // Game,
         // Ending
 
-        TestMainScene,
-        TestScene,
+        PrototypeMain,
+        PrototypeGame,
         Ending
     }
     public enum ESaveLoadType

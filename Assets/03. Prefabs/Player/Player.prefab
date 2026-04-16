@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 9117212134077917824}
   - component: {fileID: 7885230071447690142}
   - component: {fileID: 3229521789446988676}
+  - component: {fileID: 3977213404227767790}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -163,6 +164,7 @@ MonoBehaviour:
     currentValue: 0
     maxValue: 0
   currentInfectionStage: 0
+  isInteracting: 0
 --- !u!114 &7885230071447690142
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -202,6 +204,22 @@ MonoBehaviour:
   rippleInterval: 0.5
   showDebugLog: 1
   volumeLevel: 0
+--- !u!114 &3977213404227767790
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4288447685097029145}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ad0440ba2b8ae449ad1ff1fc7f6fad2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactDistance: 3
+  interactLayer:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!1 &4483761089973652734
 GameObject:
   m_ObjectHideFlags: 0
