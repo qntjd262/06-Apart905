@@ -2073,11 +2073,11 @@ MonoBehaviour:
   _halfExtents: {x: 0.92, y: 1.93, z: 1.2}
   _waitTime: 1
   offset: {x: 0, y: 0, z: 0}
-  minPatrolTime: 3
-  maxPatrolTime: 5
+  minPatrolTime: 5
+  maxPatrolTime: 8
   patrolRadius: 10
-  minIdleTime: 3
-  maxIdleTime: 5
+  minIdleTime: 5
+  maxIdleTime: 8
 --- !u!114 &2049902063302787069
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2159,8 +2159,8 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 0
+  m_UseGravity: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0

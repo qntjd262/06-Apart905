@@ -59,7 +59,6 @@ public class AttackPlayer : ActionNode
                     }
                 }
             }
-            Debug.Log("АјАн Сп");
             return NodeState.Running;
         }
 

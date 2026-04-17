@@ -710,11 +710,23 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 726232580332858897, guid: 17ea2d63191aba44688c1fc629a00a4d, type: 3}
       propertyPath: maxIdleTime
-      value: 5
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 726232580332858897, guid: 17ea2d63191aba44688c1fc629a00a4d, type: 3}
       propertyPath: minIdleTime
-      value: 3
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 726232580332858897, guid: 17ea2d63191aba44688c1fc629a00a4d, type: 3}
+      propertyPath: maxPatrolTime
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 726232580332858897, guid: 17ea2d63191aba44688c1fc629a00a4d, type: 3}
+      propertyPath: minPatrolTime
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 726232580332858897, guid: 17ea2d63191aba44688c1fc629a00a4d, type: 3}
+      propertyPath: _chaseDuration
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 726232580332858897, guid: 17ea2d63191aba44688c1fc629a00a4d, type: 3}
       propertyPath: playerLayer.m_Bits
@@ -726,7 +738,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 819825834002921135, guid: 17ea2d63191aba44688c1fc629a00a4d, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1127182238652781207, guid: 17ea2d63191aba44688c1fc629a00a4d, type: 3}
       propertyPath: Loop
@@ -739,6 +751,10 @@ PrefabInstance:
     - target: {fileID: 1127182238652781207, guid: 17ea2d63191aba44688c1fc629a00a4d, type: 3}
       propertyPath: m_Resource
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1127182238652781207, guid: 17ea2d63191aba44688c1fc629a00a4d, type: 3}
+      propertyPath: panLevelCustomCurve.m_Curve.Array.data[0].value
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3212055422348515476, guid: 17ea2d63191aba44688c1fc629a00a4d, type: 3}
       propertyPath: bodyType
@@ -2706,7 +2722,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3027425050049414036, guid: 6f8b4d02b70cd264987e9cccd12575fe, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.9
+      value: -2.63
       objectReference: {fileID: 0}
     - target: {fileID: 3027425050049414036, guid: 6f8b4d02b70cd264987e9cccd12575fe, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2714,7 +2730,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3027425050049414036, guid: 6f8b4d02b70cd264987e9cccd12575fe, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.5
+      value: -8.62
       objectReference: {fileID: 0}
     - target: {fileID: 3027425050049414036, guid: 6f8b4d02b70cd264987e9cccd12575fe, type: 3}
       propertyPath: m_LocalRotation.w
@@ -4182,7 +4198,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4559453170637643689, guid: 1e356580033863140b452cd11303ab4b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.38
+      value: 1.69
       objectReference: {fileID: 0}
     - target: {fileID: 4559453170637643689, guid: 1e356580033863140b452cd11303ab4b, type: 3}
       propertyPath: m_LocalPosition.y
@@ -4190,7 +4206,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4559453170637643689, guid: 1e356580033863140b452cd11303ab4b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -7.37
+      value: -7.97
       objectReference: {fileID: 0}
     - target: {fileID: 4559453170637643689, guid: 1e356580033863140b452cd11303ab4b, type: 3}
       propertyPath: m_LocalRotation.w
@@ -4230,7 +4246,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8186094476854529674, guid: 1e356580033863140b452cd11303ab4b, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8186094476854529674, guid: 1e356580033863140b452cd11303ab4b, type: 3}
       propertyPath: m_TagString
