@@ -6328,6 +6328,7 @@ GameObject:
   - component: {fileID: 7229391140203675277}
   - component: {fileID: 6309308828254376524}
   - component: {fileID: 2529379890105321235}
+  - component: {fileID: -8243167956043191630}
   m_Layer: 11
   m_Name: UrbanZombie
   m_TagString: Monster
@@ -6492,11 +6493,11 @@ MonoBehaviour:
   _halfExtents: {x: 0.5, y: 0.67, z: 0.66}
   _waitTime: 1
   offset: {x: 0, y: -0.62, z: -0.54}
-  minPatrolTime: 5
-  maxPatrolTime: 8
+  minPatrolTime: 10
+  maxPatrolTime: 15
   patrolRadius: 10
-  minIdleTime: 5
-  maxIdleTime: 8
+  minIdleTime: 10
+  maxIdleTime: 15
 --- !u!114 &7712571214228110393
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6511,6 +6512,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   monsterStatSO: {fileID: 11400000, guid: 1b27d1e7423f4324d9c5c1471a646e5d, type: 2}
   currentHealth: 0
+  detectAngle: 60
 --- !u!114 &6493602484300250755
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6573,7 +6575,7 @@ NavMeshAgent:
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 1.5
+  m_StoppingDistance: 2
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -6594,7 +6596,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
-  m_Volume: 0.356
+  m_Volume: 0.5
   m_Pitch: 0.9
   Loop: 0
   Mute: 0
@@ -6705,6 +6707,27 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!135 &-8243167956043191630
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8332598093197692057}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 5.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &8407338246900623519
 GameObject:
   m_ObjectHideFlags: 0

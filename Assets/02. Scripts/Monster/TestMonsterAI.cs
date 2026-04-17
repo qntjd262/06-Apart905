@@ -69,8 +69,8 @@ public class TestMonsterAI : MonoBehaviour
                 // 플레이어가 보인다면
                 new SequenceNode
                 (
-                    new IsSeeingPlayer(detectRadius, detectAngle, playerLayer, blackboard), // 플레이어를 보고 있는지 확인
-
+                    //new IsSeeingPlayer(detectRadius, detectAngle, playerLayer, blackboard), // 플레이어를 보고 있는지 확인
+                    new ConditionNode(() => blackboard.Player != null), // 플레이어가 보인다면
                     new SelectorNode // 플레이어가 보인다면
                     (
                         new SequenceNode
@@ -124,7 +124,7 @@ public class TestMonsterAI : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(transform.position, detectRadius); // 탐지 범위를 시각적으로 표시
+        //Gizmos.DrawWireSphere(transform.position, detectRadius); // 탐지 범위를 시각적으로 표시
         Gizmos.DrawRay(this.center.position, Quaternion.Euler(0, -detectAngle, 0) * transform.forward * detectRadius);
         Gizmos.DrawRay(this.center.position, Quaternion.Euler(0, detectAngle, 0) * transform.forward * detectRadius);
 
@@ -136,7 +136,7 @@ public class TestMonsterAI : MonoBehaviour
         if (blackboard.Player != null)
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawLine(this.center.position, blackboard.Player.transform.position + new Vector3(0, 0.5f, 0)); // 탐지된 플레이어와의 선을 시각적으로 표시
+            Gizmos.DrawLine(this.center.position, blackboard.Player.transform.position + new Vector3(0, 1f, 0)); // 탐지된 플레이어와의 선을 시각적으로 표시
         }
 
         if (blackboard.NavMeshAgent.hasPath)
