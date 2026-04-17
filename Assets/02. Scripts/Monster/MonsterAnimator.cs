@@ -20,6 +20,8 @@ public class MonsterAnimator : MonoBehaviour
     public static readonly int MonsterAniParamAttacked = Animator.StringToHash("Attacked");
     public static readonly int MonsterAniParamDeath = Animator.StringToHash("Death");
     public static readonly int MonsterAniParamIsFront = Animator.StringToHash("IsFront");
+    public static readonly int MonsterAniParamChase = Animator.StringToHash("Chase");
+    public static readonly int MonsterAniParamWalkState = Animator.StringToHash("WalkState");
 
     private void Awake()
     {
@@ -44,25 +46,30 @@ public class MonsterAnimator : MonoBehaviour
 
     public void OnWalk()
     {
-        _animator.SetBool(MonsterAniParamIsMoving, true);
-        //_soundController.OnGrowlSound();
+        _animator.SetInteger(MonsterAniParamWalkState, 1);
+        _soundController.OnGrowlSound();
     }
 
     public void OnAttack()
     {
         _animator.SetTrigger(MonsterAniParamAttack);
-        _animator.SetBool(MonsterAniParamIsMoving, false);
+        _animator.SetInteger(MonsterAniParamWalkState, 0);
         _soundController.OnAttackSound();
     }
 
     public void OnIdle()
     {
-        _animator.SetBool(MonsterAniParamIsMoving, false);
-
+        _animator.SetInteger(MonsterAniParamWalkState, 0);
         if (_moanCoroutine == null)
         {
             _moanCoroutine = StartCoroutine(MoanRoutine());
         }
+    }
+
+    public void OnChase()
+    {
+        _animator.SetInteger(MonsterAniParamWalkState, 2);
+        _soundController.OnRageSound();
     }
 
     IEnumerator MoanRoutine()
@@ -92,6 +99,7 @@ public class MonsterAnimator : MonoBehaviour
         _animator.SetBool(MonsterAniParamIsFront, isFront);
         _animator.SetTrigger(MonsterAniParamAttacked);
         _animator.ResetTrigger(MonsterAniParamAttack);
+        _animator.SetInteger(MonsterAniParamWalkState, 0);
         _soundController.OnAttackedSound();
         _rigidbody.isKinematic = false;
 
@@ -111,5 +119,10 @@ public class MonsterAnimator : MonoBehaviour
     public void OnDeath()
     {
         _animator.SetTrigger(MonsterAniParamDeath);
+    }
+
+    public void OnRage()
+    {
+        _soundController.OnRageSound();
     }
 }

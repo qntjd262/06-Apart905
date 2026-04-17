@@ -20,7 +20,7 @@ public class ChasePlayer: ActionNode
     public override void OnStart()
     {
         _blackboard.MonsterState = Blackboard.State.Chase;
-        _blackboard.Animator.OnWalk();
+        _blackboard.Animator.OnChase();
     }
 
     public override NodeState OnUpdate()

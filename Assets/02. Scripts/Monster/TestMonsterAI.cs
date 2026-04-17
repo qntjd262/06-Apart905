@@ -117,7 +117,7 @@ public class TestMonsterAI : MonoBehaviour
     private void Update()
     {
         //Debug.Log(blackboard.MonsterState);
-        Debug.Log(blackboard.HasLostTarget);
+        //Debug.Log(blackboard.HasLostTarget);
         _rootNode.Evaluate(); // 매 프레임마다 Behavior Tree 평가
     }
 

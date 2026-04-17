@@ -117,7 +117,7 @@ Animator:
   m_GameObject: {fileID: 819825834002921135}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: f263560410702b24f819002bea6cd792, type: 3}
-  m_Controller: {fileID: 9100000, guid: 072ce40309236bc4eb2cde2e7316ded3, type: 2}
+  m_Controller: {fileID: 22100000, guid: 7cd6960e1e53ba14f808a44a9625a783, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -174,11 +174,11 @@ MonoBehaviour:
   _halfExtents: {x: 0.5, y: 0.67, z: 0.66}
   _waitTime: 1
   offset: {x: 0, y: -0.62, z: -0.54}
-  minPatrolTime: 3
-  maxPatrolTime: 5
+  minPatrolTime: 5
+  maxPatrolTime: 8
   patrolRadius: 10
-  minIdleTime: 3
-  maxIdleTime: 5
+  minIdleTime: 5
+  maxIdleTime: 8
 --- !u!114 &3438003573289710738
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -275,7 +275,7 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 0.356
   m_Pitch: 1
   Loop: 0
