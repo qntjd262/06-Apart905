@@ -56,14 +56,14 @@ public class MonsterController : MonoBehaviour
 
         currentHealth -= damage;
        
+        _blackBoard.Player = player;
+        _blackBoard.MonsterState = Blackboard.State.Attacked;
+
         Debug.Log($"{damage} 입음, 남은 체력 {currentHealth}");
         if (currentHealth <= 0)
         {
             Death();
         }
-
-        _blackBoard.Player = player;
-        _blackBoard.MonsterState = Blackboard.State.Attacked;
     }
 
     // 사망

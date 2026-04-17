@@ -14,7 +14,7 @@ public class Wait : ActionNode
     public override void OnStart()
     {
         _startTimer = Time.time;
-        _blackboard.Animator.OnIdle();
+        //_blackboard.Animator.OnIdle();
     }
 
     public override NodeState OnUpdate()
