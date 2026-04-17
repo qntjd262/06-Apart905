@@ -89,7 +89,7 @@ public class PlayerController : MonoBehaviour
         if (Input.GetMouseButtonDown(0))
         {   
             //TODO : 공격 애니메이션을 통해 해당 애니메이션 지점에서 Attack()함수 실행하기
-            playerAttack.Attack();
+            playerEquip.UseCurrentItem();
         }
 
     }

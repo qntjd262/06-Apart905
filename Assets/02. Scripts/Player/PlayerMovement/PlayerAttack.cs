@@ -45,16 +45,6 @@ public class PlayerAttack : MonoBehaviour
 
         if(isAttacking) return;
 
-        if(playerEquip != null && playerEquip.currentEquipItem != null)
-        {
-            //W003 ID = 손전등
-            if(playerEquip.currentEquipItem.ID == "Woo3")
-            {
-                //TODO : 손전등 공격 시, 플래쉬 ON/OFF 동작
-                return;
-            }
-        }
-
         StartCoroutine(AttackRoutine());
 
     }

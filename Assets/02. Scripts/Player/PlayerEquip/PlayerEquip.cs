@@ -11,6 +11,12 @@ public class PlayerEquip : MonoBehaviour
     public EquipItemData currentEquipItem { get; private set;}
 
     private GameObject currentEquipObject;
+    private PlayerAttack playerAttack;
+
+    void Awake()
+    {
+        playerAttack = GetComponent<PlayerAttack>();
+    }
 
     public void EquipItem(ItemData itemData)
     {
@@ -60,6 +66,27 @@ public class PlayerEquip : MonoBehaviour
         currentEquipItem = equipData;
         Debug.Log($"{equipData.Name} 장착 완료");
         #endregion
+    }
+
+    //현재 들고 있는 아이템에 따른 동작 분배기
+    public void UseCurrentItem()
+    {
+        if(currentEquipItem == null)
+        {
+            playerAttack.Attack();
+            return;
+        }
+
+        if(currentEquipItem.ID == "WOO3")
+        {
+            //TODO : 손전등 사용 로직
+        }
+        else
+        {
+            if(playerAttack != null) playerAttack.Attack();
+        }
+
+        
     }
 
     public void EquipFromQuickSlot(int slotIndex)
