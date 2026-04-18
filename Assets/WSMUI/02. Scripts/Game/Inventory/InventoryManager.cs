@@ -49,6 +49,7 @@ public class InventoryManager : Singleton<InventoryManager>
                 {
                     QuestManager.Instance.NotifyEvent(QuestType.ItemCollection, itemToAdd.Name, 1);
                 }
+                SyncQuestAndUI(itemToAdd.itemName);
 
                 OnBagUpdated?.Invoke();
                 return true;
@@ -87,6 +88,7 @@ public class InventoryManager : Singleton<InventoryManager>
         if (targetSlot.item == null || targetSlot.IsEmpty) return;
 
         ItemData item = targetSlot.item;
+        string itemName = item.itemName;
 
         if (item is EatableItemData eatItem)
         {
@@ -95,7 +97,11 @@ public class InventoryManager : Singleton<InventoryManager>
             if (eatItem.eatableType_2 != EatableType.None)
                 ApplyEffect(player, eatItem.eatableType_2, eatItem.value_2);
 
-            targetSlot.item = null;
+
+            targetSlot.item = null; 
+            targetSlot.amount = 0;
+
+            SyncQuestAndUI(itemName);
 
             if (isQuickSlot) OnQuickSlotUpdated?.Invoke();
             else OnBagUpdated?.Invoke();
@@ -116,6 +122,8 @@ public class InventoryManager : Singleton<InventoryManager>
                 if (removedCount >= countToRemove) break;
             }
         }
+
+        SyncQuestAndUI(itemName);
 
         OnBagUpdated?.Invoke();
         OnQuickSlotUpdated?.Invoke();
@@ -237,5 +245,25 @@ public class InventoryManager : Singleton<InventoryManager>
         slot1.item = slot2.item;
 
         slot2.item = tempItem;
+    }
+
+    private void SyncQuestAndUI(string itemName)
+    {
+        if (QuestManager.Instance != null)
+    {
+        //현재 남은 개수 확인
+        int currentCount = GetItemCount(itemName);
+        
+        //당 아이템 관련 퀘스트 찾아서 데이터 동기화
+        var targetQuest = QuestManager.Instance.activeQuests.Find(q => q.targetID == itemName);
+        if (targetQuest != null)
+        {
+            targetQuest.ForceSyncProgress(currentCount);
+        }
+
+        //퀘스트 UI 새로고침
+        QuestUI ui = FindObjectOfType<QuestUI>(true);
+        if (ui != null) ui.RefreshQuestList();
+    }
     }
 }
