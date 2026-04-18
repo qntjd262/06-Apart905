@@ -21,11 +21,11 @@ public class GameManager : Singleton<GameManager>
     protected override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         // 게임 씬으로 진입했을 때만 실행
-        if (scene.name == Constants.ESceneType.TestScene.ToString())
+        if (scene.name == Constants.ESceneType.Game.ToString())
         {
             SpawnAndInitializePlayer();
         }
-        else if (scene.name == Constants.ESceneType.TestMainScene.ToString())
+        else if (scene.name == Constants.ESceneType.Main.ToString())
         {
             // 메인으로 돌아왔을 때 플레이어 파괴 처리 등
             if (_player != null)

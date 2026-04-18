@@ -62,7 +62,7 @@ public class UIManager : Singleton<UIManager>
     //Test를 위하여 ESceneType.Game -> ESceneType.TestScene으로 변경
     private void Update()
     {
-        if (SceneManager.GetActiveScene().name != Constants.ESceneType.TestScene.ToString()) return;
+        if (SceneManager.GetActiveScene().name != Constants.ESceneType.Game.ToString()) return;
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
@@ -186,7 +186,17 @@ public class UIManager : Singleton<UIManager>
 
         bool isPaused = !pauseMenuPanel.activeSelf;
         pauseMenuPanel.SetActive(isPaused);
+
         Time.timeScale = isPaused ? 0f : 1f;
+
+        if (isPaused)
+        {
+            SoundManager.Instance?.PauseBGM();
+        }
+        else
+        {
+            SoundManager.Instance?.ResumeBGM();
+        }
     }
 
     public void ShowPauseMenuWithoutChangingTimeScale()
@@ -275,6 +285,7 @@ public class UIManager : Singleton<UIManager>
 
         // 1. 화면 검게
         bool fadeDone = false;
+        SoundManager.Instance?.StopBGM();
         FadeOut(0.5f, () => fadeDone = true);
         yield return new WaitUntil(() => fadeDone);
 

@@ -4,8 +4,8 @@ public static class Constants
 {
     public enum ESceneType
     {
-        TestMainScene,
-        TestScene,
+        Main,
+        Game,
         Ending
 
         
