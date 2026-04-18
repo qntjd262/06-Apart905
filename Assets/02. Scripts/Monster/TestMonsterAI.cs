@@ -124,7 +124,7 @@ public class TestMonsterAI : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
-        //Gizmos.DrawWireSphere(transform.position, detectRadius); // 탐지 범위를 시각적으로 표시
+        Gizmos.DrawWireSphere(transform.position, detectRadius); // 탐지 범위를 시각적으로 표시
         Gizmos.DrawRay(this.center.position, Quaternion.Euler(0, -detectAngle, 0) * transform.forward * detectRadius);
         Gizmos.DrawRay(this.center.position, Quaternion.Euler(0, detectAngle, 0) * transform.forward * detectRadius);
 

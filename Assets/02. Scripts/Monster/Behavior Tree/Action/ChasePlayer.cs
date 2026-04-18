@@ -55,7 +55,6 @@ public class ChasePlayer: ActionNode
 
     public override void OnStop()
     {
-        Debug.Log("Chase ÁßÁö");
         base.OnStop();
         _blackboard.LastPoint = _navMeshAgent.destination;
         _blackboard.HasLostTarget = true;

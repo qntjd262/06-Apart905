@@ -49,7 +49,6 @@ public class MonsterController : MonoBehaviour
             Vector3 direction = player.transform.position - _blackboard.Center.position + new Vector3(0, 1.5f, 0);
             float distance = direction.magnitude;
             float angle = Vector3.Angle(transform.forward, direction);
-            Debug.Log(angle);
             // 시야각이 일정 각도 이내이고, 사이에 장애물이 없으면 발견 판정
             if (angle <= detectAngle &&
                 Physics.Raycast(_blackboard.Center.position, direction, out RaycastHit hit, distance + 0.5f))
@@ -123,7 +122,6 @@ public class MonsterController : MonoBehaviour
     // 사망
     public void Death()
     {
-        Debug.Log(_blackboard.MonsterState);
         _blackboard.MonsterState = Blackboard.State.Death;
         StartCoroutine(DeathAnim());
     }
