@@ -53,6 +53,15 @@ public class SoundManager : Singleton<SoundManager>
         if (bgmSource != null) bgmSource.Stop();
     }
 
+    public void PauseBGM()
+    {
+        bgmSource.Pause(); // 현재 재생 위치를 기억하고 멈춤
+    }
+
+    public void ResumeBGM()
+    {
+        bgmSource.UnPause(); // 기억된 위치부터 다시 재생
+    }
     public void PlaySFX(string key)
     {
         if (!_sfxDict.TryGetValue(key, out SoundDataSO data)) return;
