@@ -252,6 +252,7 @@ GameObject:
   - component: {fileID: 77499974486842412}
   - component: {fileID: 402786360804397190}
   - component: {fileID: 4555439405092115831}
+  - component: {fileID: 5273381230387616813}
   m_Layer: 5
   m_Name: ReturnButton
   m_TagString: Untagged
@@ -361,6 +362,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &5273381230387616813
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2645007275911983575}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa3b2a7362d100843bcccc655357c442, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sfxKey: button_click
+  hoverSfxKey: button_hover
 --- !u!1 &4484350536463405679
 GameObject:
   m_ObjectHideFlags: 0

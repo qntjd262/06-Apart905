@@ -3639,6 +3639,8 @@ GameObject:
   - component: {fileID: 15362755892983250}
   - component: {fileID: 204325031976236070}
   - component: {fileID: 74628939336154185}
+  - component: {fileID: 374856927355334136}
+  - component: {fileID: 3043190103783584562}
   m_Layer: 11
   m_Name: Giant_Zombie
   m_TagString: Monster
@@ -3656,7 +3658,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -4.2211637, y: 0.00000023841858, z: 11.102239}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.8, y: 1.8, z: 1.8}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7242719435021196318}
@@ -3674,7 +3676,7 @@ Animator:
   m_GameObject: {fileID: 5152905152235290107}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: f57f85ae5e7398b4cb8c70a5432d5a7d, type: 3}
-  m_Controller: {fileID: 9100000, guid: 072ce40309236bc4eb2cde2e7316ded3, type: 2}
+  m_Controller: {fileID: 22100000, guid: 2ddda7113a049284b9e18eb4a59e3ac6, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -3758,15 +3760,15 @@ MonoBehaviour:
   detectAngle: 70
   center: {fileID: 3874732444577207063}
   _chaseInterval: 0.4
-  _chaseDuration: 3
-  _halfExtents: {x: 0.5, y: 0.67, z: 0.66}
-  _waitTime: 1
-  offset: {x: 0, y: -0.62, z: -0.54}
-  minPatrolTime: 3
-  maxPatrolTime: 5
+  _chaseDuration: 4
+  _halfExtents: {x: 1, y: 1.3, z: 1.1}
+  _waitTime: 1.5
+  offset: {x: 0, y: -1.1, z: 0}
+  minPatrolTime: 10
+  maxPatrolTime: 15
   patrolRadius: 10
-  minIdleTime: 3
-  maxIdleTime: 5
+  minIdleTime: 10
+  maxIdleTime: 15
 --- !u!114 &7787019753020274172
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3779,8 +3781,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5936c6c8758bfa4479c689ed44ea1dbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  monsterStatSO: {fileID: 11400000, guid: 8aa57cf68793caf43acd214ec17a2ff3, type: 2}
+  monsterStatSO: {fileID: 11400000, guid: 272106a39a085fe469825e2673ae8ae2, type: 2}
   currentHealth: 0
+  detectAngle: 70
 --- !u!114 &1049868710292544921
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3805,7 +3808,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d298f02eba8942e4b873364b9d170fac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  monsterSoundSO: {fileID: 11400000, guid: 3ac25ece53c38d14eb2dfa2c4cf1475f, type: 2}
+  monsterSoundSO: {fileID: 11400000, guid: 01628424066d98441910219147544592, type: 2}
 --- !u!136 &15362755892983250
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -3843,7 +3846,7 @@ NavMeshAgent:
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 120
-  m_StoppingDistance: 1.5
+  m_StoppingDistance: 2
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1
@@ -3863,9 +3866,9 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
-  m_PlayOnAwake: 1
-  m_Volume: 1
-  m_Pitch: 1
+  m_PlayOnAwake: 0
+  m_Volume: 0.5
+  m_Pitch: 0.8
   Loop: 0
   Mute: 0
   Spatialize: 0
@@ -3873,7 +3876,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 15
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -3908,7 +3911,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -3948,6 +3951,54 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!54 &374856927355334136
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5152905152235290107}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
+--- !u!135 &3043190103783584562
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5152905152235290107}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 5.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5192597751831254875
 GameObject:
   m_ObjectHideFlags: 0

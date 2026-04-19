@@ -7,4 +7,5 @@ public class MonsterSoundSO : ScriptableObject
     public AudioClip attackedSound;
     public AudioClip growlSound;
     public AudioClip rageSound;
+    public AudioClip moanSound;
 }

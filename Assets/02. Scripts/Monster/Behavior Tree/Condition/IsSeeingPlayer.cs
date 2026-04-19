@@ -25,10 +25,10 @@ public class IsSeeingPlayer : Node
             var player = overlapSphere[0].gameObject;
 
             // 각도, 방향, 거리 계산
-            Vector3 direction = player.transform.position - _blackboard.Center.position + new Vector3(0, 0.5f, 0);
+            Vector3 direction = player.transform.position - _blackboard.Center.position + new Vector3(0, 1f, 0);
             float distance = direction.magnitude;
             float angle = Vector3.Angle(_self.transform.forward, direction);
-
+            Debug.Log(angle);
             // 시야각이 일정 각도 이내이고, 사이에 장애물이 없으면 발견 판정
             if (angle <= _detectAngle &&
                 Physics.Raycast(_blackboard.Center.position, direction, out RaycastHit hit, distance + 0.5f))
