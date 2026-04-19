@@ -94,12 +94,12 @@ public class GameOverController : MonoBehaviour
     {
         if (UIManager.Instance != null)
         {
-            UIManager.Instance.LoadScene(Constants.ESceneType.Main);
+            UIManager.Instance.LoadScene(Constants.ESceneType.PrototypeMain);
             gameObject.SetActive(false);
             return;
         }
 
         Time.timeScale = 1f;
-        SceneManager.LoadScene(Constants.ESceneType.Main.ToString());
+        SceneManager.LoadScene(Constants.ESceneType.PrototypeMain.ToString());
     }
 }

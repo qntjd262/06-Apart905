@@ -4,19 +4,13 @@ public static class Constants
 {
     public enum ESceneType
     {
-        Main,
-        Game,
-        Ending
-
-        
         // Main,
         // Game,
         // Ending
 
-
-        //  TestMainScene,
-        // TestScene,
-        // Ending
+        PrototypeMain,
+        PrototypeGame,
+        Ending
     }
     public enum ESaveLoadType
     {

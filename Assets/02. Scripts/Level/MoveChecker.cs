@@ -2,17 +2,57 @@ using UnityEngine;
 
 public class MoveChecker : MonoBehaviour
 {
-    [SerializeField] private bool _isMoveUp;
-    [SerializeField] private MoveLevel moveLevel;
+    private MoveLevel moveLevel;
+
+    public bool isDown, isMid, isUp;
+
+    private void Awake()
+    {
+        moveLevel = FindFirstObjectByType<MoveLevel>();
+    }
 
     private void OnTriggerEnter(Collider other)
     {
         if(other.CompareTag("Player"))
-        {/*
-            if (_isMoveUp)
-                other.GetComponent<Player>().PlayerState;
+        {
+            if (!moveLevel.check)
+            {
+                if (isDown)
+                    moveLevel.state = MoveLevel.PlayerState.MoveDown;
+                else if (isMid)
+                    moveLevel.check = true;
+                else if (isUp)
+                        moveLevel.state = MoveLevel.PlayerState.MoveUp;
+            }
             else
-                other.GetComponent<Player>().MoveDown();*/
+            {
+                if (isDown)
+                {
+                    if (moveLevel.state == MoveLevel.PlayerState.MoveDown)
+                    {
+                        moveLevel.check = false;
+                        return;
+                    }
+                    else if (moveLevel.state == MoveLevel.PlayerState.MoveUp)
+                    {
+                        moveLevel.check = false;
+                        moveLevel.MoveUp();
+                    }
+                }
+                else if (isUp)
+                {
+                    if (moveLevel.state == MoveLevel.PlayerState.MoveUp)
+                    {
+                        moveLevel.check = false;
+                        return;
+                    }
+                    else if (moveLevel.state == MoveLevel.PlayerState.MoveDown)
+                    {
+                        moveLevel.check = false;
+                        moveLevel.MoveDown();
+                    }
+                }
+            }
         }
     }
 }

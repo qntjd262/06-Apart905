@@ -127,14 +127,14 @@ public class SelectCharacterController : MonoBehaviour
             card.DOKill(true);
 
             float targetScale = i == currentIndex ? 1.0f : unselectedScale;
-            float targetBrightness = Mathf.Clamp01(1f - Mathf.Abs(i - currentIndex) * 0.8f);
+            float targetAlpha = Mathf.Clamp01(1f - Mathf.Abs(i - currentIndex) * 0.8f);
 
             if (isImmediate)
                 card.localScale = Vector3.one * targetScale;
             else
                 card.DOScale(targetScale, duration);
 
-            cardScripts?[i]?.SetDim(targetBrightness, duration, isImmediate);
+            cardScripts?[i]?.SetAlpha(targetAlpha, duration, isImmediate);
         }
         UpdateStats();
         UpdateButtonState();
@@ -181,7 +181,7 @@ public class SelectCharacterController : MonoBehaviour
         if (UIManager.Instance != null)
         {
             UIManager.Instance.CloseSelectCharacterPanel();
-            UIManager.Instance.LoadScene(Constants.ESceneType.Game);
+            UIManager.Instance.LoadScene(Constants.ESceneType.PrototypeGame);
         }
 
     }

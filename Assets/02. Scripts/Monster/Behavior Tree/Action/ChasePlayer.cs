@@ -20,7 +20,7 @@ public class ChasePlayer: ActionNode
     public override void OnStart()
     {
         _blackboard.MonsterState = Blackboard.State.Chase;
-        _blackboard.Animator.OnWalk();
+        _blackboard.Animator.OnChase();
     }
 
     public override NodeState OnUpdate()
@@ -55,7 +55,6 @@ public class ChasePlayer: ActionNode
 
     public override void OnStop()
     {
-        Debug.Log("Chase ÁßÁö");
         base.OnStop();
         _blackboard.LastPoint = _navMeshAgent.destination;
         _blackboard.HasLostTarget = true;

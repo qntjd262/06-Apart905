@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -7,12 +8,17 @@ using UnityEngine.AI;
 public class MonsterController : MonoBehaviour
 {
     private NavMeshAgent _navMeshAgent;
-    private Blackboard _blackBoard;
+    private Blackboard _blackboard;
+    private Coroutine _visionSensor;
     public MonsterStatSO monsterStatSO;
 
     [Header("몬스터 체력")]
     private float monsterHealth;
     [SerializeField] private float currentHealth;
+
+    [Header("적 탐지 센서")]
+    //[SerializeField] private float detectRadius = 10f;
+    [SerializeField] private float detectAngle = 60f;
 
     private void Awake()
     {
@@ -22,9 +28,56 @@ public class MonsterController : MonoBehaviour
     private void Start()
     {
         currentHealth = monsterHealth;
-        _blackBoard = GetComponent<TestMonsterAI>().blackboard;
+        _blackboard = GetComponent<TestMonsterAI>().blackboard;
         _navMeshAgent = GetComponent<NavMeshAgent>();
     }
+
+    #region 적 보이는지 체크
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            _visionSensor = StartCoroutine(VisionSensor(other.gameObject));
+        }
+    }
+
+    IEnumerator VisionSensor(GameObject player)
+    {
+        while (true)
+        {
+            // 각도, 방향, 거리 계산
+            Vector3 direction = player.transform.position - _blackboard.Center.position + new Vector3(0, 1.5f, 0);
+            float distance = direction.magnitude;
+            float angle = Vector3.Angle(transform.forward, direction);
+            // 시야각이 일정 각도 이내이고, 사이에 장애물이 없으면 발견 판정
+            if (angle <= detectAngle &&
+                Physics.Raycast(_blackboard.Center.position, direction, out RaycastHit hit, distance + 0.5f))
+            {
+                // hit한 오브젝트의 태그가 Player라면
+                if (hit.collider.CompareTag("Player"))
+                {
+                    _blackboard.Player = player; // 플레이어 정보를 블랙보드에 저장
+                }
+            }
+
+            yield return new WaitForSeconds(0.3f);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            if (_visionSensor != null)
+            {
+                StopCoroutine(_visionSensor);
+                _visionSensor = null;
+            }
+            _blackboard.Player = null;
+        }
+    }
+
+    #endregion
 
     #region 적 발소리 체크
     /// <summary>
@@ -33,8 +86,8 @@ public class MonsterController : MonoBehaviour
     /// <param name="soundOrigin"></param>
     public void CanHearPlayerSound(Vector3 soundOrigin)
     {
-        if (_blackBoard.MonsterState != Blackboard.State.Idle &&
-            _blackBoard.MonsterState != Blackboard.State.Patrol)
+        if (_blackboard.MonsterState != Blackboard.State.Idle &&
+            _blackboard.MonsterState != Blackboard.State.Patrol)
         {
             return;
         }
@@ -43,8 +96,8 @@ public class MonsterController : MonoBehaviour
 
         // TODO : 플레이어의 Noise 범위 내에 있는지 확인
         // 만약, 범위 내에 있다면 true, 없다면 false
-        _blackBoard.CanHearPlayer = true;
-        _blackBoard.SoundDirection = soundDirection;
+        _blackboard.CanHearPlayer = true;
+        _blackboard.SoundDirection = soundDirection;
     }
     #endregion
 
@@ -56,21 +109,20 @@ public class MonsterController : MonoBehaviour
 
         currentHealth -= damage;
        
+        _blackboard.Player = player;
+        _blackboard.MonsterState = Blackboard.State.Attacked;
+
         Debug.Log($"{damage} 입음, 남은 체력 {currentHealth}");
         if (currentHealth <= 0)
         {
             Death();
         }
-
-        _blackBoard.Player = player;
-        _blackBoard.MonsterState = Blackboard.State.Attacked;
     }
 
     // 사망
     public void Death()
     {
-        Debug.Log(_blackBoard.MonsterState);
-        _blackBoard.MonsterState = Blackboard.State.Death;
+        _blackboard.MonsterState = Blackboard.State.Death;
         StartCoroutine(DeathAnim());
     }
 

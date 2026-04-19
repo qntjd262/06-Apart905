@@ -59,7 +59,6 @@ public class AttackPlayer : ActionNode
                     }
                 }
             }
-
             return NodeState.Running;
         }
 
