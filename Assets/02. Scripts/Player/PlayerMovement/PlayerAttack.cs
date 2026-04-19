@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.AppUI.UI;
 using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour
@@ -8,6 +9,7 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] private float attackRange = 2f;
     //TODO : playerstat.cs 추가 후 수정 예정 임시 공격력
     private PlayerStat playerStat;
+    private PlayerEquip playerEquip;
 
     [SerializeField] private Transform cameraPos;
 
@@ -35,6 +37,7 @@ public class PlayerAttack : MonoBehaviour
         playerStat = GetComponent<PlayerStat>();
 
         playerNoise = GetComponent<PlayerNoise>();
+        playerEquip = GetComponent<PlayerEquip>();
     }
 
     public void Attack()
@@ -83,7 +86,8 @@ public class PlayerAttack : MonoBehaviour
 
                 if(monster != null && playerStat != null)
                 {
-                    monster.TakeDamage(playerStat.AttackPower, this.gameObject);
+                    float totalDamage = CalculateAttackDamage();
+                    monster.TakeDamage(totalDamage, this.gameObject);
                     Debug.Log("공격 성공");
                 }
             }
@@ -96,6 +100,19 @@ public class PlayerAttack : MonoBehaviour
         {
             Debug.Log("없음");
         }
+    }
+
+    private float CalculateAttackDamage()
+    {
+        float finalDamage = playerStat != null ? playerStat.AttackPower : 0f;
+
+        if(playerEquip != null && playerEquip.currentEquipItem != null)
+        {
+            finalDamage += playerEquip.currentEquipItem.equipValue;
+            Debug.Log($"장착 아이템 : {playerEquip.currentEquipItem.Name}, 합산 공격력 기본 : {playerStat.AttackPower} + 아이템 {playerEquip.currentEquipItem.equipValue}");
+        }
+
+        return finalDamage;
     }
 
     //사거리를 보기 위함
