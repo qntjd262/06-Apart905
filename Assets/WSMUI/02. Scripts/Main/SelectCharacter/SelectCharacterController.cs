@@ -127,14 +127,14 @@ public class SelectCharacterController : MonoBehaviour
             card.DOKill(true);
 
             float targetScale = i == currentIndex ? 1.0f : unselectedScale;
-            float targetAlpha = Mathf.Clamp01(1f - Mathf.Abs(i - currentIndex) * 0.8f);
+            float targetBrightness = Mathf.Clamp01(1f - Mathf.Abs(i - currentIndex) * 0.8f);
 
             if (isImmediate)
                 card.localScale = Vector3.one * targetScale;
             else
                 card.DOScale(targetScale, duration);
 
-            cardScripts?[i]?.SetAlpha(targetAlpha, duration, isImmediate);
+            cardScripts?[i]?.SetDim(targetBrightness, duration, isImmediate);
         }
         UpdateStats();
         UpdateButtonState();
