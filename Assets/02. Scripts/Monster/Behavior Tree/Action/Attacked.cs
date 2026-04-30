@@ -41,6 +41,8 @@ public class Attacked : ActionNode
         float dot = Vector3.Dot(selfTransform.forward, dirToPlayer);
 
         // angle이 0보다 크면 앞에서, 작으면 뒤에서 맞는 애니메이션 출력
+        Vector3 lookDirection = dot > 0 ? dirToPlayer : -dirToPlayer;
+        _blackboard.Self.transform.rotation = Quaternion.LookRotation(lookDirection);
         _blackboard.Animator.OnAttacked(dot > 0);
     }
 
@@ -58,7 +60,7 @@ public class Attacked : ActionNode
             _navMeshAgent.updateRotation = false; // 네브메쉬로 인한 회전 정지
 
             Quaternion dirToPlayer = Quaternion.LookRotation(playerTransform.position - selfTransform.position);
-            _blackboard.Self.transform.rotation = Quaternion.Slerp(selfTransform.rotation, dirToPlayer, 1.5f * Time.deltaTime);
+            _blackboard.Self.transform.rotation = Quaternion.Slerp(selfTransform.rotation, dirToPlayer, 3f * Time.deltaTime);
 
             // 아직 다 돌아보지 않았다면 계속 회전
             if (Quaternion.Angle(_blackboard.Self.transform.rotation, dirToPlayer) > 30f)
