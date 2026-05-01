@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class UIManager : Singleton<UIManager>
 {
@@ -37,7 +38,6 @@ public class UIManager : Singleton<UIManager>
 
     private HUDController _hudController;
     private int activePopupCount = 0;
-
     public bool IsAnyPopupOpen => activePopupCount > 0;
 
     protected override void Awake()
@@ -95,6 +95,7 @@ public class UIManager : Singleton<UIManager>
             }
         }
 
+
         //playercontroller에서 인벤토리 토글 담당
         /*
         bool isPaused = pauseMenuPanel != null && pauseMenuPanel.activeSelf;
@@ -106,6 +107,37 @@ public class UIManager : Singleton<UIManager>
         */
     }
 
+    private void UpdateCursorState()
+    {
+        // 1. 메인 메뉴 등 게임 씬이 아닐 때는 무조건 커서 활성화
+        if (SceneManager.GetActiveScene().name != Constants.ESceneType.PrototypeGame.ToString())
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            return;
+        }
+
+        // 2. 게임 씬일 경우: 하나라도 열려 있으면 true
+        bool inventoryActive = (inventoryPanel != null && inventoryPanel.activeSelf);
+        bool storageActive = (storagePanel != null && storagePanel.activeSelf);
+        bool pauseActive = (pauseMenuPanel != null && pauseMenuPanel.activeSelf);
+        bool gameOverActive = (gameOverPanel != null && gameOverPanel.activeSelf);
+
+        // IsAnyPopupOpen(전역 팝업 카운트) + 로컬 패널들 상태 합산
+        bool showCursor = IsAnyPopupOpen || inventoryActive || storageActive || pauseActive || gameOverActive;
+
+        if (showCursor)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
+        else
+        {
+            // 모든 UI가 닫혀 있을 때만 커서를 잠금
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+    }
     public void OpenSelectCharacterPanel()
     {
         if (selectCharacterPanel != null)
@@ -186,6 +218,7 @@ public class UIManager : Singleton<UIManager>
 
         bool isPaused = !pauseMenuPanel.activeSelf;
         pauseMenuPanel.SetActive(isPaused);
+        UpdateCursorState();
 
         Time.timeScale = isPaused ? 0f : 1f;
 
@@ -209,6 +242,7 @@ public class UIManager : Singleton<UIManager>
 
     public void ToggleInventory()
     {
+
         if (inventoryPanel == null)
         {
             Debug.LogError("UIManager: inventoryPanel reference is missing.");
@@ -218,6 +252,7 @@ public class UIManager : Singleton<UIManager>
         bool isNowActive = !inventoryPanel.activeSelf;
 
         inventoryPanel.SetActive(isNowActive);
+        UpdateCursorState();
 
         if (_hudController == null)
         {
@@ -233,6 +268,7 @@ public class UIManager : Singleton<UIManager>
 
     public void ToggleStorage(InventorySlot[] slots = null)
     {
+
         if (storagePanel == null || inventoryPanel == null) return;
 
         // 현재 보관함 상태의 반대로 설정 (열려있으면 닫고, 닫혀있으면 엶)
@@ -241,6 +277,7 @@ public class UIManager : Singleton<UIManager>
         // 보관함과 인벤토리를 동시에 활성화/비활성화
         storagePanel.SetActive(isNowActive);
         inventoryPanel.SetActive(isNowActive);
+        UpdateCursorState();
 
         if (isNowActive && slots != null)
         {
@@ -283,7 +320,9 @@ public class UIManager : Singleton<UIManager>
     {
         Time.timeScale = 1f;
 
-        // 1. 화면 검게
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        
         bool fadeDone = false;
         SoundManager.Instance?.StopBGM();
         FadeOut(0.5f, () => fadeDone = true);
@@ -391,7 +430,17 @@ public class UIManager : Singleton<UIManager>
         StorageUI storUI = GameObject.FindAnyObjectByType<StorageUI>(FindObjectsInactive.Include);
         if (storUI != null) storagePanel = storUI.gameObject;
         if (storagePanel != null) storagePanel.SetActive(false);
+        bool isGameScene = scene.name == Constants.ESceneType.PrototypeGame.ToString();
 
+        if (isGameScene)
+        {
+            UpdateCursorState();
+        }
+        else
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+        }
         FadeIn(1f, () =>
      {
          if (SoundManager.Instance != null)
@@ -399,6 +448,18 @@ public class UIManager : Singleton<UIManager>
      });
     }
 
+    private void OnApplicationFocus(bool focus)
+    {
+        if (focus)
+        {
+            // 현재 UI 상태에 맞춰 커서 상태를 강제로 재설정
+            string currentScene = SceneManager.GetActiveScene().name;
+            if (currentScene == Constants.ESceneType.PrototypeGame.ToString())
+            {
+                UpdateCursorState();
+            }
+        }
+    }
     protected override void OnSceneUnloaded(Scene scene) { }
 
     protected override void OnDestroy()
