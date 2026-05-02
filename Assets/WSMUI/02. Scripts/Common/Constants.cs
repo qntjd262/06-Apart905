@@ -17,4 +17,12 @@ public static class Constants
         Save,
         Load
     }
+    public enum InteractType
+    {
+        None = 0,
+        Door,      
+        Search,     
+        Pickup,       
+        Talk,       
+    }
 }

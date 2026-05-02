@@ -4,6 +4,16 @@ public class NPC : MonoBehaviour, IInteractable
 {
     public Quest myQuest;
 
+    public string GetInteractText()
+    {
+        return "대화하기";
+    }
+
+    public Constants.InteractType GetInteractType()
+    {
+       return Constants.InteractType.Talk;
+    }
+
     public void Interact(PlayerStat player)
     {
         if (player.isInteracting || myQuest == null) return;

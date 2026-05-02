@@ -2,7 +2,8 @@ using UnityEngine;
 
 public class ItemObject : MonoBehaviour, IInteractable
 {
-    public ItemData itemData; 
+    public ItemData itemData;
+
 
     public void Interact(PlayerStat player) // 매개변수 타입 변경
     {
@@ -15,6 +16,15 @@ public class ItemObject : MonoBehaviour, IInteractable
         }
     }
 
+    public string GetInteractText()
+    {
+        return "획득";
+    }
+
+    public Constants.InteractType GetInteractType()
+    {
+        return Constants.InteractType.Pickup;
+    }
 // private void ApplyEffect(PlayerStat player, ItemDataEatable effect)
 // {
 //     StatCondition targetStat = null;

@@ -40,6 +40,10 @@ public class UIManager : Singleton<UIManager>
     private int activePopupCount = 0;
     public bool IsAnyPopupOpen => activePopupCount > 0;
 
+    [Header("Interaction UI")]
+    private InteractUI activeInteractUI;
+    [SerializeField] private Sprite[] interactIcons;
+
     protected override void Awake()
     {
         base.Awake();
@@ -95,16 +99,6 @@ public class UIManager : Singleton<UIManager>
             }
         }
 
-
-        //playercontroller에서 인벤토리 토글 담당
-        /*
-        bool isPaused = pauseMenuPanel != null && pauseMenuPanel.activeSelf;
-        bool isBlockedByPopup = IsAnyGlobalPopupActive();
-        if (!isPaused && !isBlockedByPopup && (Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.Tab)))
-        {
-            if (inventoryPanel != null) ToggleInventory();
-        }
-        */
     }
 
     private void UpdateCursorState()
@@ -138,6 +132,26 @@ public class UIManager : Singleton<UIManager>
             Cursor.visible = false;
         }
     }
+
+    public void RegisterInteractionUI(InteractUI ui)
+    {
+        activeInteractUI = ui;
+        activeInteractUI.gameObject.SetActive(false);
+    }
+    public void ShowInteractUI(string text, Constants.InteractType type)
+    {
+        if (activeInteractUI == null) return;
+        activeInteractUI.gameObject.SetActive(true);
+        activeInteractUI.interactText.text = $"[E]를 눌러 {text}";
+        activeInteractUI.iconImage.sprite = interactIcons[(int)type];
+    }
+
+    public void HideInteractUI()
+    {
+        if (activeInteractUI == null) return;
+        activeInteractUI.gameObject.SetActive(false);
+    }
+
     public void OpenSelectCharacterPanel()
     {
         if (selectCharacterPanel != null)
@@ -322,7 +336,7 @@ public class UIManager : Singleton<UIManager>
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        
+
         bool fadeDone = false;
         SoundManager.Instance?.StopBGM();
         FadeOut(0.5f, () => fadeDone = true);
