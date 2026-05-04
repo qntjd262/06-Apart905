@@ -2,15 +2,34 @@ using UnityEngine;
 
 public class Flashlight : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public Light spotLight;
+
+    private bool isOn = false;
+
+    void Awake()
     {
-        
+        ForceTurnOff();
     }
 
-    // Update is called once per frame
-    void Update()
+    public void ToggleFlashlight()
     {
+        isOn = !isOn;
         
+        if(spotLight != null)
+        {
+            spotLight.enabled = isOn;
+        }
+
+        Debug.Log(isOn ? "손전등 켜짐" : "손전등 꺼짐");
+    }
+
+    public void ForceTurnOff()
+    {
+        isOn = false;
+
+        if(spotLight != null)
+        {
+            spotLight.enabled = false;
+        }
     }
 }

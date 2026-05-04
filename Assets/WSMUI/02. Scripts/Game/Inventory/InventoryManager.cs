@@ -109,9 +109,9 @@ public class InventoryManager : Singleton<InventoryManager>
         if (item is EatableItemData eatItem)
         {
             if (eatItem.eatableType_1 != EatableType.None)
-                ApplyEffect(player, eatItem.eatableType_1, eatItem.value_1);
+                player.ApplyEatableEffect(eatItem.eatableType_1, eatItem.value_1);
             if (eatItem.eatableType_2 != EatableType.None)
-                ApplyEffect(player, eatItem.eatableType_2, eatItem.value_2);
+                player.ApplyEatableEffect(eatItem.eatableType_2, eatItem.value_2);
 
 
 
@@ -168,52 +168,6 @@ public class InventoryManager : Singleton<InventoryManager>
         OnQuickSlotUpdated?.Invoke();
     }
 
-
-    private void ApplyEffect(PlayerStat player, EatableType type, float value)
-    {
-        Debug.Log($"[아이템 효과 발동] 타입: {type}, 회복/감소량: {value}");
-
-
-        StatCondition targetStat = null;
-
-
-        switch (type)
-        {
-            case EatableType.Hunger: targetStat = player.hunger; break;
-            case EatableType.Thirst: targetStat = player.thirst; break;
-            case EatableType.Health: targetStat = player.hp; break;
-            case EatableType.Stamina: targetStat = player.stamina; break;
-            case EatableType.Infection: targetStat = player.infection; break;
-        }
-
-
-        if (targetStat != null)
-        {
-            //로그찍기 위함
-            float before = targetStat.currentValue;
-
-
-            // 감염도(Infection)인 경우에만 수치를 뺌
-            if (type == EatableType.Infection)
-            {
-                targetStat.currentValue -= value;
-            }
-            else // 나머지는 수치를 더합니다 (회복 효과)
-            {
-                targetStat.currentValue += value;
-            }
-
-
-            Debug.Log($"[{type}] 변경 전: {before} -> 변경 후: {targetStat.currentValue} (최대치: {targetStat.maxValue})");
-
-
-            // 스탯이 0 ~ 최대값 범위를 벗어나지 않게 고정
-            targetStat.currentValue = Mathf.Clamp(targetStat.currentValue, 0, targetStat.maxValue);
-            Debug.Log($"{type} 스탯 변경됨, 현재 수치 : {targetStat.currentValue}");
-        }
-
-
-    }
     private void EquipToQuickSlot(int bagIndex)
     {
         // 1. 퀵슬롯에서 빈 공간(item이 null인 곳) 찾기

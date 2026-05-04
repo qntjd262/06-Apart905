@@ -77,9 +77,12 @@ public class PlayerEquip : MonoBehaviour
             return;
         }
 
-        if(currentEquipItem.ID == "WOO3")
+        Flashlight flashlight = currentEquipObject.GetComponent<Flashlight>();
+
+        if(flashlight != null)
         {
             //TODO : 손전등 사용 로직
+            flashlight.ToggleFlashlight();
         }
         else
         {

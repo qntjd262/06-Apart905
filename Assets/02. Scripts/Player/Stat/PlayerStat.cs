@@ -146,4 +146,38 @@ public class PlayerStat : MonoBehaviour
             Debug.Log($"현재 체력 : {hp.currentValue}");
         }
     }
+
+    public void ApplyEatableEffect(EatableType type, float value)
+    {
+        Debug.Log($"아이템 효과 발동 타입 : {type}, 수치 : {value}");
+
+        StatCondition targetStat = null;
+
+        switch (type)
+        {
+            case EatableType.Hunger: targetStat = hunger; break;
+            case EatableType.Thirst: targetStat = thirst; break;
+            case EatableType.Health: targetStat = hp; break;
+            case EatableType.Stamina: targetStat = stamina; break;
+            case EatableType.Infection: targetStat = infection; break;
+        }
+        if(targetStat != null)
+        {
+            //로그찍기 위함
+            float before = targetStat.currentValue;
+
+            if(type == EatableType.Infection) //감염도인 경우 수치 빼기
+            {
+                targetStat.currentValue -= value;
+            }
+            else //나머지는 수치 더하기
+            {
+                targetStat.currentValue += value;
+            }
+
+            //스탯이 0 ~ 최대값 범위를 벗어나지 않게 고정
+            targetStat.currentValue = Mathf.Clamp(targetStat.currentValue, 0, targetStat.maxValue);
+            Debug.Log($"{type} 변경 전 : {before} ->  변경 후 : {targetStat.currentValue}");
+        }
+    }
 }
