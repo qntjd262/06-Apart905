@@ -14,6 +14,7 @@ public class SlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 
     public bool IsStorageSlot { get; set; }
 
+    public bool IsInGameQuickSlot { get; set; }
 
     public void UpdateSlot(InventorySlot slotData)
     {
@@ -31,6 +32,7 @@ public class SlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 
     public void OnBeginDrag(PointerEventData eventData)
     {
+        if (IsInGameQuickSlot) return;
         if (icon.sprite == null) return;
         draggingSlot = this;
         icon.color = new Color(1, 1, 1, 0.5f);
