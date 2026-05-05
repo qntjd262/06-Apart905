@@ -27,11 +27,9 @@ public class MemorySequenceNode : CompositeNode
                     return NodeState.Running;
 
                 case NodeState.Failure: // 실패하면 전체 실패 처리
-                    OnStop();
                     return NodeState.Failure;
             }
         }
-
         OnStop();
         return NodeState.Success; // 모든 자식이 성공하면 성공 반환
     }

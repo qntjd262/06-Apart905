@@ -3759,7 +3759,7 @@ MonoBehaviour:
     m_Bits: 1024
   detectAngle: 70
   center: {fileID: 3874732444577207063}
-  _chaseInterval: 0.4
+  _chaseInterval: 0.25
   _chaseDuration: 4
   _halfExtents: {x: 1, y: 1.3, z: 1.1}
   _waitTime: 1.5
@@ -3841,10 +3841,10 @@ NavMeshAgent:
   m_GameObject: {fileID: 5152905152235290107}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.5
+  m_Radius: 0.7
   m_Speed: 2.5
-  m_Acceleration: 8
-  avoidancePriority: 50
+  m_Acceleration: 6
+  avoidancePriority: 51
   m_AngularSpeed: 120
   m_StoppingDistance: 2
   m_AutoTraverseOffMeshLink: 1

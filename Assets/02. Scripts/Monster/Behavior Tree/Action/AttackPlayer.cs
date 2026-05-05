@@ -23,6 +23,7 @@ public class AttackPlayer : ActionNode
     public override void OnStart()
     {
         _blackboard.MonsterState = Blackboard.State.Attack;
+        _blackboard.Self.transform.LookAt(_blackboard.Player.transform);
         _colliderHashSet.Clear();
 
         // TODO : 애니메이션 실행

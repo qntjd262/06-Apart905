@@ -87,20 +87,20 @@ public class TestMonsterAI : MonoBehaviour
                     )
                 ),
 
-                // 적의 발소리가 들린다면 && 추적 중이 아니라면 
-                new SequenceNode
-                (
-                    new ConditionNode(() => blackboard.MonsterState != Blackboard.State.Chase &&
-                                            blackboard.CanHearPlayer),
-                    new LookAt(() => blackboard.SoundDirection, 1f, blackboard)
-                ),
-
                 // 추적 중 플레이어가 시야에서 사라진다면
                 new MemorySequenceNode
                 (
                     new ConditionNode(() => blackboard.HasLostTarget),
                     new MoveToLastPoint(_chaseDuration, blackboard),
                     new LookAround(4f, 40f, blackboard)
+                ),
+
+                // 적의 발소리가 들린다면 && 추적 중이 아니라면 
+                new SequenceNode
+                (
+                    new ConditionNode(() => blackboard.MonsterState != Blackboard.State.Chase &&
+                                            blackboard.CanHearPlayer),
+                    new LookAt(() => blackboard.SoundDirection, 1f, blackboard)
                 ),
 
                 // 정찰 및 대기
@@ -116,9 +116,8 @@ public class TestMonsterAI : MonoBehaviour
 
     private void Update()
     {
-        //Debug.Log(blackboard.MonsterState);
-        //Debug.Log(blackboard.HasLostTarget);
         _rootNode.Evaluate(); // 매 프레임마다 Behavior Tree 평가
+        Debug.Log(blackboard.Player);
     }
 
     private void OnDrawGizmos()

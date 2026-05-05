@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -11,13 +9,13 @@ public class MonsterController : MonoBehaviour
     private Blackboard _blackboard;
     private Coroutine _visionSensor;
     public MonsterStatSO monsterStatSO;
+    private LayerMask _monsterMask = ~(1 << 11);
 
     [Header("몬스터 체력")]
     private float monsterHealth;
     [SerializeField] private float currentHealth;
 
     [Header("적 탐지 센서")]
-    //[SerializeField] private float detectRadius = 10f;
     [SerializeField] private float detectAngle = 60f;
 
     private void Awake()
@@ -51,12 +49,15 @@ public class MonsterController : MonoBehaviour
             float angle = Vector3.Angle(transform.forward, direction);
             // 시야각이 일정 각도 이내이고, 사이에 장애물이 없으면 발견 판정
             if (angle <= detectAngle &&
-                Physics.Raycast(_blackboard.Center.position, direction, out RaycastHit hit, distance + 0.5f))
+                Physics.Raycast(_blackboard.Center.position, direction, out RaycastHit hit, distance + 0.5f, _monsterMask))
             {
-                // hit한 오브젝트의 태그가 Player라면
                 if (hit.collider.CompareTag("Player"))
                 {
                     _blackboard.Player = player; // 플레이어 정보를 블랙보드에 저장
+                }
+                else
+                {
+                    _blackboard.Player = null; // 플레이어가 안보일시 플레이어 정보 삭제
                 }
             }
 
