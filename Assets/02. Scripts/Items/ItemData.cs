@@ -7,7 +7,8 @@ public enum ItemType
     Equipable, // 장착 아이템 (무기, 손전등 등)
     Eatable,   // 소모 아이템 (음식, 약 등)
     Useable,   // 특수 아이템 (일반 열쇠, 건전지 등)
-    Quest // 퀘스트 아이템 (퀘스트 진행에 필요한 아이템)
+    Quest, // 퀘스트 아이템 (퀘스트 진행에 필요한 아이템)
+    Key
 }
 
 // 소모 시 영향을 줄 스탯 종류
@@ -52,8 +53,6 @@ public class UseItemData : ItemData
     public float useValue;
 }
 
-[CreateAssetMenu(fileName = "New Quest Item", menuName = "Item Data/Quest Item")]
-public class QuestItemData : ItemData
-{   
-    public string targetQuestID;
-}
+
+
+
