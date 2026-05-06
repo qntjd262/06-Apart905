@@ -7,6 +7,9 @@ public class Shelf : MonoBehaviour, IInteractable
     [Header("선반 고유 번호")]
     [SerializeField] private string shelfID;
 
+    [Header ("고정 스폰 아이템")]
+    [SerializeField] private List<ItemData> fixedItems = new List<ItemData>();
+
     [Header("선반 파밍 설정")]
     [SerializeField] private int minItems = 2;
     [SerializeField] private int maxItems = 4;
@@ -51,7 +54,7 @@ public class Shelf : MonoBehaviour, IInteractable
 
     private void GenerateRandomItem()
     {
-        int itemCount = UnityEngine.Random.Range(minItems, maxItems + 1);
+        
         // shelfInventory.Clear();
 
         // for (int i = 0; i < itemCount; i++)
@@ -70,14 +73,34 @@ public class Shelf : MonoBehaviour, IInteractable
             slot.item = null;
         }
 
-        for (int i = 0; i < itemCount; i++)
+        int currentSlotIndex = 0;
+
+        //고정아이템 슬롯에 먼저 배치
+        if(fixedItems != null && fixedItems.Count > 0)
         {
+            foreach (ItemData item in fixedItems)
+            {
+                if(currentSlotIndex < shelfSlots.Length)
+                {
+                    shelfSlots[currentSlotIndex].item = item;
+                    currentSlotIndex ++;
+                }
+            }
+        }
+        
+        int ranItemCount = UnityEngine.Random.Range(minItems, maxItems + 1);
+
+        for (int i = 0; i < ranItemCount; i++)
+        {
+            if(currentSlotIndex >= shelfSlots.Length) break;
+
             // GlobalItemCountManager에서 아이템 드로우
             ItemData newItem = GlobalItemCountManager.Instance.DrawItem();
             if (newItem != null)
             {
                 // 생성된 개수만큼 앞에서부터 슬롯에 할당
-                shelfSlots[i].item = newItem;
+                shelfSlots[currentSlotIndex].item = newItem;
+                currentSlotIndex ++;
             }
         }
     }
