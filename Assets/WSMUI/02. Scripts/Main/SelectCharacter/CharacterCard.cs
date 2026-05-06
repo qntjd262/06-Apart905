@@ -8,11 +8,8 @@ public class CharacterCard : MonoBehaviour
     [SerializeField] private Image characterImage;
     [SerializeField] private TextMeshProUGUI characterNameText;
 
-    private CanvasGroup _canvasGroup;
-
     private void Awake()
     {
-        _canvasGroup = GetComponent<CanvasGroup>();
     }
 
     // 외부에서 데이터를 주입할 수 있는 유일한 public 메서드
@@ -22,13 +19,12 @@ public class CharacterCard : MonoBehaviour
         if (characterImage != null) characterImage.sprite = data.characterSprite;
         if (characterNameText != null) characterNameText.text = data.Name; //data.characterName -> data.Name
     }
-
-    public void SetAlpha(float alpha, float duration, bool isImmediate)
+    public void SetDim(float brightness, float duration, bool isImmediate)
     {
-        if (_canvasGroup == null) return;
+        Color targetColor = new Color(brightness, brightness, brightness, 1f);
         if (isImmediate)
-            _canvasGroup.alpha = alpha;
+            characterImage.color = targetColor;
         else
-            _canvasGroup.DOFade(alpha, duration);
+            characterImage.DOColor(targetColor, duration);
     }
 }

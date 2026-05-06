@@ -12,7 +12,20 @@ public class PlayerGamemanager : MonoBehaviour
 
     [Header("시간 설정")]
     private float timer = 0f;
-    public float timeInterval = 3f;
+    private int dayCount = 0;
+    private int hours = 0;
+    private int minutes = 0;
+    private float seconds = 0f;
+
+    [Header("시간 배속")]
+    //시간 배속 조절 변수
+    public float timeMultiplier = 60f;
+    
+
+    [Header("스탯 감소 인터벌")]
+    //게임 시간 스탯 인터벌 (분 단위)
+    private int statDecreaseMinuteInterval = 3;
+    private int minutePassCount = 0;
 
     void Awake()
     {
@@ -23,13 +36,44 @@ public class PlayerGamemanager : MonoBehaviour
     //현재 배고픔, 감염도, 갈증이 맥스에 달할 때마다 인터벌 후 hp감소도 적용
     void Update()
     {
-        timer += Time.deltaTime;
+        CalculateTime();
+    }
 
-        if(timer >= timeInterval)
+    private void CalculateTime()
+    {
+        seconds += Time.deltaTime * timeMultiplier;
+
+        if(seconds >= 60f)
         {
-            OnGameStatChangeTime?.Invoke();
-            timer = 0f;
+            minutes ++;
+            seconds = 0f;
+            minutePassCount ++;
+
+            if(minutePassCount >= statDecreaseMinuteInterval)
+            {
+                OnGameStatChangeTime?.Invoke();
+                minutePassCount = 0;
+            }
+            if(minutes >= 60)
+            {
+                hours++;
+                minutes = 0;
+
+                if(hours >= 24)
+                {
+                    dayCount ++;
+                    hours = 0;
+                }
+            }
         }
+
+        
+    }
+
+    //게임 시간을 UI상으로 표시하기 위한 함수
+    public string GetFormattedTime()
+    {
+        return string.Format("{0}일 {1:00} : {2:00}", dayCount,hours,minutes);
     }
 
     public void OnClickBack()

@@ -7,12 +7,12 @@ public class DialogueManager : Singleton<DialogueManager>
 {
     protected override void OnSceneLoaded(Scene scene, LoadSceneMode mode) 
     {
-        // 씬이 로드될 때 실행할 로직이 없다면 비워둡니다.
+        
     }
 
     protected override void OnSceneUnloaded(Scene scene) 
     {
-        // 씬이 해제될 때 실행할 로직이 없다면 비워둡니다.
+        
     }
 
     public GameObject dialoguePanel;

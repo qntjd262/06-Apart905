@@ -22,6 +22,7 @@ public class ItemData : ScriptableObject
     [Header("기본 정보")]
     public string ID;
     public string Name;
+    public string itemName;
     public int SpawnCount;
     public ItemType itemType;
     public Sprite icon;
