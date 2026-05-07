@@ -21,6 +21,17 @@ public class Blackboard
     public MonsterController MonsterStat { get; set; }
     public Transform Center { get; set; }
 
+    // ³·¹ã »óÅÂ
+    private PlayerGamemanager.DayState _currDayState = PlayerGamemanager.DayState.Day;
+    public PlayerGamemanager.DayState CurrDayState
+    {
+        get => _currDayState;
+        set
+        {
+            _currDayState = value;
+        }
+    }
+
     // °ø°Ý, ÇÇ°Ý
     private State _monsterState = State.Idle;
     public State MonsterState

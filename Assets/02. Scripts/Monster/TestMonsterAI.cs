@@ -45,6 +45,16 @@ public class TestMonsterAI : MonoBehaviour
         blackboard.Center = center;
     }
 
+    private void OnEnable()
+    {
+        PlayerGamemanager.OnDayStateChange += ChangeDayState;
+    }
+
+    private void OnDisable()
+    {
+        PlayerGamemanager.OnDayStateChange -= ChangeDayState;
+    }
+
     // SelectorNode -> 실패하면 다음 노드로
     // SequenceNode -> 성공하면 다음 노드로
     private void Start()
@@ -107,6 +117,7 @@ public class TestMonsterAI : MonoBehaviour
                 new MemorySequenceNode
                 (
                     new Idle(minIdleTime, maxIdleTime, blackboard),
+                    new ConditionNode(() => blackboard.CurrDayState == PlayerGamemanager.DayState.Day),
                     new PatrolToFindPlayer(patrolRadius, blackboard)
                 )
             );
@@ -117,7 +128,6 @@ public class TestMonsterAI : MonoBehaviour
     private void Update()
     {
         _rootNode.Evaluate(); // 매 프레임마다 Behavior Tree 평가
-        Debug.Log(blackboard.Player);
     }
 
     private void OnDrawGizmos()
@@ -143,5 +153,10 @@ public class TestMonsterAI : MonoBehaviour
             Gizmos.color = Color.blue;
             Gizmos.DrawLine(this.center.position, blackboard.NavMeshAgent.destination);
         }
+    }
+
+    private void ChangeDayState(PlayerGamemanager.DayState dayState)
+    {
+        blackboard.CurrDayState = dayState;
     }
 }
