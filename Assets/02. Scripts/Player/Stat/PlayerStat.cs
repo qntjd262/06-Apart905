@@ -34,6 +34,7 @@ public class PlayerStat : MonoBehaviour
     public bool isInteracting = false;
 
     public event Action<bool> OnInfectionStateBool;
+    public event Action<float, float> OnHpChanged;
 
     
     void Awake()
@@ -91,6 +92,7 @@ public class PlayerStat : MonoBehaviour
     public void TakeDamage(float damage)
     {
         hp.DecreaseStat(damage);
+        OnHpChanged?.Invoke(hp.currentValue, hp.maxValue);
 
         AddInfection();
 
@@ -178,6 +180,11 @@ public class PlayerStat : MonoBehaviour
             //스탯이 0 ~ 최대값 범위를 벗어나지 않게 고정
             targetStat.currentValue = Mathf.Clamp(targetStat.currentValue, 0, targetStat.maxValue);
             Debug.Log($"{type} 변경 전 : {before} ->  변경 후 : {targetStat.currentValue}");
+
+            if(type == EatableType.Health)
+            {
+                OnHpChanged?.Invoke(hp.currentValue,hp.maxValue);
+            }
         }
     }
 }
