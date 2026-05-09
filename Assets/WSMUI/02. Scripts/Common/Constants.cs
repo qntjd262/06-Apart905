@@ -10,7 +10,7 @@ public static class Constants
 
         PrototypeMain,
         PrototypeGame,
-        Ending
+        PrototypeEnding
     }
     public enum ESaveLoadType
     {

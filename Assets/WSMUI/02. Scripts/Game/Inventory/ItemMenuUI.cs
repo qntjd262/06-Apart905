@@ -96,20 +96,19 @@ public class ItemMenuUI : Singleton<ItemMenuUI>
     private void Update()
     {
         // 메뉴가 켜져 있을 때 다른 곳을 클릭하면 닫기
-        if (menuPanel.activeSelf && (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1)))
+        if (menuPanel.activeSelf && (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.Escape)))
         {
-            // 간단하게 구현하기 위해 마우스가 메뉴 바깥이면 닫기 (Raycast 등 활용 가능)
-            // 여기선 간단히 ESC나 다시 클릭 시 닫히는 구조 권장
+            CloseMenu();
         }
     }
 
     protected override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        throw new System.NotImplementedException();
+       
     }
 
     protected override void OnSceneUnloaded(Scene scene)
     {
-        throw new System.NotImplementedException();
+        
     }
 }

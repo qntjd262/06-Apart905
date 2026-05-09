@@ -126,7 +126,7 @@ public class InventoryManager : Singleton<InventoryManager>
             if (isQuickSlot) OnQuickSlotUpdated?.Invoke();
             else OnBagUpdated?.Invoke();
         }
- else if (item.itemType == ItemType.Equipable)
+        else if (item.itemType == ItemType.Equipable)
         {
             // 이미 퀵슬롯에 있는 아이템을 다시 '장착'할 필요는 없으므로 가방에 있을 때만 실행
             if (!isQuickSlot)
@@ -352,22 +352,60 @@ public class InventoryManager : Singleton<InventoryManager>
     private void SyncQuestAndUI(string itemName)
     {
         if (QuestManager.Instance != null)
-    {
-        //현재 남은 개수 확인
-        int currentCount = GetItemCount(itemName);
-       
-        //당 아이템 관련 퀘스트 찾아서 데이터 동기화
-        var targetQuest = QuestManager.Instance.activeQuests.Find(q => q.targetID == itemName);
-        if (targetQuest != null)
         {
-            targetQuest.ForceSyncProgress(currentCount);
+            //현재 남은 개수 확인
+            int currentCount = GetItemCount(itemName);
+
+            //당 아이템 관련 퀘스트 찾아서 데이터 동기화
+            var targetQuest = QuestManager.Instance.activeQuests.Find(q => q.targetID == itemName);
+            if (targetQuest != null)
+            {
+                targetQuest.ForceSyncProgress(currentCount);
+            }
+
+
+            //퀘스트 UI 새로고침
+            QuestUI ui = FindObjectOfType<QuestUI>(true);
+            if (ui != null) ui.RefreshQuestList();
         }
-
-
-        //퀘스트 UI 새로고침
-        QuestUI ui = FindObjectOfType<QuestUI>(true);
-        if (ui != null) ui.RefreshQuestList();
     }
+
+    // 창고 -> 가방 비어있는 칸으로 이동
+    public void MoveItemStorageToBag(int storageIndex)
+    {
+        if (CurrentStorageSlots == null || CurrentStorageSlots[storageIndex].IsEmpty) return;
+
+        // 가방의 빈 칸 찾기
+        for (int i = 0; i < BagSlots.Length; i++)
+        {
+            if (BagSlots[i].IsEmpty)
+            {
+                SwapSlots(CurrentStorageSlots[storageIndex], BagSlots[i]);
+                OnBagUpdated?.Invoke();
+                OnStorageUpdated?.Invoke();
+                return;
+            }
+        }
+        Debug.Log("가방에 빈 공간이 없습니다.");
+    }
+
+    // 가방 -> 창고 비어있는 칸으로 이동
+    public void MoveItemBagToStorage(int bagIndex)
+    {
+        if (CurrentStorageSlots == null || BagSlots[bagIndex].IsEmpty) return;
+
+        // 창고의 빈 칸 찾기
+        for (int i = 0; i < CurrentStorageSlots.Length; i++)
+        {
+            if (CurrentStorageSlots[i].IsEmpty)
+            {
+                SwapSlots(BagSlots[bagIndex], CurrentStorageSlots[i]);
+                OnBagUpdated?.Invoke();
+                OnStorageUpdated?.Invoke();
+                return;
+            }
+        }
+        Debug.Log("창고에 빈 공간이 없습니다.");
     }
 }
 

@@ -25,6 +25,7 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] public GameObject storagePanel;
     public GameObject pauseMenuPanel;
     public GameObject gameOverPanel;
+    public GameObject dialoguePanel;
 
     [Header("Global Popup Panels")]
     [SerializeField] private GameObject selectCharacterPanel;
@@ -43,6 +44,9 @@ public class UIManager : Singleton<UIManager>
     [Header("Interaction UI")]
     private InteractUI activeInteractUI;
     [SerializeField] private Sprite[] interactIcons;
+
+    private QuestTrackerUI _cachedTracker;
+    public QuestTrackerUI MainTracker => _cachedTracker;
 
     protected override void Awake()
     {
@@ -70,6 +74,10 @@ public class UIManager : Singleton<UIManager>
 
         if (Input.GetKeyDown(KeyCode.Escape))
         {
+            // if (dialoguePanel != null && dialoguePanel.activeSelf)
+            // {
+            //     return;
+            // }
             if (IsAnyGlobalPopupActive()) return;
             if (gameOverPanel != null && gameOverPanel.activeSelf) return;
             // 보관함이 열려있다면 (인벤토리도 같이 열려있는 상태)
@@ -101,7 +109,7 @@ public class UIManager : Singleton<UIManager>
 
     }
 
-    private void UpdateCursorState()
+    public void UpdateCursorState()
     {
         // 1. 메인 메뉴 등 게임 씬이 아닐 때는 무조건 커서 활성화
         if (SceneManager.GetActiveScene().name != Constants.ESceneType.PrototypeGame.ToString())
@@ -116,9 +124,10 @@ public class UIManager : Singleton<UIManager>
         bool storageActive = (storagePanel != null && storagePanel.activeSelf);
         bool pauseActive = (pauseMenuPanel != null && pauseMenuPanel.activeSelf);
         bool gameOverActive = (gameOverPanel != null && gameOverPanel.activeSelf);
+        bool dialogueActive = (dialoguePanel != null && dialoguePanel.activeSelf);
 
         // IsAnyPopupOpen(전역 팝업 카운트) + 로컬 패널들 상태 합산
-        bool showCursor = IsAnyPopupOpen || inventoryActive || storageActive || pauseActive || gameOverActive;
+        bool showCursor = IsAnyPopupOpen || inventoryActive || storageActive || pauseActive || gameOverActive || dialogueActive;
 
         if (showCursor)
         {
@@ -133,6 +142,10 @@ public class UIManager : Singleton<UIManager>
         }
     }
 
+    public void RegisterTracker(QuestTrackerUI tracker)
+    {
+        _cachedTracker = tracker;
+    }
     public void RegisterInteractionUI(InteractUI ui)
     {
         activeInteractUI = ui;
@@ -257,15 +270,19 @@ public class UIManager : Singleton<UIManager>
     public void ToggleInventory()
     {
 
-        if (inventoryPanel == null)
+        if (inventoryPanel == null) return;
+        bool isNowActive = !inventoryPanel.activeSelf;
+        inventoryPanel.SetActive(isNowActive);
+
+        if (isNowActive)
         {
-            Debug.LogError("UIManager: inventoryPanel reference is missing.");
-            return;
+            inventoryPanel.GetComponent<InventoryUI>().SetPanelPosition(false);
         }
 
-        bool isNowActive = !inventoryPanel.activeSelf;
-
-        inventoryPanel.SetActive(isNowActive);
+        if (_cachedTracker != null)
+        {
+            _cachedTracker.gameObject.SetActive(!isNowActive);
+        }
         UpdateCursorState();
 
         if (_hudController == null)
@@ -291,6 +308,15 @@ public class UIManager : Singleton<UIManager>
         // 보관함과 인벤토리를 동시에 활성화/비활성화
         storagePanel.SetActive(isNowActive);
         inventoryPanel.SetActive(isNowActive);
+
+        if (isNowActive)
+        {
+            var invScript = inventoryPanel.GetComponent<InventoryUI>();
+            if (invScript != null)
+            {
+                invScript.SetPanelPosition(true); // 오른쪽으로 이동
+            }
+        }
         UpdateCursorState();
 
         if (isNowActive && slots != null)

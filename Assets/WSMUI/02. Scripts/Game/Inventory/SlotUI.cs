@@ -85,6 +85,27 @@ public class SlotUI : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHa
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        // --- [추가] 더블 클릭 로직 (왼쪽 버튼) ---
+        if (eventData.button == PointerEventData.InputButton.Left && eventData.clickCount == 2)
+        {
+            if (icon.sprite == null) return; // 빈 슬롯은 무시
+
+            // 1. 현재 창고가 열려있는지 확인
+            if (InventoryManager.Instance.CurrentStorageSlots != null)
+            {
+                if (IsStorageSlot)
+                {
+                    // 창고에서 가방으로 이동 시도
+                    InventoryManager.Instance.MoveItemStorageToBag(SlotIndex);
+                }
+                else if (!IsQuickSlot) // 가방 슬롯일 때 (퀵슬롯 제외)
+                {
+                    // 가방에서 창고로 이동 시도
+                    InventoryManager.Instance.MoveItemBagToStorage(SlotIndex);
+                }
+            }
+            return; // 더블클릭 처리했으므로 종료
+        }
         if (eventData.button == PointerEventData.InputButton.Right)
         {
             if (IsStorageSlot || icon.sprite == null || IsQuickSlot)
