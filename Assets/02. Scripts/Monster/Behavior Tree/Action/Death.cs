@@ -9,7 +9,6 @@ public class Death : ActionNode
 
     public override void OnStart()
     {
-        Debug.Log("사망 애니메이션 실행");
         // 시작 시, 사망 애니메이션 실행
         _blackboard.Animator.OnDeath();
     }

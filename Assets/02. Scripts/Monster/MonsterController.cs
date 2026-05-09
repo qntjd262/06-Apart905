@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
@@ -8,12 +9,16 @@ public class MonsterController : MonoBehaviour
     private NavMeshAgent _navMeshAgent;
     private Blackboard _blackboard;
     private Coroutine _visionSensor;
-    public MonsterStatSO monsterStatSO;
     private LayerMask _monsterMask = ~(1 << 11);
+    [field : SerializeField]
+    public MonsterStatSO monsterStatSO { get; private set; }
+
+    // 죽었을 때 발동할 이벤트
+    public event Action OnDied;
 
     [Header("몬스터 체력")]
-    private float monsterHealth;
     [SerializeField] private float currentHealth;
+    private float monsterHealth;
 
     [Header("적 탐지 센서")]
     [SerializeField] private float detectAngle = 60f;
@@ -21,10 +26,6 @@ public class MonsterController : MonoBehaviour
     private void Awake()
     {
         monsterHealth = monsterStatSO.maxHP;
-    }
-
-    private void Start()
-    {
         currentHealth = monsterHealth;
         _blackboard = GetComponent<TestMonsterAI>().blackboard;
         _navMeshAgent = GetComponent<NavMeshAgent>();
@@ -145,6 +146,33 @@ public class MonsterController : MonoBehaviour
 
         GetComponent<TestMonsterAI>().enabled = false;
         GetComponent<CapsuleCollider>().enabled = false;
+
+        // 시야 감지 코루틴 중지
+        if (_visionSensor != null)
+        {
+            StopCoroutine(_visionSensor);
+            _visionSensor = null;
+        }
+
+        // 사망한 좀비 처리에 따라 다르게 변경될 필요가 있음
+        OnDied?.Invoke();
+        MonsterSpawnManager.Instance.ReturnPoolObject(gameObject);
+    }
+
+    // 사망 후 monster 정보 리셋
+    public void ResetMonster()
+    {
+        currentHealth = monsterHealth;
+
+        _navMeshAgent.isStopped = false;
+        _navMeshAgent.enabled = true;
+
+        GetComponent<TestMonsterAI>().enabled = true;
+        GetComponent<CapsuleCollider>().enabled = true;
+
+        _blackboard.MonsterState = Blackboard.State.Idle;
+        _blackboard.Player = null;
+        _blackboard.CanHearPlayer = false;
     }
     #endregion
 }
