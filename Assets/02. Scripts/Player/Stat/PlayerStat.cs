@@ -35,6 +35,7 @@ public class PlayerStat : MonoBehaviour
 
     public event Action<bool> OnInfectionStateBool;
     public event Action<float, float> OnHpChanged;
+    public event Action OnPlayerDeath;
 
     
     void Awake()
@@ -133,6 +134,8 @@ public class PlayerStat : MonoBehaviour
 
         this.enabled = false;
         //TODO : 사망 애니메이션, 사망 UI ON, 게임 시간 멈춤 등 사망 처리
+
+        OnPlayerDeath?.Invoke();
     }
 
     //배고픔, 갈증 감소 함수
