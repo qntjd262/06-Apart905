@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class PlayerEquip : MonoBehaviour
 {
+
+    [SerializeField] private Animator playerAnimator;
     [Header("무기 장착 위치")]
     [SerializeField] private Transform equipPoint;
 
@@ -16,6 +18,9 @@ public class PlayerEquip : MonoBehaviour
     void Awake()
     {
         playerAttack = GetComponent<PlayerAttack>();
+
+        if(playerAnimator == null)
+            playerAnimator = GetComponentInChildren<Animator>();
     }
 
     public void EquipItem(ItemData itemData)
@@ -32,6 +37,7 @@ public class PlayerEquip : MonoBehaviour
         if(itemData == null || itemData.itemType != ItemType.Equipable)
         {
             Debug.Log("맨손");
+            SetFlashlightAnimation(false);
             return;
         }
 
@@ -41,6 +47,7 @@ public class PlayerEquip : MonoBehaviour
         if(equipData == null || equipData.equipPrefab == null)
         {
             Debug.Log($"{itemData.Name}의 프리팹 데이터가 존재하지 않음");
+            SetFlashlightAnimation(false);
             return;
         }
 
@@ -66,6 +73,9 @@ public class PlayerEquip : MonoBehaviour
         currentEquipItem = equipData;
         Debug.Log($"{equipData.Name} 장착 완료");
         #endregion
+
+        bool isFlashlight = currentEquipObject.GetComponent<Flashlight>() != null;
+        SetFlashlightAnimation(isFlashlight);
     }
 
     //현재 들고 있는 아이템에 따른 동작 분배기
@@ -107,5 +117,13 @@ public class PlayerEquip : MonoBehaviour
             EquipItem(slot.item);
         }
         
+    }
+
+    private void SetFlashlightAnimation(bool isHolding)
+    {
+        if(playerAnimator != null)
+        {
+            playerAnimator.SetBool("IsHoldFlashlight", isHolding);
+        }
     }
 }
