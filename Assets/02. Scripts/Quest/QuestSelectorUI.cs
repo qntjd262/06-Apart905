@@ -43,24 +43,50 @@ public class QuestSelectorUI : MonoBehaviour
 
     public void RefreshDisplay()
     {
+        // 1. UI 컴포넌트 자체가 인스펙터에서 할당 안 됐을 경우 방어
+        if (titleText == null || goalText == null)
+        {
+            Debug.LogWarning("QuestSelectorUI: UI Text 컴포넌트가 할당되지 않았습니다.");
+            return;
+        }
+
+        // 2. QuestManager 인스턴스 확인
+        if (QuestManager.Instance == null) return;
+
         var quests = QuestManager.Instance.activeQuests;
 
-        if (quests.Count == 0)
+        // 3. 리스트가 비어있을 때 처리
+        if (quests == null || quests.Count == 0)
         {
             titleText.text = "진행 중인 퀘스트 없음";
             goalText.text = "";
             return;
         }
 
+        // 4. 인덱스 범위 안전성 확인
+        if (currentIndex < 0 || currentIndex >= quests.Count) currentIndex = 0;
+
         Quest q = quests[currentIndex];
-        titleText.text = q.questName;
-        titleText.color = q.isMainQuest ? new Color(0.8f, 0.4f, 0f) : Color.blue;
-        goalText.text = $"{q.targetID} ({q.currentAmount}/{q.goalAmount})";
+
+        // 5. 퀘스트 데이터 자체가 null인지 확인
+        if (q != null)
+        {
+            titleText.text = q.questName;
+            titleText.color = q.isMainQuest ? new Color(0.8f, 0.4f, 0f) : Color.blue;
+            goalText.text = $"{q.targetID} ({q.currentAmount}/{q.goalAmount})";
+        }
     }
 
     private void UpdateIndexToTrackingQuest()
     {
+        // 1. QuestManager 인스턴스 자체가 없는 경우 체크
+        if (QuestManager.Instance == null) return;
+
         var quests = QuestManager.Instance.activeQuests;
+
+        // 2. 리스트가 초기화되지 않았거나 비어있는 경우 체크
+        if (quests == null || quests.Count == 0) return;
+
         if (QuestManager.Instance.trackingQuest != null)
         {
             currentIndex = quests.FindIndex(q => q.questName == QuestManager.Instance.trackingQuest.questName);

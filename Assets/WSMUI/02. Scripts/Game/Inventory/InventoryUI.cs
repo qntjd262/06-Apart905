@@ -1,28 +1,43 @@
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InventoryUI : MonoBehaviour
 {
-    [SerializeField] private RectTransform rectTransform;
+    // [SerializeField] private RectTransform rectTransform;
     [SerializeField] private Transform slotsParent;
     private SlotUI[] uiSlots;
+    [SerializeField] private GameObject questSelectorObject;
 
-    [Header("Position Settings")]
-    [SerializeField] private Vector2 centerPosition = Vector2.zero; // 중앙 위치
-    [SerializeField] private Vector2 rightPosition = new Vector2(670f, 0f);
+    [Header("Character Info 연동")]
+    [SerializeField] private Image portraitImage;
+    [SerializeField] private TextMeshProUGUI characterNameText;
 
-    void Awake()
+    [SerializeField] private SurvivalGauge inventorySurvivalGauge;
+    private PlayerStat _playerStat;
+
+    private void OnEnable()
     {
-        if (rectTransform == null) rectTransform = GetComponent<RectTransform>();
-    }
-    public void SetPanelPosition(bool isStorageOpen)
-    {
-        if (rectTransform == null) rectTransform = GetComponent<RectTransform>();
+        // 1. 캐릭터 선택 창에서 고른 데이터 연동 (초상화 & 이름)
+        if (CharacterDataManager.Instance != null && CharacterDataManager.Instance.selectedCharacterSO != null)
+        {
+            CharacterStatSO selectedData = CharacterDataManager.Instance.selectedCharacterSO;
 
-        Vector2 targetPos = isStorageOpen ? rightPosition : centerPosition;
+            if (portraitImage != null) portraitImage.sprite = selectedData.characterSprite;
+            if (characterNameText != null) characterNameText.text = selectedData.Name;
+        }
+        else
+        {
+            Debug.LogWarning("InventoryUI: CharacterDataManager에서 선택된 캐릭터 데이터를 찾을 수 없습니다.");
+        }
 
-        // 즉각 반영 (테스트용)
-        rectTransform.anchoredPosition = targetPos;
+        // 2. 실시간 스탯 연동을 위한 PlayerStat 캐싱
+        if (_playerStat == null)
+        {
+            _playerStat = FindFirstObjectByType<PlayerStat>();
+        }
     }
+
     void Start()
     {
         uiSlots = slotsParent.GetComponentsInChildren<SlotUI>();
@@ -45,8 +60,24 @@ public class InventoryUI : MonoBehaviour
         {
             UIManager.Instance.inventoryPanel = this.gameObject;
         }
+    }
 
-        gameObject.SetActive(true);  //false로 바꿔야됨
+    private void Update()
+    {
+        // 3. 인벤토리가 열려 있는 동안 HUD처럼 실시간으로 게이지 갱신
+        if (_playerStat == null || inventorySurvivalGauge == null) return;
+
+        inventorySurvivalGauge.UpdateStamina(_playerStat.stamina.currentValue, _playerStat.stamina.maxValue, false);
+        inventorySurvivalGauge.UpdateHunger(_playerStat.hunger.currentValue, _playerStat.hunger.maxValue);
+        inventorySurvivalGauge.UpdateThirst(_playerStat.thirst.currentValue, _playerStat.thirst.maxValue);
+        inventorySurvivalGauge.UpdateSanity(_playerStat.infection.currentValue, _playerStat.infection.maxValue);
+    }
+    public void SetQuestSelectorActive(bool isActive)
+    {
+        if (questSelectorObject != null)
+        {
+            questSelectorObject.SetActive(isActive);
+        }
     }
 
     private void RefreshUI()

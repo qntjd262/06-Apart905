@@ -104,7 +104,7 @@ namespace Michsky.UI.Dark
             lastCursorPos = Mouse.current.position.ReadValue();
 
             if (affectCursor == true)
-                Cursor.visible = false;
+                // Cursor.visible = false;
 
             if (defaultPanelManager != null)
             {
@@ -149,8 +149,7 @@ namespace Michsky.UI.Dark
             gamepadEnabled = false;
             keyboardEnabled = true;
 
-            if (affectCursor == true)
-                Cursor.visible = true;
+          
 
             if (defaultPanelManager != null)
                 defaultPanelManager.gamepadEnabled = false;

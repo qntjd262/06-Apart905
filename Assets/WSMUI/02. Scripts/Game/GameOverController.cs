@@ -2,39 +2,41 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 using DG.Tweening;
-using UnityEngine.UI; // Image 컴포넌트를 사용하기 위해 필요
+using UnityEngine.UI;
 
-public class GameOverController : MonoBehaviour
+// 1. BasePopupUI 상속
+public class GameOverController : BasePopupUI
 {
     [SerializeField] private GameObject bloodSplatterEffect;
     [SerializeField] private GameObject buttonGroup;
 
-    public SaveLoadController saveLoadController;
-    private Image bloodImage; // Image 컴포넌트 참조 저장용
+    private Image bloodImage;
 
     private void Awake()
     {
+        popupPanel = this.gameObject; // 부모 변수 연결
+
         if (UIManager.Instance != null)
         {
             UIManager.Instance.gameOverPanel = this.gameObject;
         }
 
-        // bloodSplatterEffect에서 Image 컴포넌트 미리 캐싱
         if (bloodSplatterEffect != null)
         {
             bloodImage = bloodSplatterEffect.GetComponent<Image>();
         }
     }
 
+    // 2. 외부에서 게임 오버 창을 켤 때 호출할 함수
+    public void Open()
+    {
+        ShowPanel(); // 스택 등록 및 SetActive(true) 자동 실행
+    }
+
     private void OnEnable()
     {
-        // 1. 게임 일시정지
         Time.timeScale = 0f;
-
-        // 2. 초기화: 버튼 그룹은 숨기고, 블러드는 투명하게
         if (buttonGroup != null) buttonGroup.SetActive(false);
-        
-        // 3. 연출 시작
         PlayGameOverSequence();
     }
 
@@ -42,13 +44,11 @@ public class GameOverController : MonoBehaviour
     {
         if (bloodSplatterEffect == null) return;
 
-        // 초기 상태 강제 설정 (스케일 0, 투명도 0)
         bloodSplatterEffect.transform.localScale = Vector3.zero;
         if (bloodImage != null) bloodImage.color = new Color(1, 1, 1, 0);
 
         Sequence mainSeq = DOTween.Sequence();
 
-        // [단계 1] 블러드 효과 연출: 확 커졌다가(1.2f) 원래 크기(1.0f)로
         mainSeq.Append(bloodSplatterEffect.transform.DOScale(1.2f, 0.15f).SetEase(Ease.OutExpo));
         if (bloodImage != null)
         {
@@ -56,25 +56,20 @@ public class GameOverController : MonoBehaviour
         }
         mainSeq.Append(bloodSplatterEffect.transform.DOScale(1.0f, 0.1f));
 
-        // [단계 2] 아주 짧은 대기 (0.1초)
         mainSeq.AppendInterval(0.1f);
 
-        // [단계 3] 연출 완료 후 버튼 그룹 등장
         mainSeq.OnComplete(() =>
         {
             if (buttonGroup != null)
             {
                 buttonGroup.SetActive(true);
-                
-                // 버튼 그룹도 스케일 업 연출 (통통 튀는 느낌을 위해 OutBack 사용)
                 buttonGroup.transform.localScale = Vector3.zero;
                 buttonGroup.transform.DOScale(1.0f, 0.4f)
                     .SetEase(Ease.OutBack)
-                    .SetUpdate(true); // 중요: 타임스케일 0일 때 작동
+                    .SetUpdate(true);
             }
         });
 
-        // 시퀀스 전체가 타임스케일 영향을 받지 않도록 설정
         mainSeq.SetUpdate(true);
     }
 
@@ -83,19 +78,25 @@ public class GameOverController : MonoBehaviour
         SaveLoadController saveLoader = FindFirstObjectByType<SaveLoadController>(FindObjectsInactive.Include);
         if (saveLoader != null)
         {
-            saveLoader.currentMode = Constants.ESaveLoadType.Load;
-            saveLoader.ReturnToPauseMenuOnClose = true;
-            gameObject.SetActive(false);
-            saveLoader.gameObject.SetActive(true);
+            HidePanel(); // 게임 오버 창 닫기
+
+            saveLoader.onCloseAction = () =>
+            {
+                this.ShowPanel(); // 불러오기 취소/완료 시 다시 게임 오버 창으로 복귀
+            };
+
+            saveLoader.Open(Constants.ESaveLoadType.Load);
         }
     }
 
     public void OnMainMenuClick()
     {
+        // 4. 메인 메뉴로 갈 때는 스택에서 확실히 해제
+        HidePanel();
+
         if (UIManager.Instance != null)
         {
             UIManager.Instance.LoadScene(Constants.ESceneType.PrototypeMain);
-            gameObject.SetActive(false);
             return;
         }
 

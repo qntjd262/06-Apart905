@@ -407,6 +407,16 @@ public class InventoryManager : Singleton<InventoryManager>
         }
         Debug.Log("창고에 빈 공간이 없습니다.");
     }
+    public void ResetInventory()
+    {
+        InitializeInventory();
+
+        CurrentStorageSlots = null;
+
+        OnBagUpdated?.Invoke();
+        OnQuickSlotUpdated?.Invoke();
+        OnStorageUpdated?.Invoke();
+    }
 }
 
 
