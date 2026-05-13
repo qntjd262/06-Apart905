@@ -103,7 +103,6 @@ public class MonsterAnimator : MonoBehaviour
     IEnumerator MoanRoutine()
     {
         _soundController.OnMoanSound();
-        Debug.Log("moan 코루틴 시작");
         while (_animator.GetCurrentAnimatorStateInfo(0).IsTag("Idle"))
         {
             float randomDelay = Random.Range(5f, 10f);
@@ -113,7 +112,6 @@ public class MonsterAnimator : MonoBehaviour
             if (_animator.GetBool(MonsterAniParamIsMoving) == false &&
                 randomExecute == 1)
             {
-                Debug.Log("moan 출력");
                 _soundController.OnMoanSound();
             }
         }
