@@ -2,9 +2,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class SlotUI : MonoBehaviour, IPointerClickHandler
+public class SlotUI : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
 {
     [SerializeField] private Image icon;
+
+    [Header("Highlight UI")]
+    [SerializeField] private GameObject highlightImageObject;
+    private static SlotUI currentlySelectedSlot;
 
     public int SlotIndex { get; set; }
     public bool IsQuickSlot { get; set; }
@@ -13,21 +17,57 @@ public class SlotUI : MonoBehaviour, IPointerClickHandler
 
     private static SlotUI pickedSlot;
     public static SlotUI PickedSlot => pickedSlot;
-    private static Image cursorIcon;  // 마우스를 따라다닐 아이콘
+    private static Image cursorIcon;
 
     public void UpdateSlot(InventorySlot slotData)
     {
-        if (slotData.IsEmpty)
+        if (slotData == null || slotData.IsEmpty)
         {
             icon.sprite = null;
             icon.color = new Color(1, 1, 1, 0);
         }
         else
         {
-            // 현재 이 슬롯이 아이템을 "들고 있는" 슬롯이라면 아이콘을 반투명하게
             bool isPicked = (pickedSlot == this);
             icon.sprite = slotData.item.icon;
             icon.color = new Color(1, 1, 1, isPicked ? 0.3f : 1f);
+        }
+    }
+
+    public void SelectSlot()
+    {
+        if (currentlySelectedSlot != null && currentlySelectedSlot != this)
+        {
+            if (currentlySelectedSlot.highlightImageObject != null)
+                currentlySelectedSlot.highlightImageObject.SetActive(false);
+        }
+
+        currentlySelectedSlot = this;
+        if (highlightImageObject != null) highlightImageObject.SetActive(true);
+
+        // 1. 보관함 슬롯인 경우 -> StorageUI로 정보 전달
+        if (IsStorageSlot)
+        {
+            StorageUI storageUI = GetComponentInParent<StorageUI>();
+            if (storageUI != null && InventoryManager.Instance.CurrentStorageSlots != null)
+            {
+                InventorySlot slotData = InventoryManager.Instance.CurrentStorageSlots[SlotIndex];
+                storageUI.ShowItemInfo(slotData);
+            }
+        }
+        // 2. 인벤토리/퀵슬롯인 경우 (인게임 HUD용 퀵슬롯 제외) -> InventoryUI로 정보 전달
+        else if (!IsInGameQuickSlot)
+        {
+            InventoryUI inventoryUI = GetComponentInParent<InventoryUI>();
+            if (inventoryUI != null)
+            {
+                // 퀵슬롯인지 가방인지에 따라 참조할 배열이 다름
+                InventorySlot slotData = IsQuickSlot
+                    ? InventoryManager.Instance.QuickSlots[SlotIndex]
+                    : InventoryManager.Instance.BagSlots[SlotIndex];
+
+                inventoryUI.ShowItemInfo(slotData);
+            }
         }
     }
 
@@ -35,103 +75,83 @@ public class SlotUI : MonoBehaviour, IPointerClickHandler
     {
         if (IsInGameQuickSlot) return;
 
-        // 오른쪽 클릭 (기존 메뉴 로직)
+        // 우클릭 (메뉴 호출)
         if (eventData.button == PointerEventData.InputButton.Right)
         {
+            SelectSlot(); // [수정 1] 우클릭할 때도 외곽선 표시 적용
             HandleRightClick();
             return;
         }
 
-        // 왼쪽 클릭 (Pick & Place 로직)
+        // 좌클릭
         if (eventData.button == PointerEventData.InputButton.Left)
         {
-            // 1. 아무것도 들고 있지 않을 때 -> 아이템 들어올리기
-            if (pickedSlot == null)
+            if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
             {
-                if (icon.sprite == null) return; // 빈 칸 클릭 무시
-
-                PickUpItem();
+                if (IsStorageSlot) InventoryManager.Instance.MoveAllFromStorageToBag();
+                return;
             }
-            // 2. 이미 아이템을 들고 있을 때 -> 여기에 내려놓기(Swap)
-            else
+
+            // 단일 클릭
+            if (eventData.clickCount == 1)
             {
-                PlaceItem();
+                SelectSlot(); // [수정 1] 공용 함수 호출로 깔끔하게 정리
+            }
+            // 더블 클릭
+            else if (eventData.clickCount == 2)
+            {
+                if (icon.sprite == null) return;
+
+                if (IsStorageSlot) InventoryManager.Instance.MoveItemStorageToBag(SlotIndex);
+                else if (!IsQuickSlot && InventoryManager.Instance.CurrentStorageSlots != null) InventoryManager.Instance.MoveItemBagToStorage(SlotIndex);
+                else if (IsQuickSlot) InventoryManager.Instance.ClearQuickSlot(SlotIndex);
             }
         }
     }
 
-    private void PickUpItem()
+    // --- 드래그 앤 드롭 로직 (변경 없음) ---
+    public void OnBeginDrag(PointerEventData eventData)
     {
+        if (icon.sprite == null || IsInGameQuickSlot) return;
+
         pickedSlot = this;
 
-        // 마우스 커서 아이콘 생성 (없다면)
         if (cursorIcon == null)
         {
             GameObject iconObj = new GameObject("CursorIcon");
             iconObj.transform.SetParent(GetComponentInParent<Canvas>().transform);
             cursorIcon = iconObj.AddComponent<Image>();
-            cursorIcon.raycastTarget = false; // 마우스 클릭 방해 금지
-            cursorIcon.rectTransform.sizeDelta = new Vector2(50, 50); // 적절한 크기
+            cursorIcon.raycastTarget = false;
+            cursorIcon.rectTransform.sizeDelta = new Vector2(50, 50);
         }
 
         cursorIcon.sprite = icon.sprite;
         cursorIcon.gameObject.SetActive(true);
-
-        // 원본 슬롯 반투명화
         icon.color = new Color(1, 1, 1, 0.3f);
     }
 
-    private void PlaceItem()
+    public void OnDrag(PointerEventData eventData)
     {
-        // 로직은 기존 OnDrop과 동일하지만 pickedSlot을 사용
-        ExecuteSwap(pickedSlot, this);
-
-        // 들고 있는 상태 해제
-        pickedSlot = null;
-        if (cursorIcon != null) cursorIcon.gameObject.SetActive(false);
-
-        // 모든 슬롯의 UI 갱신 (반투명 해제 등을 위해)
-        // 실제 프로젝트에서는 이벤트나 매니저를 통해 호출하는 것이 좋음
-        InventoryManager.Instance.OnBagUpdated?.Invoke();
-        InventoryManager.Instance.OnStorageUpdated?.Invoke();
-        InventoryManager.Instance.OnQuickSlotUpdated?.Invoke();
+        if (pickedSlot == this && cursorIcon != null) cursorIcon.transform.position = Input.mousePosition;
     }
 
-    private void Update()
+    public void OnEndDrag(PointerEventData eventData)
     {
-        if (pickedSlot == this && cursorIcon != null)
+        if (pickedSlot == this) CancelPick();
+    }
+
+    public void OnDrop(PointerEventData eventData)
+    {
+        if (pickedSlot != null && pickedSlot != this)
         {
-            // 1. 아이콘이 마우스를 따라다님
-            cursorIcon.transform.position = Input.mousePosition;
-
-            // 2. ESC 키 감지 시 취소
-            if (Input.GetKeyDown(KeyCode.Escape))
-            {
-                CancelPick();
-            }
-
-            // 3. 슬롯이 아닌 빈 공간 클릭 시 취소
-            // 마우스 왼쪽 클릭이 눌렸는데, 마우스 아래에 UI 객체가 없으면 빈 공간으로 판단
-            if (Input.GetMouseButtonDown(0))
-            {
-                if (!EventSystem.current.IsPointerOverGameObject())
-                {
-                    CancelPick();
-                }
-            }
-
-            // 4. 인벤토리 자체가 비활성화될 때를 대비 (OnDisable에서도 처리 가능)
-            if (!gameObject.activeInHierarchy)
-            {
-                CancelPick();
-            }
+            ExecuteSwap(pickedSlot, this);
+            pickedSlot.CancelPick();
         }
     }
 
     public void CancelPick()
     {
         if (pickedSlot == null) return;
-
         pickedSlot = null;
         if (cursorIcon != null) cursorIcon.gameObject.SetActive(false);
 
@@ -142,9 +162,13 @@ public class SlotUI : MonoBehaviour, IPointerClickHandler
 
     private void OnDisable()
     {
-        if (pickedSlot == this)
+        if (pickedSlot == this) CancelPick();
+
+        // [수정 2] 창이 꺼질 때 외곽선 선택 상태를 완전히 리셋한다.
+        if (currentlySelectedSlot == this)
         {
-            CancelPick();
+            if (highlightImageObject != null) highlightImageObject.SetActive(false);
+            currentlySelectedSlot = null;
         }
     }
 
@@ -152,24 +176,18 @@ public class SlotUI : MonoBehaviour, IPointerClickHandler
     {
         if (from == to) return;
 
-        // 기존 OnDrop에 있던 스왑 조건문 로직을 그대로 사용
         if (from.IsQuickSlot || to.IsQuickSlot)
         {
             if (from.IsStorageSlot || to.IsStorageSlot) return;
 
-            if (!from.IsQuickSlot && to.IsQuickSlot)
-                InventoryManager.Instance.SwapItemBetweenBagAndQuickSlot(from.SlotIndex, to.SlotIndex);
-            else if (from.IsQuickSlot && !to.IsQuickSlot)
-                InventoryManager.Instance.SwapItemBetweenBagAndQuickSlot(to.SlotIndex, from.SlotIndex);
-            else
-                InventoryManager.Instance.SwapItemWithinQuickSlot(from.SlotIndex, to.SlotIndex);
+            if (!from.IsQuickSlot && to.IsQuickSlot) InventoryManager.Instance.AssignToQuickSlot(from.SlotIndex, to.SlotIndex);
+            else if (from.IsQuickSlot && !to.IsQuickSlot) InventoryManager.Instance.ClearQuickSlot(from.SlotIndex);
+            else InventoryManager.Instance.SwapItemWithinQuickSlot(from.SlotIndex, to.SlotIndex);
         }
         else if (from.IsStorageSlot || to.IsStorageSlot)
         {
-            if (from.IsStorageSlot && !to.IsStorageSlot)
-                InventoryManager.Instance.SwapItemBetweenStorageAndBag(from.SlotIndex, to.SlotIndex);
-            else if (!from.IsStorageSlot && to.IsStorageSlot)
-                InventoryManager.Instance.SwapItemBetweenStorageAndBag(to.SlotIndex, from.SlotIndex);
+            if (from.IsStorageSlot && !to.IsStorageSlot) InventoryManager.Instance.SwapItemBetweenStorageAndBag(from.SlotIndex, to.SlotIndex);
+            else if (!from.IsStorageSlot && to.IsStorageSlot) InventoryManager.Instance.SwapItemBetweenStorageAndBag(to.SlotIndex, from.SlotIndex);
         }
         else
         {
@@ -179,17 +197,9 @@ public class SlotUI : MonoBehaviour, IPointerClickHandler
 
     private void HandleRightClick()
     {
-        if (IsStorageSlot || icon.sprite == null || IsQuickSlot)
-        {
-            // 만약 퀵슬롯에서 우클릭했을 때 '해제' 기능을 넣고 싶다면 여기에 작성
-            if (IsQuickSlot)
-            {
-                Debug.Log("퀵슬롯 아이템은 가방에서 관리하거나 단축키를 이용하세요.");
-            }
-            return;
-        }
-        InventorySlot slotData = InventoryManager.Instance.BagSlots[SlotIndex];
+        if (IsStorageSlot || icon.sprite == null || IsQuickSlot) return;
 
+        InventorySlot slotData = InventoryManager.Instance.BagSlots[SlotIndex];
         if (slotData != null && slotData.item != null)
         {
             if (slotData.item.itemType == ItemType.Useable)
@@ -199,6 +209,5 @@ public class SlotUI : MonoBehaviour, IPointerClickHandler
             }
             ItemMenuUI.Instance.ShowMenu(this, slotData);
         }
-
     }
 }

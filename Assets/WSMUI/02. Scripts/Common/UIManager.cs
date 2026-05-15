@@ -53,6 +53,8 @@ public class UIManager : Singleton<UIManager>
     private QuestTrackerUI _cachedTracker;
     public QuestTrackerUI MainTracker => _cachedTracker;
 
+    private float _lastStorageToggleTime;
+
     protected override void Awake()
     {
         base.Awake();
@@ -183,6 +185,12 @@ public class UIManager : Singleton<UIManager>
     public void ToggleInventory()
     {
         if (inventoryPanel == null) return;
+        if (storagePanel != null && storagePanel.activeSelf)
+        {
+            ToggleStorage();
+            return;
+        }
+
         bool isNowActive = !inventoryPanel.activeSelf;
         inventoryPanel.SetActive(isNowActive);
 
@@ -205,6 +213,11 @@ public class UIManager : Singleton<UIManager>
     public void ToggleStorage(InventorySlot[] slots = null)
     {
         if (storagePanel == null || inventoryPanel == null) return;
+
+        // [수정 3 핵심] 0.1초 이내에 토글이 연달아 호출되면 무시 (E키 충돌 방지)
+        if (Time.unscaledTime - _lastStorageToggleTime < 0.1f) return;
+        _lastStorageToggleTime = Time.unscaledTime;
+
         bool isNowActive = !storagePanel.activeSelf;
 
         storagePanel.SetActive(isNowActive);
@@ -214,7 +227,7 @@ public class UIManager : Singleton<UIManager>
         {
             inventoryPanel.GetComponent<InventoryUI>().SetQuestSelectorActive(false);
             RegisterUI(inventoryPanel);
-            RegisterUI(storagePanel); // 보관함을 최상단으로 올림
+            RegisterUI(storagePanel);
 
             if (slots != null) InventoryManager.Instance.OpenStorage(slots);
         }

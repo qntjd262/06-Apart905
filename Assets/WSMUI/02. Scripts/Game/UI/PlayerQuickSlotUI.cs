@@ -48,6 +48,13 @@ public class PlayerQuickSlotUI : MonoBehaviour
     private void HandleQuickSlotInput(int index)
     {
         InventoryManager.Instance.UseItem(index, true, InventoryManager.Instance.Player);
+
+        // [수정 4] 단축키를 누른 퀵슬롯의 외곽선 하이라이트 켜기
+        if (index < uiSlots.Length)
+        {
+            uiSlots[index].SelectSlot();
+        }
+
         TriggerShow();
     }
 

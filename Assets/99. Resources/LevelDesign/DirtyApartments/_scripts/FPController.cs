@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -24,7 +24,7 @@ public class FPController : MonoBehaviour
 	{
 		cam = GetComponentInChildren<Camera>();
 		cc = GetComponent<CharacterController>();
-		// Cursor.visible = false;
+		// Cursor.visible = false; 
 	}
 
 	// Update is called once per frame
@@ -39,7 +39,7 @@ public class FPController : MonoBehaviour
 			verticalRotation = Mathf.Clamp(verticalRotation, -60f, 60f);
 			cam.transform.localRotation = Quaternion.Euler(verticalRotation, 0, 0);
 		}
-		
+
 		forwardspeed = Input.GetAxis("Vertical") * speed;
 		sideSpeed = Input.GetAxis("Horizontal") * speed;
 
