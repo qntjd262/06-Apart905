@@ -34,6 +34,7 @@ public class InventoryUI : MonoBehaviour
 
     private void OnEnable()
     {
+        if (infoPanel != null) infoPanel.SetActive(false);
         // 1. [핵심] 1프레임 찌꺼기를 가리기 위한 마스킹 연출
         if (_canvasGroup != null)
         {

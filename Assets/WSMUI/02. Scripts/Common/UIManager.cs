@@ -55,6 +55,8 @@ public class UIManager : Singleton<UIManager>
 
     private float _lastStorageToggleTime;
 
+    public SaveLoadController saveLoadController;
+
     protected override void Awake()
     {
         base.Awake();
@@ -438,9 +440,13 @@ public class UIManager : Singleton<UIManager>
         StorageUI storUI = GameObject.FindAnyObjectByType<StorageUI>(FindObjectsInactive.Include);
         if (storUI != null) storagePanel = storUI.gameObject;
         if (storagePanel != null) storagePanel.SetActive(false);
+        if (pauseMenuPanel != null)
+        {
+            pauseMenuPanel.SetActive(false);
+        }
 
         bool isGameScene = scene.name == Constants.ESceneType.PrototypeGame.ToString();
-
+        Time.timeScale = 1f;
         if (isGameScene)
         {
             UpdateCursorState();

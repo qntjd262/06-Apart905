@@ -35,7 +35,7 @@ public class PlayerStat : MonoBehaviour
 
     public event Action<bool> OnInfectionStateBool;
 
-    
+
     void Awake()
     {
         // 인벤토리 매니저의 Player 변수에 자기 자신(this)을 할당
@@ -131,6 +131,23 @@ public class PlayerStat : MonoBehaviour
 
         this.enabled = false;
         //TODO : 사망 애니메이션, 사망 UI ON, 게임 시간 멈춤 등 사망 처리
+        if (UIManager.Instance != null)
+        {
+            if (UIManager.Instance.gameOverPanel != null)
+            {
+                GameOverController gameOverCtrl = UIManager.Instance.gameOverPanel.GetComponent<GameOverController>();
+                if (gameOverCtrl != null)
+                {
+                    gameOverCtrl.Open();
+                }
+                else
+                { // 예외 방어용: 컴포넌트가 없다면 기본 활성화
+                    UIManager.Instance.gameOverPanel.SetActive(true);
+                    UIManager.Instance.RegisterUI(UIManager.Instance.gameOverPanel);
+                }
+            }
+            Time.timeScale = 0f;
+        }
     }
 
     //배고픔, 갈증 감소 함수

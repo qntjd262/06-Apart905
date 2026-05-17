@@ -4,7 +4,6 @@ using TMPro;
 using DG.Tweening;
 using UnityEngine.UI;
 
-// 1. BasePopupUI 상속
 public class GameOverController : BasePopupUI
 {
     [SerializeField] private GameObject bloodSplatterEffect;
@@ -14,7 +13,7 @@ public class GameOverController : BasePopupUI
 
     private void Awake()
     {
-        popupPanel = this.gameObject; // 부모 변수 연결
+        popupPanel = this.gameObject;
 
         if (UIManager.Instance != null)
         {
@@ -27,34 +26,37 @@ public class GameOverController : BasePopupUI
         }
     }
 
-    // 2. 외부에서 게임 오버 창을 켤 때 호출할 함수
+    // [수정] 외부(PlayerStat 등)에서 사망 시 안전하게 열어주는 관문
     public void Open()
     {
-        ShowPanel(); // 스택 등록 및 SetActive(true) 자동 실행
+        ShowPanel(); // SetActive(true) 및 스택 등록
+
+        // 일시정지 상태에서 연출이 물리적으로 돌아가도록 Open 시점에 연출 강제 시작
+        PlayGameOverSequence();
     }
 
     private void OnEnable()
     {
-        Time.timeScale = 0f;
+        // 버튼 그룹은 연출이 끝나기 전까지 유저 조작을 막기 위해 꺼둔다.
         if (buttonGroup != null) buttonGroup.SetActive(false);
-        PlayGameOverSequence();
     }
 
     private void PlayGameOverSequence()
     {
         if (bloodSplatterEffect == null) return;
 
+        // 초기 상태 설정
         bloodSplatterEffect.transform.localScale = Vector3.zero;
         if (bloodImage != null) bloodImage.color = new Color(1, 1, 1, 0);
 
-        Sequence mainSeq = DOTween.Sequence();
+        Sequence mainSeq = DOTween.Sequence().SetUpdate(true);
 
-        mainSeq.Append(bloodSplatterEffect.transform.DOScale(1.2f, 0.15f).SetEase(Ease.OutExpo));
+        mainSeq.Append(bloodSplatterEffect.transform.DOScale(1.2f, 0.15f).SetEase(Ease.OutExpo).SetUpdate(true));
         if (bloodImage != null)
         {
-            mainSeq.Join(bloodImage.DOFade(1f, 0.1f));
+            mainSeq.Join(bloodImage.DOFade(1f, 0.1f).SetUpdate(true));
         }
-        mainSeq.Append(bloodSplatterEffect.transform.DOScale(1.0f, 0.1f));
+        mainSeq.Append(bloodSplatterEffect.transform.DOScale(1.0f, 0.1f).SetUpdate(true));
 
         mainSeq.AppendInterval(0.1f);
 
@@ -64,43 +66,40 @@ public class GameOverController : BasePopupUI
             {
                 buttonGroup.SetActive(true);
                 buttonGroup.transform.localScale = Vector3.zero;
+
+                // 버튼이 백에서 튕겨 나오며 스케일업 되는 연출도 독립 시간 적용
                 buttonGroup.transform.DOScale(1.0f, 0.4f)
                     .SetEase(Ease.OutBack)
                     .SetUpdate(true);
             }
         });
-
-        mainSeq.SetUpdate(true);
     }
 
     public void OnLoadClick()
     {
-        SaveLoadController saveLoader = FindFirstObjectByType<SaveLoadController>(FindObjectsInactive.Include);
-        if (saveLoader != null)
+        if (UIManager.Instance != null && UIManager.Instance.saveLoadController != null)
         {
-            HidePanel(); // 게임 오버 창 닫기
-
-            saveLoader.onCloseAction = () =>
-            {
-                this.ShowPanel(); // 불러오기 취소/완료 시 다시 게임 오버 창으로 복귀
-            };
-
-            saveLoader.Open(Constants.ESaveLoadType.Load);
+            HidePanel();
+            UIManager.Instance.saveLoadController.onCloseAction = null;
+            UIManager.Instance.saveLoadController.Open(Constants.ESaveLoadType.Load, false);
+        }
+        else
+        {
+            Debug.LogError("GameOverController: UIManager 또는 SaveLoadController 참조가 누락되었습니다.");
+            ShowPanel();
         }
     }
 
     public void OnMainMenuClick()
     {
-        // 4. 메인 메뉴로 갈 때는 스택에서 확실히 해제
         HidePanel();
+        Time.timeScale = 1f;
 
         if (UIManager.Instance != null)
         {
-            UIManager.Instance.LoadScene(Constants.ESceneType.PrototypeMain);
+            UIManager.Instance.LoadScene(Constants.ESceneType.PrototypeMain, false);
             return;
         }
-
-        Time.timeScale = 1f;
         SceneManager.LoadScene(Constants.ESceneType.PrototypeMain.ToString());
     }
 }

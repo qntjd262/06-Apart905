@@ -27,11 +27,10 @@ public class PlayerQuickSlotUI : MonoBehaviour
     {
         if (InventoryManager.Instance != null)
         {
-            InventoryManager.Instance.OnQuickSlotUpdated += () => RefreshUI(true);
+            InventoryManager.Instance.OnQuickSlotUpdated += OnQuickSlotUpdatedCallback;
             RefreshUI(false);
         }
     }
-
     void Update()
     {
         if (UIManager.Instance.IsAnyPopupOpen) return;
@@ -45,6 +44,21 @@ public class PlayerQuickSlotUI : MonoBehaviour
         }
     }
 
+    private void OnDestroy()
+    {
+        // 씬이 전환되거나 오브젝트가 파괴될 때 싱글톤 매니저에 등록된 이벤트를 확실히 끊어준다.
+        if (InventoryManager.Instance != null)
+        {
+            InventoryManager.Instance.OnQuickSlotUpdated -= OnQuickSlotUpdatedCallback;
+        }
+    }
+
+    private void OnQuickSlotUpdatedCallback()
+    {
+        if (this == null || canvasGroup == null) return;
+
+        RefreshUI(true);
+    }
     private void HandleQuickSlotInput(int index)
     {
         InventoryManager.Instance.UseItem(index, true, InventoryManager.Instance.Player);
