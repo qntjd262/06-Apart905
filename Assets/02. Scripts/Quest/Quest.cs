@@ -12,6 +12,9 @@ public class Quest : ScriptableObject
     public int goalAmount; //필요 갯수
     public int currentAmount;
 
+    [Header("Reward")]
+    public ItemData rewardItemID; //보상 아이템의 이름
+
     [Header("Dialogues")]
     [TextArea] public string[] beforeAcceptDialogues;
     [TextArea] public string[] duringAcceptDialogues;

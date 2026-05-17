@@ -17,6 +17,8 @@ public class InventoryManager : Singleton<InventoryManager>
     public InventorySlot[] CurrentStorageSlots { get; private set; }
     public Action OnStorageUpdated;
 
+    public static System.Action OnInventoryChanged;
+
     protected override void Awake()
     {
         base.Awake();
@@ -97,12 +99,29 @@ public class InventoryManager : Singleton<InventoryManager>
 
                 SyncQuestAndUI(itemToAdd.itemName);
 
+                UpdateAllNPCOutlines();
+
                 OnBagUpdated?.Invoke();
                 return true;
             }
         }
         Debug.Log("가방이 가득 찼습니다.");
         return false;
+    }
+
+    private void UpdateAllNPCOutlines()
+    {
+        NPC[] allNPCs = FindObjectsOfType<NPC>();
+        foreach (NPC npc in allNPCs)
+        {
+            if (npc.myQuest != null)
+            {
+                // 인벤토리 수량을 NPC의 퀘스트 데이터에 다시 맞추고 색상 변경
+                int count = GetItemCount(npc.myQuest.targetID);
+                npc.myQuest.ForceSyncProgress(count);
+                npc.UpdateOutlineColor();
+            }
+        }
     }
 
     public int GetItemCount(string itemName)

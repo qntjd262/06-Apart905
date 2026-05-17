@@ -1,11 +1,81 @@
+using UnityEditor.PackageManager;
+using UnityEditor.ShaderGraph;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class NPC : MonoBehaviour, IInteractable
 {
+    [Header("NPC Info")]
+    public NPCdata npcData;
+
     public Quest myQuest;
+    private Renderer myRenderer;
+    private MaterialPropertyBlock PropertyBlock;
+
+    void Awake()
+    {
+        myRenderer = GetComponentInChildren<Renderer>();
+        PropertyBlock = new MaterialPropertyBlock();
+    }
+
+    void Start()
+    {
+        UpdateOutlineColor();
+    }
+
+    public void UpdateOutlineColor()
+    {
+        if(myRenderer == null || myQuest == null) return;
+
+        myRenderer.GetPropertyBlock(PropertyBlock);
+        Color targetColor = Color.red;
+        string status = "";
+
+        //퀘스트 완료 시
+        if(myQuest.isCompleted)
+        {
+            targetColor = Color.red;
+            status = "완료";
+        }
+        else
+        {
+            bool isActive = QuestManager.Instance.activeQuests.Exists(q => q.questName == myQuest.questName);
+
+            if(isActive)
+            {
+                //목표 아이템을 다 모았나?
+                if(myQuest.currentAmount >= myQuest.goalAmount)
+                {
+                    targetColor = Color.green;
+                    status = "목표달성";
+                }
+                else
+                {
+                    targetColor = Color.red;
+                    status = "목표치 부족";
+                }
+            }
+            else
+            {
+                //퀘스트가 수락 가능한 상태인가?
+                targetColor = Color.green;
+                status = "수락 전(보유중)";
+            }
+        }
+        Debug.Log($"{gameObject.name}의 퀘스트 상태: {status} / 설정 색상: {targetColor}");
+
+        PropertyBlock.SetColor("_Outline_color", targetColor);
+        myRenderer.SetPropertyBlock(PropertyBlock);
+    }
 
     public void Interact(PlayerStat player)
     {
+        if(npcData != null && NPCUIHandler.Instance != null)
+        {
+            NPCUIHandler.Instance.ShowNPC(npcData);
+        }
+
         if (player.isInteracting || myQuest == null) return;
 
         // 현재 인벤토리 수량을 퀘스트 데이터에 동기화
@@ -55,22 +125,50 @@ public class NPC : MonoBehaviour, IInteractable
                 // 퀘스트 완료 처리
                 CompleteQuest();
             }
+                UpdateOutlineColor();
         });
     }
 
     void CompleteQuest()
     {
         myQuest.isCompleted = true;
+
+        //퀘스트 완료 시 목표 아이템 제거
         if (myQuest.type == QuestType.ItemCollection)
         {
             InventoryManager.Instance.RemoveItem(myQuest.targetID, myQuest.goalAmount);
         }
 
-        // [수정] 주소값이 아닌 '이름' 기반으로 리스트에서 제거
+        //보상 아이템 지급
+        if (myQuest.rewardItemID != null)
+            {
+                bool isSuccess = InventoryManager.Instance.AddItem(myQuest.rewardItemID);
+                Debug.Log($"{myQuest.rewardItemID.itemName}를 획득하였습니다!");
+            }
+
         QuestManager.Instance.activeQuests.RemoveAll(q => q.questName == myQuest.questName);
 
-        // [추가] 퀘스트가 완료되어 사라졌으므로 UI를 새로고침합니다.
         QuestUI ui = FindObjectOfType<QuestUI>(true);
         if (ui != null) ui.RefreshQuestList();
+    }
+
+    void Onable()
+    {
+        InventoryManager.OnInventoryChanged += RefreshStatus;
+    }
+
+    void Osable()
+    {
+        InventoryManager.OnInventoryChanged -= RefreshStatus;
+    }
+
+    void RefreshStatus()
+    {
+        if(myQuest != null)
+        {
+            int count = InventoryManager.Instance.GetItemCount(myQuest.targetID);
+            myQuest.ForceSyncProgress(count);
+            UpdateOutlineColor();
+        }
     }
 }
