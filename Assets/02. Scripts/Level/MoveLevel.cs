@@ -9,6 +9,7 @@ public class MoveLevel : MonoBehaviour
      *    Player스크립트에서 Player의 상태에 따라 위/아래를 구분     
      *    플레이어 외의 요소들이 이동하는것 보단 플레이어가 이동하고 층만 따라가는게 더 효율적이라고 생각함
      *    층 간격은 prefab기준으로 5.4
+     *    바닥 y축은 -45.9
      */
     
     public enum PlayerState         // 임시로 지정
@@ -22,8 +23,8 @@ public class MoveLevel : MonoBehaviour
     [SerializeField]
     private GameObject
         _LevelBott, _LevelMid, _LevelTop,  // 이동시킬 3개의 층들
-        _RoofTop;                          // 옥상
-    private int _currLevel;         // 현재 층 수
+        _RoofTop, _Ground;                          // 옥상, 1층 바닥
+    [SerializeField] private int _currLevel;         // 현재 층 수
 
     private void Start()
     {
@@ -32,35 +33,45 @@ public class MoveLevel : MonoBehaviour
 
     public void MoveUp()
     {
-        if (_currLevel < 18)          // 18층은 옥상 구현
+        if (_currLevel > 2 && _currLevel < 16)          // 18층은 옥상 구현
         {          
             _LevelBott.transform.Translate(0, 5.4f * 3, 0);   // 최하층을 제일 위로
             IsMoveUp(true);
 
             // 층 이동에 따른 오브젝트/몬스터/NPC 비활성화 및 위치 조정 코드 작성
-            _currLevel++;
+        }
+        else if (_currLevel == 3)
+        {
+            _Ground.SetActive(false);
         }
         else
         {
             _RoofTop.transform.position = new Vector3(0, _LevelTop.transform.position.y + 5.4f, 0);    // 옥상으로 이동
             _RoofTop.SetActive(true);
         }
+
+        _currLevel++;
     }
 
     public void MoveDown()
     {
-        if (_currLevel > 1 && _currLevel < 18)           // 최하층
+        if (_currLevel > 2 && _currLevel < 17)           // 최상층을 제일 아래로
         {
             _LevelTop.transform.Translate(0, -5.4f * 3, 0);
-            IsMoveUp(false); 
-            _currLevel--;
+            IsMoveUp(false);
 
+            if (_currLevel == 16)                       // 옥상 비활성화
+            {
+                _RoofTop.SetActive(false);
+            }
             // 층 이동에 따른 오브젝트/몬스터/NPC 비활성화 및 위치 조정 코드 작성
         }
-        else if(_currLevel == 18)
+        else if( _currLevel == 2)
         {
-            _RoofTop.SetActive(false);
+            _Ground.SetActive(true);
         }
+
+            _currLevel--;                               // 층 감소
     }
 
     private void IsMoveUp(bool isMoveUp)     // 층 이동 후 층 위치 조정

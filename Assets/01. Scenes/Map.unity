@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 0
   m_AmbientMode: 3
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: 768577258d8777a4687c5c68efc5a851, type: 2}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 2b56b902ef25644448edf97e91923f71, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -127,9 +127,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4076758277611094041, guid: 842bd55c4d130844f94089ffc3179639, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4381456772002601818, guid: 842bd55c4d130844f94089ffc3179639, type: 3}
       propertyPath: m_Name
       value: Floors
+      objectReference: {fileID: 0}
+    - target: {fileID: 5869341687035240974, guid: 842bd55c4d130844f94089ffc3179639, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6993984898980634466, guid: 842bd55c4d130844f94089ffc3179639, type: 3}
       propertyPath: m_LocalPosition.x
@@ -193,7 +201,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!108 &194044003
 Light:
   m_ObjectHideFlags: 0
@@ -383,8 +391,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 437788170}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.0051506464, y: 0.99434465, z: -0.060640953, w: 0.087033756}
-  m_LocalPosition: {x: 10.281786, y: 0.09126419, z: -12.247439}
+  m_LocalRotation: {x: -0.004883617, y: 0.9789723, z: -0.023810785, w: -0.20254001}
+  m_LocalPosition: {x: 3.8002245, y: 6.035558, z: -4.8540077}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
