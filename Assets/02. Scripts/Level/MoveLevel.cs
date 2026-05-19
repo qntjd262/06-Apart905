@@ -1,4 +1,4 @@
-using UnityEngine;
+    using UnityEngine;
 
 public class MoveLevel : MonoBehaviour
 {
@@ -12,11 +12,11 @@ public class MoveLevel : MonoBehaviour
      *    바닥 y축은 -45.9
      */
     
-    public enum PlayerState         // 임시로 지정
+    public enum PlayerState         // 플레이어의 층 이동 상태
     {
         None, MoveUp, MoveDown
     }
-    public PlayerState state;       // 임시로 지정
+    public PlayerState state;
     public bool check = false;
 
 
@@ -25,6 +25,11 @@ public class MoveLevel : MonoBehaviour
         _LevelBott, _LevelMid, _LevelTop,  // 이동시킬 3개의 층들
         _RoofTop, _Ground;                          // 옥상, 1층 바닥
     [SerializeField] private int _currLevel;         // 현재 층 수
+    public int CurrLevel => _currLevel;
+    public GameObject LevelBottom { get{ return _LevelBott; }}
+    public GameObject LevelMid { get{ return _LevelMid; }}
+    public GameObject LevelTop { get{ return _LevelTop; }}
+
 
     private void Start()
     {
