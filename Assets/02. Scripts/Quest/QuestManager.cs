@@ -7,46 +7,127 @@ public class QuestManager : MonoBehaviour
     public QuestUI questUI;
     public List<Quest> activeQuests = new List<Quest>();
 
-    void Awake()
-{
-    if (Instance == null)
-    {
-        Instance = this;
-    }
-    else
-    {
-        Destroy(gameObject);
-    }
-}
+    private Quest pendingQuest;
 
-    public void AcceptQuest(Quest newQuest)
+    private PlayerStat pendingPlayer;
+
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    public void AcceptQuest(Quest newQuest, PlayerStat player)
     {
         if(activeQuests.Exists(q => q.questName == newQuest.questName))
         {
             Debug.Log($"[{newQuest.questName}]은 이미 진행 중인 퀘스트입니다.");
+            if(player != null) player.isInteracting = false;
+
+            if(DialogueManager.Instance != null) DialogueManager.Instance.EndDialogue();
             return;
         }
 
-        if(newQuest.type == QuestType.ItemCollection)
-        {
-            if (InventoryManager.Instance != null)
-            {
-                int alreadyHaveCount = InventoryManager.Instance.GetItemCount(newQuest.targetID);
-                newQuest.currentAmount = alreadyHaveCount;
-            }
-        }
+        pendingQuest = newQuest;
+        pendingPlayer = player;
 
-        activeQuests.Add(newQuest);
-        Debug.Log($"{newQuest.questName} 퀘스트를 수락했습니다.");
-
-        QuestUI ui = FindObjectOfType<QuestUI>(true);
-        if (ui != null)
+        if(QuestAcceptUI.Instance != null)
         {
-            ui.RefreshQuestList();
+            QuestAcceptUI.Instance.ShowPopup(newQuest);
         }
         else
         {
-            Debug.LogWarning("씬에서 QuestUI를 찾을 수 없습니다.");
+            Debug.LogError("씬에 오브젝트를 찾을수 없습니다");
+            if(pendingPlayer != null) pendingPlayer.isInteracting = false;
+            if(DialogueManager.Instance != null) DialogueManager.Instance.EndDialogue();
+        }
+
+        // if(newQuest.type == QuestType.ItemCollection)
+        // {
+        //     if (InventoryManager.Instance != null)
+        //     {
+        //         int alreadyHaveCount = InventoryManager.Instance.GetItemCount(newQuest.targetID);
+        //         newQuest.currentAmount = alreadyHaveCount;
+        //     }
+        // }
+
+        // activeQuests.Add(newQuest);
+        // Debug.Log($"{newQuest.questName} 퀘스트를 수락했습니다.");
+
+        // QuestUI ui = FindObjectOfType<QuestUI>(true);
+        // if (ui != null)
+        // {
+        //     ui.RefreshQuestList();
+        // }
+        // else
+        // {
+        //     Debug.LogWarning("씬에서 QuestUI를 찾을 수 없습니다.");
+        // }
+    }
+
+    public void ConfirmAcceptQuest()
+    {
+        if(pendingQuest == null) return;
+
+        if(pendingQuest.type == QuestType.ItemCollection)
+        {
+            if(InventoryManager.Instance != null)
+            {
+                int alreadyHaveCount = InventoryManager.Instance.GetItemCount(pendingQuest.targetID);
+                pendingQuest.currentAmount = alreadyHaveCount;
+            }
+        }
+
+        activeQuests.Add(pendingQuest);
+        Debug.Log($"{pendingQuest.questName} 퀘스트를 수락하였습니다.");
+
+        pendingQuest = null;
+
+        if(pendingPlayer != null)
+        {
+            pendingPlayer.isInteracting = false;
+            pendingPlayer = null;
+        }
+
+        if(DialogueManager.Instance != null)
+        {
+            DialogueManager.Instance.EndDialogue();
+        }
+
+        NPC[] allNPCs = FindObjectsByType<NPC>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        foreach(NPC npc in allNPCs)
+        {
+            npc.UpdateOutlineColor();
+        }
+
+        if(questUI != null) questUI.RefreshQuestList();
+        else
+        {
+            QuestUI ui = FindAnyObjectByType<QuestUI>(FindObjectsInactive.Include);
+            if(ui != null) ui.RefreshQuestList();
+        }
+    }
+
+    public void CancelQuest()
+    {
+        Debug.Log("퀘스트 수락을 거절했습니다.");
+        pendingQuest = null; //대기 중인 퀘스트 취소
+
+        if(pendingPlayer != null)
+        {
+            pendingPlayer.isInteracting = false;
+            pendingPlayer = null;
+
+        }
+        if(DialogueManager.Instance != null)
+        {
+            DialogueManager.Instance.EndDialogue();
         }
     }
 

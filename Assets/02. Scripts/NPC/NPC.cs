@@ -71,6 +71,12 @@ public class NPC : MonoBehaviour, IInteractable
 
     public void Interact(PlayerStat player)
     {
+        if(myQuest != null && myQuest.isCompleted)
+        {
+            Debug.Log($"{gameObject.name}: 이미 완료된 퀘스트입니다. ");
+            return;
+        }
+
         if(npcData != null && NPCUIHandler.Instance != null)
         {
             NPCUIHandler.Instance.ShowNPC(npcData);
@@ -107,7 +113,7 @@ public class NPC : MonoBehaviour, IInteractable
         player.isInteracting = true; 
         
         DialogueManager.Instance.StartDialogue(currentDialogues, () => {
-            player.isInteracting = false; 
+            //player.isInteracting = false; 
 
             int finalCheckCount = InventoryManager.Instance.GetItemCount(myQuest.targetID);
             myQuest.ForceSyncProgress(finalCheckCount);
@@ -118,12 +124,20 @@ public class NPC : MonoBehaviour, IInteractable
             if (!stillActive && !myQuest.isCompleted)
             {
                 // 퀘스트 수락 (이 안에서 UI 새로고침이 호출되어야 합니다)
-                QuestManager.Instance.AcceptQuest(myQuest);
+                QuestManager.Instance.AcceptQuest(myQuest, player);
             }
-            else if (myQuest.currentAmount >= myQuest.goalAmount && !myQuest.isCompleted)
+            else
             {
-                // 퀘스트 완료 처리
-                CompleteQuest();
+                if(myQuest.currentAmount >= myQuest.goalAmount && !myQuest.isCompleted)
+                {
+                    // 퀘스트 완료 처리
+                    CompleteQuest();         
+                }
+                player.isInteracting = false; 
+                if(DialogueManager.Instance != null)
+                {
+                    DialogueManager.Instance.EndDialogue();
+                }
             }
                 UpdateOutlineColor();
         });
@@ -148,16 +162,16 @@ public class NPC : MonoBehaviour, IInteractable
 
         QuestManager.Instance.activeQuests.RemoveAll(q => q.questName == myQuest.questName);
 
-        QuestUI ui = FindObjectOfType<QuestUI>(true);
+        QuestUI ui = FindAnyObjectByType<QuestUI>(FindObjectsInactive.Include);
         if (ui != null) ui.RefreshQuestList();
     }
 
-    void Onable()
+    void OnEnable()
     {
         InventoryManager.OnInventoryChanged += RefreshStatus;
     }
 
-    void Osable()
+    void OnDisable()
     {
         InventoryManager.OnInventoryChanged -= RefreshStatus;
     }

@@ -51,12 +51,23 @@ public class DialogueManager : Singleton<DialogueManager>
             }
             
             isTyping = false;
+
+            yield return null;
             yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0));
             yield return null;
         }
 
-        dialoguePanel.SetActive(false);
-        IsDialogueActive = false;
+        //dialoguePanel.SetActive(false);
+        //IsDialogueActive = false;
         onComplete?.Invoke(); // 대화가 끝나면 실행
+    }
+
+    public void EndDialogue()
+    {
+        if(dialoguePanel != null)
+        {
+            dialoguePanel.SetActive(false);
+        }
+        IsDialogueActive = false;
     }
 }
