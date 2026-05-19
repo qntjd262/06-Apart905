@@ -79,13 +79,11 @@ public class UIManager : Singleton<UIManager>
     {
         if (SceneManager.GetActiveScene().name != Constants.ESceneType.PrototypeGame.ToString()) return;
 
+        string savedInteractKeyStr = PlayerPrefs.GetString("Key_Interact", "E");
+        KeyCode interactKey = (KeyCode)System.Enum.Parse(typeof(KeyCode), savedInteractKeyStr);
         if (Input.GetKeyDown(KeyCode.Backspace))
         {
-            if (SlotUI.PickedSlot != null)
-            {
-                SlotUI.PickedSlot.CancelPick();
-            }
-
+            if (SlotUI.PickedSlot != null) SlotUI.PickedSlot.CancelPick();
             if (_activeUIStack.Count > 0)
             {
                 GameObject topUI = _activeUIStack[_activeUIStack.Count - 1];
@@ -100,13 +98,13 @@ public class UIManager : Singleton<UIManager>
                     topUI.SetActive(false);
                 }
 
-                return; // 창을 하나 닫았으면 프레임 종료 (여러 개 동시 닫힘 방지)
+                return;
             }
 
             TogglePauseMenu();
         }
 
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyDown(interactKey))
         {
             if (storagePanel != null && storagePanel.activeSelf)
             {
@@ -506,7 +504,8 @@ public class UIManager : Singleton<UIManager>
     {
         if (activeInteractUI == null) return;
         activeInteractUI.gameObject.SetActive(true);
-        activeInteractUI.interactText.text = $"[E]를 눌러 {text}";
+        string currentKey = PlayerPrefs.GetString("Key_Interact", "E");
+        activeInteractUI.interactText.text = $"[{currentKey}]를 눌러 {text}";
         activeInteractUI.iconImage.sprite = interactIcons[(int)type];
     }
     public void HideInteractUI() { if (activeInteractUI == null) return; activeInteractUI.gameObject.SetActive(false); }

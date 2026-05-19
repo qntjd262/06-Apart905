@@ -29,9 +29,19 @@ public class PlayerInteraction : MonoBehaviour
                 UIManager.Instance.ShowInteractUI(interactable.GetInteractText(), interactable.GetInteractType());
 
                 //E 키를 누르면 상호작용 실행
-                if (Input.GetKeyDown(KeyCode.E))
+                // if (Input.GetKeyDown(KeyCode.E))
+                // {
+                //     Debug.Log($"[E] 키 입력 감지! {hit.collider.gameObject.name}와 상호작용을 시도합니다.");
+                //     interactable.Interact(playerStat);
+                // }
+                // return;
+                string savedKeyStr = PlayerPrefs.GetString("Key_Interact", "E");
+                KeyCode interactKey = (KeyCode)System.Enum.Parse(typeof(KeyCode), savedKeyStr);
+
+                // 유저가 세팅한 키로 입력 감지
+                if (Input.GetKeyDown(interactKey))
                 {
-                    Debug.Log($"[E] 키 입력 감지! {hit.collider.gameObject.name}와 상호작용을 시도합니다.");
+                    Debug.Log($"[{interactKey}] 키 입력 감지! {hit.collider.gameObject.name}와 상호작용을 시도합니다.");
                     interactable.Interact(playerStat);
                 }
                 return;

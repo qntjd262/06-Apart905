@@ -10,6 +10,11 @@ public class OptionsController : BasePopupUI
     [SerializeField] private Button confirmButton;
     [SerializeField] private Button returnButton;
 
+    [Header("세부 옵션 컴포넌트 연결")]
+    [SerializeField] private SoundOptions soundOptions;
+    [SerializeField] private GraphicOptions graphicOptions;
+    [SerializeField] private KeyBindOptions keyBindOptions;
+
     private void Awake()
     {
         popupPanel = this.gameObject; // 부모 변수 연결
@@ -36,6 +41,10 @@ public class OptionsController : BasePopupUI
         {
             UIManager.Instance.OpenPopupWithEffects("설정");
         }
+
+        if (soundOptions != null) soundOptions.Initialize();
+        if (graphicOptions != null) graphicOptions.Initialize();
+        if (keyBindOptions != null) keyBindOptions.Initialize();
 
         if (tabPanels != null && tabPanels.Length > 0)
         {
