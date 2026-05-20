@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7188821774180427774}
   - component: {fileID: 4821726991305752054}
+  - component: {fileID: 1724194040847291904}
   m_Layer: 0
   m_Name: LevelManager
   m_TagString: Untagged
@@ -49,3 +50,72 @@ MonoBehaviour:
   _LevelBott: {fileID: 0}
   _LevelMid: {fileID: 0}
   _LevelTop: {fileID: 0}
+  _RoofTop: {fileID: 0}
+  _Ground: {fileID: 0}
+  _currLevel: 0
+--- !u!114 &1724194040847291904
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8187276253953917822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc1ce136bef3c6441abc01409efe51c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Presets:
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 228e0028e63051b4a851bb48227b9d6f, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  Rooms:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  QuestItems:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  QuestNPCs:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}

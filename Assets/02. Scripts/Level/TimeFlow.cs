@@ -9,10 +9,15 @@ public class TimeFlow : MonoBehaviour
      * x축은 90도, y축은 0도일 때가 12시
      * 시간에 따라 Environment Reflection의 Intensity Multiplier도 변경
      */
+
+    [Header("씬에 배치된 Directional Light 할당 필요")]
     [SerializeField] private GameObject directionalLight;
+
+    [Header("현재 시간 (현실 1분 = 게임 1시간)")]
     [SerializeField] private int hours;
     [SerializeField] private float minutes;
 
+    [Header("현재 시간 (현실 1분 = 게임 1시간)")]
     [SerializeField] private Color dayColor = new Color(0.8f, 0.8f, 0.8f);
     [SerializeField] private Color nightColor = new Color(0.2f, 0.2f, 0.2f);
 
@@ -34,9 +39,9 @@ public class TimeFlow : MonoBehaviour
 
     private void RotateLight()      // Directional Light 회전
     {
-        float rotationY = (hours + (minutes / 60f)) / 24f * 360;
+        float rotationXY = (hours + (minutes / 60f)) / 24f * 360;
 
-        directionalLight.transform.rotation = Quaternion.Euler(25f, rotationY - 180f, 0f);
+        directionalLight.transform.rotation = Quaternion.Euler(rotationXY - 90f, rotationXY - 180f, 0f);
     }
 
     private void ChangeLightColor()     // Directional Light 색깔 변경

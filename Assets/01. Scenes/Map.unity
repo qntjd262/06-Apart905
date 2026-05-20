@@ -23,10 +23,10 @@ RenderSettings:
   m_AmbientSkyColor: {r: 0.019607844, g: 0.019607844, b: 0.019607844, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
-  m_AmbientIntensity: 0
+  m_AmbientIntensity: 2.02
   m_AmbientMode: 3
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 2100000, guid: 768577258d8777a4687c5c68efc5a851, type: 2}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 2b56b902ef25644448edf97e91923f71, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -127,9 +127,33 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1048360342520591880, guid: 842bd55c4d130844f94089ffc3179639, type: 3}
+      propertyPath: '_QuestNPCs.Array.data[0]'
+      value: 
+      objectReference: {fileID: 4556690178822423821, guid: 7ddcb42ac717fe846a4f0ec1d3681857, type: 3}
+    - target: {fileID: 1048360342520591880, guid: 842bd55c4d130844f94089ffc3179639, type: 3}
+      propertyPath: '_QuestNPCs.Array.data[1]'
+      value: 
+      objectReference: {fileID: 4889923487626925666, guid: 85a8f375678f65148a08295fe9ab9074, type: 3}
+    - target: {fileID: 1048360342520591880, guid: 842bd55c4d130844f94089ffc3179639, type: 3}
+      propertyPath: '_QuestNPCs.Array.data[2]'
+      value: 
+      objectReference: {fileID: 4814121383351779692, guid: 18171c4838d6eaf4598ef29c0425ce00, type: 3}
+    - target: {fileID: 1048360342520591880, guid: 842bd55c4d130844f94089ffc3179639, type: 3}
+      propertyPath: '_QuestNPCs.Array.data[3]'
+      value: 
+      objectReference: {fileID: 2317027818604601495, guid: b8afe039aaa98f64192af77f28b132ca, type: 3}
+    - target: {fileID: 4076758277611094041, guid: 842bd55c4d130844f94089ffc3179639, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4381456772002601818, guid: 842bd55c4d130844f94089ffc3179639, type: 3}
       propertyPath: m_Name
       value: Floors
+      objectReference: {fileID: 0}
+    - target: {fileID: 5869341687035240974, guid: 842bd55c4d130844f94089ffc3179639, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6993984898980634466, guid: 842bd55c4d130844f94089ffc3179639, type: 3}
       propertyPath: m_LocalPosition.x
@@ -267,13 +291,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 194044002}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.2164396, y: 0, z: 0, w: 0.97629607}
+  m_LocalRotation: {x: 0.7069991, y: -0.012340746, z: 0.012340746, w: 0.7069991}
   m_LocalPosition: {x: 0, y: 30, z: -45}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 25, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: -2, z: 0}
 --- !u!114 &194044005
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -383,8 +407,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 437788170}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.0051506464, y: 0.99434465, z: -0.060640953, w: 0.087033756}
-  m_LocalPosition: {x: 10.281786, y: 0.09126419, z: -12.247439}
+  m_LocalRotation: {x: 0.007827751, y: -0.95158243, z: 0.024592623, w: 0.3063084}
+  m_LocalPosition: {x: 4.852282, y: 0.17919335, z: -5.6841087}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
