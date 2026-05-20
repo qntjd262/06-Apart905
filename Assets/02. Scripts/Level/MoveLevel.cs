@@ -24,19 +24,13 @@ public class MoveLevel : MonoBehaviour
     private GameObject
         _LevelBott, _LevelMid, _LevelTop,           // 이동시킬 3개의 층들
         _RoofTop, _Ground;                          // 옥상, 1층 바닥
-    [SerializeField] private int _currLevel;        // 현재 층 수
+    [SerializeField] private int _currLevel = 9;             // 현재 층 수, 시작할 때 9층에서 시작
 
     // set불가 get전용 프로퍼티, 타 클래스에서 불러오기 용
     public int CurrLevel => _currLevel;
     public GameObject LevelBottom { get{ return _LevelBott; }}
     public GameObject LevelMid { get{ return _LevelMid; }}
     public GameObject LevelTop { get{ return _LevelTop; }}
-
-
-    private void Awake()
-    {
-        _currLevel = 9;             // 시작할 때 9층에서 시작
-    }
 
     public void MoveUp()
     {
@@ -60,6 +54,7 @@ public class MoveLevel : MonoBehaviour
         }
 
         _currLevel++;
+        _floorManager.SetQuests(_currLevel);
     }
 
     public void MoveDown()
@@ -80,6 +75,7 @@ public class MoveLevel : MonoBehaviour
         }
 
         _currLevel--;                               // 층 감소
+        _floorManager.SetQuests(_currLevel);
     }
 
     private void IsMoveUp(bool isMoveUp)     // 층 이동 후 층 위치 조정

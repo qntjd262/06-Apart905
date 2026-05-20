@@ -39,9 +39,9 @@ public class TimeFlow : MonoBehaviour
 
     private void RotateLight()      // Directional Light 회전
     {
-        float rotationY = (hours + (minutes / 60f)) / 24f * 360;
+        float rotationXY = (hours + (minutes / 60f)) / 24f * 360;
 
-        directionalLight.transform.rotation = Quaternion.Euler(25f, rotationY - 180f, 0f);
+        directionalLight.transform.rotation = Quaternion.Euler(rotationXY - 90f, rotationXY - 180f, 0f);
     }
 
     private void ChangeLightColor()     // Directional Light 색깔 변경

@@ -15,17 +15,17 @@ public class FloorManager : MonoBehaviour
      * 
      */
 
-    [SerializeField] private MoveLevel moveLevel;                                  // MoveLevel의 _currLevel을 받기위함 
+    [SerializeField] private MoveLevel _moveLevel;                                  // MoveLevel의 _currLevel을 받기위함 
 
     [Header("가구배치 프리셋")]
-    [SerializeField] private List<GameObject> Presets = new List<GameObject>();    // 옥상 제외 17층, 각 층에 2세대 -> 총 34가구에 적용시킬 가구 배치 프리셋
-    [SerializeField] private GameObject Presets_Ingame;
+    [SerializeField] private List<GameObject> _Presets = new List<GameObject>();    // 옥상 제외 17층, 각 층에 2세대 -> 총 34가구에 적용시킬 가구 배치 프리셋
+    [SerializeField] private GameObject _Presets_Ingame;
 
     [Header("**퀘스트 아이템**")]
-    [SerializeField] private GameObject[] QuestItems = new GameObject[6];          // 사용되는 퀘스트 아이템들(손전등, 부품, 부서진 라디오, 배터리 팩, 열쇠, 휘발유)
+    [SerializeField] private GameObject[] _QuestItems = new GameObject[6];          // 사용되는 퀘스트 아이템들(손전등, 부품, 부서진 라디오, 배터리 팩, 열쇠, 휘발유)
 
     [Header("**퀘스트 NPC**")]
-    [SerializeField] private GameObject[] QuestNPCs = new GameObject[4];           // 고정 출현 퀘스트 NPC들(친한 형, 이상한 여자, 충격먹은 청년, 좀비가 된 경비원)
+    [SerializeField] private GameObject[] _QuestNPCs = new GameObject[4];           // 고정 출현 퀘스트 NPC들(친한 형, 이상한 여자, 충격먹은 청년, 좀비가 된 경비원)
 
 
     private Vector3 Floor9_leftpos;
@@ -44,24 +44,25 @@ public class FloorManager : MonoBehaviour
      * 2. AllocatePresets: 미리 Active false상태로 배치된 가구 프리셋들을 셔플하기 위해 Presets 리스트에 할당
      * 3. RandomShuffle(Presets): Fisher-Yates 셔플, 뒤에서부터 앞으로 순회하며 현재 인덱스 이하의 랜덤 위치와 스왑하는 방식으로 매개변수 리스트를 셔플
      * 4. SetFurnitures: 셔플된 Presets 리스트 안의 가구 프리셋들을 1층부터 좌-우순서로 17층 우측방까지 배치
+     * 5. SetActiveFurnitures(currLevel, isUp, isInit): 플레이어 기준 위/아래/중간 층의 가구만 활성화시키는 함수
      * 5. SetInitialQuests: 모든 퀘스트 아이템과 NPC를 정해진 위치에 배치하는 함수
      */
     private void InitialSetting()                               
     {
-        Floor9_leftpos = moveLevel.LevelMid.transform.Find("Room_Left").transform.position;
-        Floor9_rightpos = moveLevel.LevelMid.transform.Find("Room_Right").transform.position;
+        Floor9_leftpos = _moveLevel.LevelMid.transform.Find("Room_Left").transform.position;
+        Floor9_rightpos = _moveLevel.LevelMid.transform.Find("Room_Right").transform.position;
 
         AllocatePresets();
-        RandomShuffle(Presets);
+        RandomShuffle(_Presets);
         SetFurnitures();
-        SetActiveFurnitures(moveLevel.CurrLevel, false, true);
+        SetActiveFurnitures(_moveLevel.CurrLevel, false, true);
     }
 
     private void AllocatePresets()                              // 셔플할 인 게임상의 가구 프리셋들 할당
     {
         for(int i = 0; i < 34; i++)
         {
-            Presets[i] = Presets_Ingame.transform.GetChild(i).gameObject;
+            _Presets[i] = _Presets_Ingame.transform.GetChild(i).gameObject;
         }
     }
 
@@ -118,11 +119,11 @@ public class FloorManager : MonoBehaviour
 
         while (x < 34)
         {
-            Presets[x].transform.localScale = new Vector3(-2, 2, 2);
-            Presets[x++].transform.position = RoomPos(floor, true);               // 좌측방
+            _Presets[x].transform.localScale = new Vector3(-2, 2, 2);
+            _Presets[x++].transform.position = RoomPos(floor, true);               // 좌측방
 
-            Presets[x].transform.localScale = new Vector3(2, 2, 2);
-            Presets[x++].transform.position = RoomPos(floor++, false);            // 우측방
+            _Presets[x].transform.localScale = new Vector3(2, 2, 2);
+            _Presets[x++].transform.position = RoomPos(floor++, false);            // 우측방
         }
     }
     
@@ -142,7 +143,7 @@ public class FloorManager : MonoBehaviour
                 int i = 0;                                              // 아래층이 없어 현재층부터 구현
                 while (i < 6)
                 {
-                    Presets[presetCnt + i].SetActive(true);             // presetCnt -> 0,1,2,3,4,5         
+                    _Presets[presetCnt + i].SetActive(true);             // presetCnt -> 0,1,2,3,4,5         
                     i++;
                 }
 
@@ -154,17 +155,17 @@ public class FloorManager : MonoBehaviour
 
                 while (i < 4)
                 {
-                    Presets[(presetCnt + i)].SetActive(true);
+                    _Presets[(presetCnt + i)].SetActive(true);
                     i++;
                 }
             }
             else                                                        // 그 외에는 위/현재/아래 층의 가구 구현
-            { 
+            {
                 int i = -2;
-                Debug.Log("Test");
+
                 while (i < 4)
                 {
-                    Presets[(presetCnt + i)].SetActive(true);
+                    _Presets[(presetCnt + i)].SetActive(true);
                     i++;
                 }
             }
@@ -178,26 +179,48 @@ public class FloorManager : MonoBehaviour
             while (i < 6)
             {
                 if(i < 0)
-                    Presets[(presetCnt + i)].SetActive(false);
+                    _Presets[(presetCnt + i)].SetActive(false);
                 else
-                    Presets[(presetCnt + i)].SetActive(true);
+                    _Presets[(presetCnt + i)].SetActive(true);
 
                 i++;
             }
         }
         else                                                             // 아래층으로 이동 시
         {
-            int i = 2;
+            int i = 3;
 
-            while (i > -6)
+            while (i > -5)
             {
-                if (i > 0)
-                    Presets[(presetCnt + i)].SetActive(false);
+                if (i > 1)
+                    _Presets[(presetCnt + i)].SetActive(false);
                 else
-                    Presets[(presetCnt + i)].SetActive(true);
+                    _Presets[(presetCnt + i)].SetActive(true);
 
                 i--;
             }
         }
+    }
+
+    public void SetQuests(int _currLevel)
+    {
+        foreach (var qNPCs in _QuestNPCs)
+            qNPCs.SetActive(false);
+
+        switch (_currLevel) 
+        {
+            case 3:
+                _QuestNPCs[1].SetActive(true);
+                break;
+
+            case 8:
+                _QuestNPCs[0].SetActive(true);
+                break;
+
+            case 14:
+                _QuestNPCs[2].SetActive(true);
+                _QuestNPCs[3].SetActive(true);
+                break;
+        }    
     }
 }
