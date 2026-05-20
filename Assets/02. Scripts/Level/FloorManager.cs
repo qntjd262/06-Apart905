@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class FloorManager : MonoBehaviour
 {
-    /* 게임 실행으로 Main씬에서 Game씬으로 넘어갈 때, 1층부터 17층까지의 각 34 세대에 랜덤으로 가구 배치를 적용시키는 코드
+    /* Game 씬으로 넘어갈 때, 1층부터 17층까지의 각 34 세대에 랜덤으로 가구 배치를 적용시키는 코드
      * 랜덤으로 프리셋을 적용시키는 것 외에, 고정 오브젝트(퀘스트 아이템)의 위치는 매 게임 동일하게 적용
      * 
      * 플레이어가 해당 층을 벗어나면 그 위치에 그 층의 가구들은 비활성화(SetActive false)
@@ -12,41 +12,49 @@ public class FloorManager : MonoBehaviour
      * 
      * 손전등(905호 거실 탁자 위), 부품(203호 방2), 부서진 라디오(605호 주방 베란다), 배터리 팩(1205호 방2), 열쇠(1403호 방3), 휘발유(1705호 방3 베란다)
      * 친한 형(803호 방3), 이상한 여자(305호 방1), 충격먹은 청년(1405호 방3), 좀비가 된 경비원(1403호 복도(거실과 주방 사이))
+     * 
      */
 
+    [SerializeField] private MoveLevel moveLevel;                                  // MoveLevel의 _currLevel을 받기위함 
 
     [Header("가구배치 프리셋")]
-    [SerializeField] private List<GameObject> Presets = new List<GameObject>();               // 옥상 제외 17층, 각 층에 2세대 -> 총 34가구에 적용시킬 가구 배치 프리셋
+    [SerializeField] private List<GameObject> Presets = new List<GameObject>();    // 옥상 제외 17층, 각 층에 2세대 -> 총 34가구에 적용시킬 가구 배치 프리셋
     [SerializeField] private GameObject Presets_Ingame;
 
-    [Header("각 층의 좌/우측 방 위치")]
-    [SerializeField] private Transform[] Rooms = new Transform[6];                 // 이동하는 3개의 층의 각 방 위치
-
     [Header("**퀘스트 아이템**")]
-    [SerializeField] private GameObject[] QuestItems = new GameObject[6];           // 사용되는 퀘스트 아이템들(손전등, 부품, 부서진 라디오, 배터리 팩, 열쇠, 휘발유)
+    [SerializeField] private GameObject[] QuestItems = new GameObject[6];          // 사용되는 퀘스트 아이템들(손전등, 부품, 부서진 라디오, 배터리 팩, 열쇠, 휘발유)
 
     [Header("**퀘스트 NPC**")]
     [SerializeField] private GameObject[] QuestNPCs = new GameObject[4];           // 고정 출현 퀘스트 NPC들(친한 형, 이상한 여자, 충격먹은 청년, 좀비가 된 경비원)
 
-    private MoveLevel moveLevel;            // MoveLevel의 _currLevel을 받기위함 
+
     private Vector3 Floor9_leftpos;
     private Vector3 Floor9_rightpos;
 
 
     private void Awake()
     {
-        moveLevel = FindFirstObjectByType<MoveLevel>();
-
         InitialSetting();
     }
 
-    private void InitialSetting()                               // 게임 시작 시 실행할 함수 모음
+    /* 게임 첫 시작 시 실행될 함수
+     * 불러오기로 실행은 불가
+     * 
+     * 1. 씬 시작 시, 각 방의 위치를 잡기 위한 초기값 설정(플레이어가 위치하는 9층 기준)
+     * 2. AllocatePresets: 미리 Active false상태로 배치된 가구 프리셋들을 셔플하기 위해 Presets 리스트에 할당
+     * 3. RandomShuffle(Presets): Fisher-Yates 셔플, 뒤에서부터 앞으로 순회하며 현재 인덱스 이하의 랜덤 위치와 스왑하는 방식으로 매개변수 리스트를 셔플
+     * 4. SetFurnitures: 셔플된 Presets 리스트 안의 가구 프리셋들을 1층부터 좌-우순서로 17층 우측방까지 배치
+     * 5. SetInitialQuests: 모든 퀘스트 아이템과 NPC를 정해진 위치에 배치하는 함수
+     */
+    private void InitialSetting()                               
     {
-        AllocatePresets();
-        RandomShuffle(Presets);
-
         Floor9_leftpos = moveLevel.LevelMid.transform.Find("Room_Left").transform.position;
         Floor9_rightpos = moveLevel.LevelMid.transform.Find("Room_Right").transform.position;
+
+        AllocatePresets();
+        RandomShuffle(Presets);
+        SetFurnitures();
+        SetActiveFurnitures(moveLevel.CurrLevel, false, true);
     }
 
     private void AllocatePresets()                              // 셔플할 인 게임상의 가구 프리셋들 할당
@@ -105,13 +113,91 @@ public class FloorManager : MonoBehaviour
 
     private void SetFurnitures()                                // 각 층에 가구를 배치하는 함수
     {
-        int x = 0;
-        int floor = 1;
+        int x = 0;                                              // x는 프리셋 카운트용, 프리셋 위치를 할당할 때 마다 카운트 후위 덧셈 
+        int floor = 1;                                          // floor는 층 수, 각 층의 좌/우측방에 할당이 되면 카운트 후위 덧셈
 
         while (x < 34)
         {
-            Presets[x++].transform.position = RoomPos(floor, true);             // 좌측방
+            Presets[x].transform.localScale = new Vector3(-2, 2, 2);
+            Presets[x++].transform.position = RoomPos(floor, true);               // 좌측방
+
+            Presets[x].transform.localScale = new Vector3(2, 2, 2);
             Presets[x++].transform.position = RoomPos(floor++, false);            // 우측방
+        }
+    }
+    
+    /* MoveLevel에서 호출될 함수, 층 이동 시 특정 층 가구의 활성/비활성화를 담당
+     * _currLevel을 받아 해당 층과 그 위/아래 층의 가구만 활성, 그 외는 비활성화
+     */
+    public void SetActiveFurnitures(int _currLevel, bool isUp, bool isInit)                             
+    {
+        int presetCnt = (2 * _currLevel - 2);                           // 각 층당 방 2개가 있으니 각 층의 좌측방 preset의 순서는 2n-2로 적용하면 현재 층의 프리셋 넘버링을 구할 수 있음
+
+        // 새 게임, 불러오기 등 Game 씬으로 넘어왔을 때만 실행
+        // 플레이어가 예외상황(1층에 있거나 옥상층이 활성화된 상황)을 제외하고는 위/현재/아래 3개층의 6개 방의 가구를 활성화
+        if (isInit)                                                     // 새 게임 혹은 불러오기 시 호출
+        {
+            if(_currLevel == 1)                                         // 플레이어가 1층에 있을 때, 1/2/3층의 가구를 활성화
+            {
+                int i = 0;                                              // 아래층이 없어 현재층부터 구현
+                while (i < 6)
+                {
+                    Presets[presetCnt + i].SetActive(true);             // presetCnt -> 0,1,2,3,4,5         
+                    i++;
+                }
+
+            }
+            else if((_currLevel == 17) || (_currLevel == 18))           // 플레이어가 17/18층에 있을 때, 16층과 맵 활성화 구조가 동일하기 때문에 16층과 동일하게 취급
+            {
+                _currLevel = 16;
+                int i = -2;
+
+                while (i < 4)
+                {
+                    Presets[(presetCnt + i)].SetActive(true);
+                    i++;
+                }
+            }
+            else                                                        // 그 외에는 위/현재/아래 층의 가구 구현
+            { 
+                int i = -2;
+                Debug.Log("Test");
+                while (i < 4)
+                {
+                    Presets[(presetCnt + i)].SetActive(true);
+                    i++;
+                }
+            }
+        }
+
+        // 게임 진행 중 층 이동 시 호출
+        else if (isUp)                                                   // 위층으로 이동 시
+        {
+            int i = -2;
+
+            while (i < 6)
+            {
+                if(i < 0)
+                    Presets[(presetCnt + i)].SetActive(false);
+                else
+                    Presets[(presetCnt + i)].SetActive(true);
+
+                i++;
+            }
+        }
+        else                                                             // 아래층으로 이동 시
+        {
+            int i = 2;
+
+            while (i > -6)
+            {
+                if (i > 0)
+                    Presets[(presetCnt + i)].SetActive(false);
+                else
+                    Presets[(presetCnt + i)].SetActive(true);
+
+                i--;
+            }
         }
     }
 }

@@ -75,7 +75,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6993984898980634466}
   m_Layer: 0
-  m_Name: Floors
+  m_Name: Floors(LevelManager)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -155,6 +155,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Furnitures_Preset (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 5347605987063301270, guid: 228e0028e63051b4a851bb48227b9d6f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -176,6 +180,10 @@ PrefabInstance:
     - target: {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
       propertyPath: m_Name
       value: Furnitures_02 (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5876020760575853832, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
       propertyPath: m_LocalPosition.x
@@ -279,6 +287,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Furnitures_01 (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -300,6 +312,10 @@ PrefabInstance:
     - target: {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
       propertyPath: m_Name
       value: Furnitures_02 (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5876020760575853832, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
       propertyPath: m_LocalPosition.x
@@ -403,6 +419,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Furnitures_01 (9)
       objectReference: {fileID: 0}
+    - target: {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -421,6 +441,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6993984898980634466}
     m_Modifications:
+    - target: {fileID: 1724194040847291904, guid: 0f36e76f539a9a74c8df676a4da91d54, type: 3}
+      propertyPath: moveLevel
+      value: 
+      objectReference: {fileID: 6596401624039988734}
     - target: {fileID: 1724194040847291904, guid: 0f36e76f539a9a74c8df676a4da91d54, type: 3}
       propertyPath: Presets_Ingame
       value: 
@@ -517,6 +541,10 @@ PrefabInstance:
       propertyPath: _LevelBott
       value: 
       objectReference: {fileID: 5500883418043991592}
+    - target: {fileID: 4821726991305752054, guid: 0f36e76f539a9a74c8df676a4da91d54, type: 3}
+      propertyPath: _floorManager
+      value: 
+      objectReference: {fileID: 1048360342520591880}
     - target: {fileID: 7188821774180427774, guid: 0f36e76f539a9a74c8df676a4da91d54, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -566,6 +594,28 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0f36e76f539a9a74c8df676a4da91d54, type: 3}
+--- !u!114 &1048360342520591880 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1724194040847291904, guid: 0f36e76f539a9a74c8df676a4da91d54, type: 3}
+  m_PrefabInstance: {fileID: 1828768715035353096}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc1ce136bef3c6441abc01409efe51c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &6596401624039988734 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4821726991305752054, guid: 0f36e76f539a9a74c8df676a4da91d54, type: 3}
+  m_PrefabInstance: {fileID: 1828768715035353096}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c95f9f3cab93a541ade6887f1b86512, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &8836841085530114038 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7188821774180427774, guid: 0f36e76f539a9a74c8df676a4da91d54, type: 3}
@@ -622,6 +672,10 @@ PrefabInstance:
     - target: {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
       propertyPath: m_Name
       value: Furnitures_01 (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -756,6 +810,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Furnitures_01 (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -818,6 +876,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Furnitures_01 (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -879,6 +941,10 @@ PrefabInstance:
     - target: {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
       propertyPath: m_Name
       value: Furnitures_01 (8)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1009,6 +1075,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Furnitures_Preset (10)
       objectReference: {fileID: 0}
+    - target: {fileID: 5347605987063301270, guid: 228e0028e63051b4a851bb48227b9d6f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1138,6 +1208,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Furnitures_Preset (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 5347605987063301270, guid: 228e0028e63051b4a851bb48227b9d6f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1200,6 +1274,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Furnitures_01 (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1261,6 +1339,10 @@ PrefabInstance:
     - target: {fileID: 5347605987063301270, guid: 228e0028e63051b4a851bb48227b9d6f, type: 3}
       propertyPath: m_Name
       value: Furnitures_Preset
+      objectReference: {fileID: 0}
+    - target: {fileID: 5347605987063301270, guid: 228e0028e63051b4a851bb48227b9d6f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1329,6 +1411,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Furnitures_Preset (9)
       objectReference: {fileID: 0}
+    - target: {fileID: 5347605987063301270, guid: 228e0028e63051b4a851bb48227b9d6f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1350,6 +1436,10 @@ PrefabInstance:
     - target: {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
       propertyPath: m_Name
       value: Furnitures_02 (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5876020760575853832, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1412,6 +1502,10 @@ PrefabInstance:
     - target: {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
       propertyPath: m_Name
       value: Furnitures_02 (8)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5876020760575853832, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1515,6 +1609,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Furnitures_Preset (11)
       objectReference: {fileID: 0}
+    - target: {fileID: 5347605987063301270, guid: 228e0028e63051b4a851bb48227b9d6f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1613,6 +1711,18 @@ PrefabInstance:
     m_TransformParent: {fileID: 4450808561740121335}
     m_Modifications:
     - target: {fileID: 627131305948213800, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 627131305948213800, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 627131305948213800, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 627131305948213800, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -1652,9 +1762,17 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 627131305948213800, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
       propertyPath: m_Name
       value: Furnitures_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1723,6 +1841,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Furnitures_Preset (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 5347605987063301270, guid: 228e0028e63051b4a851bb48227b9d6f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1744,6 +1866,10 @@ PrefabInstance:
     - target: {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
       propertyPath: m_Name
       value: Furnitures_02 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5876020760575853832, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1847,6 +1973,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Furnitures_Preset (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 5347605987063301270, guid: 228e0028e63051b4a851bb48227b9d6f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1909,6 +2039,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Furnitures_Preset (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 5347605987063301270, guid: 228e0028e63051b4a851bb48227b9d6f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1930,6 +2064,10 @@ PrefabInstance:
     - target: {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
       propertyPath: m_Name
       value: Furnitures_02 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5876020760575853832, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2060,6 +2198,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Furnitures_02 (10)
       objectReference: {fileID: 0}
+    - target: {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5876020760575853832, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -2121,6 +2263,10 @@ PrefabInstance:
     - target: {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
       propertyPath: m_Name
       value: Furnitures_02
+      objectReference: {fileID: 0}
+    - target: {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5876020760575853832, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2229,6 +2375,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Furnitures_01 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2290,6 +2440,10 @@ PrefabInstance:
     - target: {fileID: 5347605987063301270, guid: 228e0028e63051b4a851bb48227b9d6f, type: 3}
       propertyPath: m_Name
       value: Furnitures_Preset (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5347605987063301270, guid: 228e0028e63051b4a851bb48227b9d6f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2353,6 +2507,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Furnitures_Preset (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 5347605987063301270, guid: 228e0028e63051b4a851bb48227b9d6f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2374,6 +2532,10 @@ PrefabInstance:
     - target: {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
       propertyPath: m_Name
       value: Furnitures_02 (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5876020760575853832, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2477,6 +2639,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Furnitures_01 (10)
       objectReference: {fileID: 0}
+    - target: {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2539,6 +2705,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Furnitures_Preset (8)
       objectReference: {fileID: 0}
+    - target: {fileID: 5347605987063301270, guid: 228e0028e63051b4a851bb48227b9d6f, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2560,6 +2730,10 @@ PrefabInstance:
     - target: {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
       propertyPath: m_Name
       value: Furnitures_02 (9)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5876020760575853832, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2622,6 +2796,10 @@ PrefabInstance:
     - target: {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
       propertyPath: m_Name
       value: Furnitures_02 (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5876020760575853832, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
       propertyPath: m_LocalPosition.x
@@ -2724,6 +2902,10 @@ PrefabInstance:
     - target: {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
       propertyPath: m_Name
       value: Furnitures_01 (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
