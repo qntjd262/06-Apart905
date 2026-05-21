@@ -33,11 +33,10 @@ public class PlayerController : MonoBehaviour
     {
         if (isDead) return;
 
-        if (Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.Tab))
-        {
-            UIManager.Instance.ToggleInventory();
-        }
-
+        // if (InputManager.Instance.GetKeyDown(EKeyAction.Inventory) || Input.GetKeyDown(KeyCode.Tab))
+        // {
+        //     UIManager.Instance.ToggleInventory();
+        // }
         bool isUIOpen = (UIManager.Instance.inventoryPanel != null && UIManager.Instance.inventoryPanel.activeSelf)
                             || UIManager.Instance.IsAnyPopupOpen;
 

@@ -74,13 +74,11 @@ public class UIManager : Singleton<UIManager>
             GameManager.Instance.OnGameStart += InitializeInGameUI;
         }
     }
-
     private void Update()
     {
         if (SceneManager.GetActiveScene().name != Constants.ESceneType.PrototypeGame.ToString()) return;
 
-        string savedInteractKeyStr = PlayerPrefs.GetString("Key_Interact", "E");
-        KeyCode interactKey = (KeyCode)System.Enum.Parse(typeof(KeyCode), savedInteractKeyStr);
+        // 메뉴/뒤로가기 키 (기존 로직 유지. 필요시 InputManager에 편입 가능)
         if (Input.GetKeyDown(KeyCode.Backspace))
         {
             if (SlotUI.PickedSlot != null) SlotUI.PickedSlot.CancelPick();
@@ -100,11 +98,13 @@ public class UIManager : Singleton<UIManager>
 
                 return;
             }
-
             TogglePauseMenu();
         }
-
-        if (Input.GetKeyDown(interactKey))
+        if (InputManager.Instance.GetKeyDown(EKeyAction.Inventory) || Input.GetKeyDown(KeyCode.Tab))
+        {
+            ToggleInventory();
+        }
+        if (InputManager.Instance.GetKeyDown(EKeyAction.Interact))
         {
             if (storagePanel != null && storagePanel.activeSelf)
             {
@@ -504,8 +504,9 @@ public class UIManager : Singleton<UIManager>
     {
         if (activeInteractUI == null) return;
         activeInteractUI.gameObject.SetActive(true);
-        string currentKey = PlayerPrefs.GetString("Key_Interact", "E");
-        activeInteractUI.interactText.text = $"[{currentKey}]를 눌러 {text}";
+
+        KeyCode currentKey = InputManager.Instance.GetKeyForAction(EKeyAction.Interact);
+        activeInteractUI.interactText.text = $"[{currentKey.ToString()}]를 눌러 {text}";
         activeInteractUI.iconImage.sprite = interactIcons[(int)type];
     }
     public void HideInteractUI() { if (activeInteractUI == null) return; activeInteractUI.gameObject.SetActive(false); }
@@ -518,6 +519,14 @@ public class UIManager : Singleton<UIManager>
         if (GameManager.Instance != null) GameManager.Instance.OnGameStart -= InitializeInGameUI;
     }
 
+    public KeyCode GetKeyForAction(EKeyAction action)
+    {
+        if (InputManager.Instance != null)
+        {
+            return InputManager.Instance.GetKeyForAction(action);
+        }
+        return KeyCode.None;
+    }
 #if UNITY_EDITOR
     // 화면 좌측 상단에 현재 스택의 상태를 실시간으로 그린다.
     private void OnGUI()
