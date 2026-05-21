@@ -124,4 +124,14 @@ public class Shelf : MonoBehaviour, IInteractable
             }
         }
     }
+
+    public string GetInteractText()
+    {
+        return "조사하기";
+    }
+
+    public Constants.InteractType GetInteractType()
+    {
+        return Constants.InteractType.Search;
+    }
 }

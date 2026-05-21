@@ -2,12 +2,10 @@ version=1
 
 # This file caches language service data to improve the performance of C# Dev Kit.
 # It is not intended for manual editing. It can safely be deleted and will be
-# regenerated automatically.
+# regenerated automatically. For more information, see https://aka.ms/lscache
 #
-# To exclude from version control, add *.lscache to your .gitignore file.
-#
-# To disable caching, add the following to your VS Code settings:
-#   "dotnet.projectsystem.enableLanguageServiceCache": false
+# To control where cache files are stored, use the following VS Code setting:
+#   "dotnet.projectsystem.cacheInProjectFolder": true
 
 [project]
 language=C#
@@ -54,17 +52,31 @@ TemporaryDependencyNodeTargetIdentifier=netstandard2.1
 [sourceFiles]
 Assets/02. Scripts/
  Interfaces/IInteractable.cs
- Items/ItemObject.cs
+ Items/
+  GlobalItemCountManager.cs
+  ItemDataManager.cs
+  ItemObject.cs
+  Shelf.cs
+ Level/
+  MoveChecker.cs
+  MoveLevel.cs
+  TimeFlow.cs
  Monster/Behavior Tree/Action/
   Attacked.cs
   AttackPlayer.cs
   ChasePlayer.cs
+  Death.cs
   Idle.cs
+  LookAround.cs
+  LookAt.cs
+  MoveToLastPoint.cs
   PatrolToFindPlayer.cs
   ReturnOriginPosition.cs
+  Wait.cs
  Monster/Behavior Tree/
   Blackboard/Blackboard.cs
   Composite/
+   MemorySequenceNode.cs
    SelectorNode.cs
    SequenceNode.cs
   Condition/
@@ -77,8 +89,13 @@ Assets/02. Scripts/
    CompositeNode.cs
    DecoratorNode.cs
    Node.cs
+ Monster/Monster Sound/
+  MonsterSoundController.cs
+  MonsterSoundSO.cs
  Monster/
   Monster Stat/MonsterStatSO.cs
+  MonsterAnimator.cs
+  MonsterController.cs
   TestButtonUI.cs
   TestMonsterAI.cs
  NPC/
@@ -95,6 +112,10 @@ Assets/02. Scripts/
    PlayerController.cs
    PlayerLook.cs
    PlayerMove.cs
+  PlayerNoise/
+   MicNoiseDetector.cs
+   NoiseVisual.cs
+   PlayerNoise.cs
   Stat/
    CharacterSelect.cs
    InfectionCameraEffect.cs
@@ -104,11 +125,92 @@ Assets/02. Scripts/
  Quest/
   Quest.cs
   QuestManager.cs
+  QuestNotifyUI.cs
+  QuestSelectorUI.cs
+  QuestTrackerUI.cs
   QuestUI.cs
   QuestUIText.cs
  UI/
   Condition.cs
   UICondition.cs
+Assets/99. Resources/Dark - Complete Horror UI/Scripts/
+ Core/DarkInternalTools.cs
+ Editor Handlers/DarkUIEditorHandler.cs
+ Events/
+  PointerEnterEvents.cs
+  PressKeyEvent.cs
+  TimedEvent.cs
+ Input/
+  GamepadChecker.cs
+  GamepadScrollEvent.cs
+  ScrollRectElement.cs
+ Others/
+  EditorDemoPositionFix.cs
+  ExitToSystem.cs
+  LaunchURL.cs
+  LayoutGroupFix.cs
+  PanelInitUtil.cs
+  QualityManager.cs
+  Ripple.cs
+  ScrollForMore.cs
+ Rendering/
+  BackgroundFilter.cs
+  BlurChecker.cs
+  BlurManager.cs
+  UIDissolveEffect.cs
+  UIGradient.cs
+  UIParticleRenderer.cs
+ UI Elements/
+  ButtonAnimationFix.cs
+  ButtonManager.cs
+  CanvasManager.cs
+  DropdownManager.cs
+  HorizontalSelector.cs
+  SliderManager.cs
+  SwitchManager.cs
+  UIElementSound.cs
+ UI Manager/
+  UIManager.cs
+  UIManagerBackground.cs
+  UIManagerImage.cs
+  UIManagerLogo.cs
+  UIManagerText.cs
+ Window/
+  MainPanelButton.cs
+  MainPanelManager.cs
+  ModalWindowManager.cs
+  SplashScreenManager.cs
+  SplashScreenTitle.cs
+Assets/99. Resources/LevelDesign/
+ DirtyApartments/_scripts/FPController.cs
+ Doors Group/Script/
+  RevolvingDoorControl.cs
+  SlideDoorControl.cs
+Assets/99. Resources/NewPunch/OldManZombie/Scripts/
+ OldManZombie_Customization.cs
+ OldManZombie_Instantiate.cs
+Assets/Mono Limbo/Simple Fake Volume/
+ Bonus/Scripts/LightFlicker.cs
+ Documentation/Welcome.cs
+Assets/NewPunch/BigZombie/Scripts/
+ BigZombieJiggleBelly.cs
+ BZ_CharCustomizeBP.cs
+ BZ_CharInstantiate.cs
+ BZ_Char_Customize.cs
+Assets/NewPunch/GiantZombie/Scripts/
+ GiantZombie_CharacterCustomize.cs
+ GiantZombie_CharacterCustomize_BodyParts.cs
+ GiantZombie_Char_BodyParts_Instantiate.cs
+ GiantZombie_Char_Instantiate.cs
+Assets/NewPunch/UrbanZombie/Scripts/
+ UrbanZombie_AssetsList.cs
+ UrbanZombie_CharacterCustomize.cs
+ UrbanZombie_Custom_Instantiate.cs
+ UrbanZombie_Parts_CharacterCustomize.cs
+ UrbanZombie_Parts_Custom_Instantiate.cs
+Assets/NewPunch/ZombieGirl_B/Scripts/
+ ZombieGirlB_Customization.cs
+ ZombieGirlB_Instantiate.cs
 Assets/
  ScriptableObject/ItemData.cs
  TextMesh Pro/Examples & Extras/Scripts/
@@ -148,33 +250,53 @@ Assets/
   WarpTextExample.cs
  TutorialInfo/Scripts/Readme.cs
  WSMUI/02. Scripts/Common/
+  BasePopupUI.cs
   Constants.cs
   GameManager.cs
   LoadingPanelController.cs
   Singleton.cs
-  SODatas/NewCharacterData.cs
-  SoundManager.cs
+  Sounds/
+   SoundButton.cs
+   SoundDataSO.cs
+   SoundManager.cs
   UIManager.cs
- WSMUI/02. Scripts/Game/Inventory/
-  InventoryManager.cs
-  InventorySlot.cs
-  InventoryUI.cs
-  QuickSlotUI.cs
-  SlotUI.cs
-  StorageUI.cs
- WSMUI/02. Scripts/Game/UI/
-  HUDController.cs
-  SurvivalGauge.cs
+ WSMUI/02. Scripts/Ending/
+  EndingData.cs
+  EndingPopupUI.cs
+  EndingSceneController.cs
+ WSMUI/02. Scripts/Game/
+  EndingTrigger.cs
+  GameOverController.cs
+  Inventory/
+   InventoryManager.cs
+   InventorySlot.cs
+   InventoryUI.cs
+   ItemMenuUI.cs
+   QuickSlotUI.cs
+   SlotUI.cs
+   StorageUI.cs
+  PauseMenuController.cs
+  UI/
+   HUDController.cs
+   InteractUI.cs
+   PlayerQuickSlotUI.cs
+   SurvivalGauge.cs
  WSMUI/02. Scripts/Main/
+  EndingList/EndingListController.cs
+  FlickerEffect.cs
+  LayoutInitializer.cs
   MainPanelController.cs
+  Options/OptionsController.cs
+  SaveLoad/
+   SaveLoadController.cs
+   SaveSlotUI.cs
   SelectCharacter/
    CharacterCard.cs
-   CharacterSelector.cs
+   SelectCharacterController.cs
 Temp/obj/Assembly-CSharp/.NETStandard,Version=v2.1.AssemblyAttributes.cs
 
 [metadataReferences]
-Assets/Plugins/Demigiant/DOTween/DOTween.dll
-D:/Unity Editor/6000.0.60f1/Editor/Data/Managed/UnityEngine/
+../../../../../Program Files/Unity/Hub/Editor/6000.0.60f1/Editor/Data/Managed/UnityEngine/
  UnityEditor.AccessibilityModule.dll
  UnityEditor.AdaptivePerformanceModule.dll
  UnityEditor.BuildProfileModule.dll
@@ -293,7 +415,7 @@ D:/Unity Editor/6000.0.60f1/Editor/Data/Managed/UnityEngine/
  UnityEngine.VRModule.dll
  UnityEngine.WindModule.dll
  UnityEngine.XRModule.dll
-D:/Unity Editor/6000.0.60f1/Editor/Data/NetStandard/compat/2.1.0/shims/netfx/
+../../../../../Program Files/Unity/Hub/Editor/6000.0.60f1/Editor/Data/NetStandard/compat/2.1.0/shims/netfx/
  mscorlib.dll
  System.ComponentModel.Composition.dll
  System.Core.dll
@@ -311,7 +433,7 @@ D:/Unity Editor/6000.0.60f1/Editor/Data/NetStandard/compat/2.1.0/shims/netfx/
  System.Xml.dll
  System.Xml.Linq.dll
  System.Xml.Serialization.dll
-D:/Unity Editor/6000.0.60f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/
+../../../../../Program Files/Unity/Hub/Editor/6000.0.60f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstandard/
  Microsoft.Win32.Primitives.dll
  System.AppContext.dll
  System.Buffers.dll
@@ -415,12 +537,13 @@ D:/Unity Editor/6000.0.60f1/Editor/Data/NetStandard/compat/2.1.0/shims/netstanda
  System.Xml.XmlSerializer.dll
  System.Xml.XPath.dll
  System.Xml.XPath.XDocument.dll
-D:/Unity Editor/6000.0.60f1/Editor/Data/NetStandard/
+../../../../../Program Files/Unity/Hub/Editor/6000.0.60f1/Editor/Data/NetStandard/
  Extensions/2.0.0/System.Runtime.InteropServices.WindowsRuntime.dll
  ref/2.1.0/netstandard.dll
-D:/Unity Editor/6000.0.60f1/Editor/Data/PlaybackEngines/AndroidPlayer/
+../../../../../Program Files/Unity/Hub/Editor/6000.0.60f1/Editor/Data/PlaybackEngines/AndroidPlayer/
  Unity.Android.Gradle.dll
  Unity.Android.Types.dll
+Assets/Plugins/Demigiant/DOTween/DOTween.dll
 Library/PackageCache/com.unity.collections@aea9d3bd5e19/
  Unity.Collections.LowLevel.ILSupport/Unity.Collections.LowLevel.ILSupport.dll
  Unity.Collections.Tests/
@@ -431,8 +554,7 @@ Library/PackageCache/
  com.unity.nuget.mono-cecil@d78732e851eb/Mono.Cecil.dll
  com.unity.nuget.newtonsoft-json@74deb55db2a0/Runtime/Newtonsoft.Json.dll
  com.unity.visualscripting@6279e2b7c485/Runtime/VisualScripting.Flow/Dependencies/NCalc/Unity.VisualScripting.Antlr3.Runtime.dll
-Temp/bin/Debug/
- Assembly-CSharp-firstpass.dll
+Library/ScriptAssemblies/
  PPv2URPConverters.dll
  Unity.2D.Sprite.Editor.dll
  Unity.AI.Navigation.dll
@@ -441,7 +563,6 @@ Temp/bin/Debug/
  Unity.AI.Navigation.Updater.dll
  Unity.AppUI.dll
  Unity.AppUI.Editor.dll
- Unity.AppUI.InternalAPIBridge.dll
  Unity.AppUI.MVVM.dll
  Unity.AppUI.Navigation.dll
  Unity.AppUI.Navigation.Editor.dll
@@ -469,12 +590,8 @@ Temp/bin/Debug/
  Unity.PlasticSCM.Editor.dll
  Unity.ProBuilder.AddOns.Editor.dll
  Unity.ProBuilder.AssetIdRemapUtility.dll
- Unity.ProBuilder.Csg.dll
  Unity.ProBuilder.dll
  Unity.ProBuilder.Editor.dll
- Unity.ProBuilder.KdTree.dll
- Unity.ProBuilder.Poly2Tri.dll
- Unity.ProBuilder.Stl.dll
  Unity.Rendering.LightTransport.Editor.dll
  Unity.Rendering.LightTransport.Runtime.dll
  Unity.RenderPipeline.Universal.ShaderLibrary.dll
@@ -494,7 +611,6 @@ Temp/bin/Debug/
  Unity.Searcher.Editor.dll
  Unity.Settings.Editor.dll
  Unity.ShaderGraph.Editor.dll
- Unity.ShaderGraph.Utilities.dll
  Unity.TextMeshPro.dll
  Unity.TextMeshPro.Editor.dll
  Unity.Timeline.dll
@@ -508,17 +624,16 @@ Temp/bin/Debug/
  Unity.VisualScripting.State.dll
  Unity.VisualScripting.State.Editor.dll
  Unity.VisualStudio.Editor.dll
- UnityEditor.TestRunner.dll
  UnityEditor.UI.dll
- UnityEngine.TestRunner.dll
  UnityEngine.UI.dll
+Temp/bin/Debug/Assembly-CSharp-firstpass.dll
 
 [analyzerReferences]
-C:/Users/권기훈/.vscode/extensions/visualstudiotoolsforunity.vstuc-1.2.1/Analyzers/Microsoft.Unity.Analyzers.dll
-D:/Unity Editor/6000.0.60f1/Editor/Data/Tools/Unity.SourceGenerators/
+../../../../../Program Files/Unity/Hub/Editor/6000.0.60f1/Editor/Data/Tools/Unity.SourceGenerators/
  Unity.Properties.SourceGenerator.dll
  Unity.SourceGenerators.dll
  Unity.UIToolkit.SourceGenerator.dll
+../../../.vscode/extensions/visualstudiotoolsforunity.vstuc-1.2.2/Analyzers/Microsoft.Unity.Analyzers.dll
 Library/PackageCache/com.unity.dt.app-ui@5d6dc8bfd8d9/Runtime/
  MVVM/SourceGenerators/netstandard2.0/MVVMSourceGenerators.dll
  SourceGenerators/netstandard2.0/EnumToLowerCase.dll

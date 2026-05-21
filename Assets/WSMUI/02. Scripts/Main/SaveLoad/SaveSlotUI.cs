@@ -8,15 +8,16 @@ public class SaveSlotUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI slotNameText;
     [SerializeField] private TextMeshProUGUI dateText;
     [SerializeField] private Button slotButton;
-    [SerializeField] private Image outlineImage; // 선택 시 보여줄 테두리 이미지
+    [SerializeField] private Image outlineImage;
 
     private int slotIndex;
-    private Action<int> onSelectAction;
+    private bool hasSaveData; // [추가] 해당 슬롯에 데이터가 있는지 여부
+    private Action<int, bool> onSelectAction; // [수정] Action이 데이터 유무도 전달하게 변경
 
-    // 담당자가 나중에 데이터를 던져줄 때 받을 통로
-    public void Initialize(int index, string displayName, string dateString, Action<int> onSelect)
+    public void Initialize(int index, string displayName, string dateString, bool hasData, Action<int, bool> onSelect)
     {
         slotIndex = index;
+        hasSaveData = hasData;
         onSelectAction = onSelect;
 
         slotNameText.text = displayName;
@@ -24,13 +25,11 @@ public class SaveSlotUI : MonoBehaviour
 
         slotButton.onClick.RemoveAllListeners();
         slotButton.onClick.AddListener(OnSlotSelect);
-        
-        SetSelected(false); // 초기 상태는 선택 해제
     }
 
     private void OnSlotSelect()
     {
-        onSelectAction?.Invoke(slotIndex);
+        onSelectAction?.Invoke(slotIndex, hasSaveData);
     }
 
     public void SetSelected(bool isSelected)

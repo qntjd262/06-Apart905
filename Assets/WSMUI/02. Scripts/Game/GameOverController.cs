@@ -2,104 +2,104 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 using DG.Tweening;
-using UnityEngine.UI; // Image 컴포넌트를 사용하기 위해 필요
+using UnityEngine.UI;
 
-public class GameOverController : MonoBehaviour
+public class GameOverController : BasePopupUI
 {
     [SerializeField] private GameObject bloodSplatterEffect;
     [SerializeField] private GameObject buttonGroup;
 
-    public SaveLoadController saveLoadController;
-    private Image bloodImage; // Image 컴포넌트 참조 저장용
+    private Image bloodImage;
 
     private void Awake()
     {
+        popupPanel = this.gameObject;
+
         if (UIManager.Instance != null)
         {
             UIManager.Instance.gameOverPanel = this.gameObject;
         }
 
-        // bloodSplatterEffect에서 Image 컴포넌트 미리 캐싱
         if (bloodSplatterEffect != null)
         {
             bloodImage = bloodSplatterEffect.GetComponent<Image>();
         }
     }
 
+    // [수정] 외부(PlayerStat 등)에서 사망 시 안전하게 열어주는 관문
+    public void Open()
+    {
+        ShowPanel(); // SetActive(true) 및 스택 등록
+
+        // 일시정지 상태에서 연출이 물리적으로 돌아가도록 Open 시점에 연출 강제 시작
+        PlayGameOverSequence();
+    }
+
     private void OnEnable()
     {
-        // 1. 게임 일시정지
-        Time.timeScale = 0f;
-
-        // 2. 초기화: 버튼 그룹은 숨기고, 블러드는 투명하게
+        // 버튼 그룹은 연출이 끝나기 전까지 유저 조작을 막기 위해 꺼둔다.
         if (buttonGroup != null) buttonGroup.SetActive(false);
-        
-        // 3. 연출 시작
-        PlayGameOverSequence();
     }
 
     private void PlayGameOverSequence()
     {
         if (bloodSplatterEffect == null) return;
 
-        // 초기 상태 강제 설정 (스케일 0, 투명도 0)
+        // 초기 상태 설정
         bloodSplatterEffect.transform.localScale = Vector3.zero;
         if (bloodImage != null) bloodImage.color = new Color(1, 1, 1, 0);
 
-        Sequence mainSeq = DOTween.Sequence();
+        Sequence mainSeq = DOTween.Sequence().SetUpdate(true);
 
-        // [단계 1] 블러드 효과 연출: 확 커졌다가(1.2f) 원래 크기(1.0f)로
-        mainSeq.Append(bloodSplatterEffect.transform.DOScale(1.2f, 0.15f).SetEase(Ease.OutExpo));
+        mainSeq.Append(bloodSplatterEffect.transform.DOScale(1.2f, 0.15f).SetEase(Ease.OutExpo).SetUpdate(true));
         if (bloodImage != null)
         {
-            mainSeq.Join(bloodImage.DOFade(1f, 0.1f));
+            mainSeq.Join(bloodImage.DOFade(1f, 0.1f).SetUpdate(true));
         }
-        mainSeq.Append(bloodSplatterEffect.transform.DOScale(1.0f, 0.1f));
+        mainSeq.Append(bloodSplatterEffect.transform.DOScale(1.0f, 0.1f).SetUpdate(true));
 
-        // [단계 2] 아주 짧은 대기 (0.1초)
         mainSeq.AppendInterval(0.1f);
 
-        // [단계 3] 연출 완료 후 버튼 그룹 등장
         mainSeq.OnComplete(() =>
         {
             if (buttonGroup != null)
             {
                 buttonGroup.SetActive(true);
-                
-                // 버튼 그룹도 스케일 업 연출 (통통 튀는 느낌을 위해 OutBack 사용)
                 buttonGroup.transform.localScale = Vector3.zero;
+
+                // 버튼이 백에서 튕겨 나오며 스케일업 되는 연출도 독립 시간 적용
                 buttonGroup.transform.DOScale(1.0f, 0.4f)
                     .SetEase(Ease.OutBack)
-                    .SetUpdate(true); // 중요: 타임스케일 0일 때 작동
+                    .SetUpdate(true);
             }
         });
-
-        // 시퀀스 전체가 타임스케일 영향을 받지 않도록 설정
-        mainSeq.SetUpdate(true);
     }
 
     public void OnLoadClick()
     {
-        SaveLoadController saveLoader = FindFirstObjectByType<SaveLoadController>(FindObjectsInactive.Include);
-        if (saveLoader != null)
+        if (UIManager.Instance != null && UIManager.Instance.saveLoadController != null)
         {
-            saveLoader.currentMode = Constants.ESaveLoadType.Load;
-            saveLoader.ReturnToPauseMenuOnClose = true;
-            gameObject.SetActive(false);
-            saveLoader.gameObject.SetActive(true);
+            HidePanel();
+            UIManager.Instance.saveLoadController.onCloseAction = null;
+            UIManager.Instance.saveLoadController.Open(Constants.ESaveLoadType.Load, false);
+        }
+        else
+        {
+            Debug.LogError("GameOverController: UIManager 또는 SaveLoadController 참조가 누락되었습니다.");
+            ShowPanel();
         }
     }
 
     public void OnMainMenuClick()
     {
+        HidePanel();
+        Time.timeScale = 1f;
+
         if (UIManager.Instance != null)
         {
-            UIManager.Instance.LoadScene(Constants.ESceneType.PrototypeMain);
-            gameObject.SetActive(false);
+            UIManager.Instance.LoadScene(Constants.ESceneType.PrototypeMain, false);
             return;
         }
-
-        Time.timeScale = 1f;
         SceneManager.LoadScene(Constants.ESceneType.PrototypeMain.ToString());
     }
 }

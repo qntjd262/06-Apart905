@@ -8,6 +8,8 @@ public class GameManager : Singleton<GameManager>
 
     public CharacterStatSO SelectedCharacterData { get; private set; }
 
+    public EndingData selectedEnding;
+
     public void SetCharacter(CharacterStatSO data)
     {
         if (data != null) SelectedCharacterData = data;

@@ -2,7 +2,19 @@ using UnityEngine;
 
 public class NPC : MonoBehaviour, IInteractable
 {
+    public string npcName;      // 에디터에서 설정할 NPC 이름
+    public Sprite npcIcon;      // 에디터에서 설정할 NPC 초상화
     public Quest myQuest;
+
+    public string GetInteractText()
+    {
+        return "대화하기";
+    }
+
+    public Constants.InteractType GetInteractType()
+    {
+        return Constants.InteractType.Talk;
+    }
 
     public void Interact(PlayerStat player)
     {
@@ -10,7 +22,7 @@ public class NPC : MonoBehaviour, IInteractable
 
         // 현재 인벤토리 수량을 퀘스트 데이터에 동기화
         int currentBagCount = InventoryManager.Instance.GetItemCount(myQuest.targetID);
-        myQuest.ForceSyncProgress(currentBagCount); 
+        myQuest.ForceSyncProgress(currentBagCount);
 
         string[] currentDialogues;
 
@@ -34,21 +46,27 @@ public class NPC : MonoBehaviour, IInteractable
             currentDialogues = myQuest.duringAcceptDialogues;
         }
 
-        player.isInteracting = true; 
-        
-        DialogueManager.Instance.StartDialogue(currentDialogues, () => {
-            player.isInteracting = false; 
+        player.isInteracting = true;
+
+        DialogueManager.Instance.StartDialogue(npcName, npcIcon, currentDialogues, () =>
+        {
+            player.isInteracting = false;
 
             int finalCheckCount = InventoryManager.Instance.GetItemCount(myQuest.targetID);
             myQuest.ForceSyncProgress(finalCheckCount);
-            
+
             // 다시 한번 현재 리스트에 있는지 확인
             bool stillActive = QuestManager.Instance.activeQuests.Exists(q => q.questName == myQuest.questName);
 
             if (!stillActive && !myQuest.isCompleted)
             {
                 // 퀘스트 수락 (이 안에서 UI 새로고침이 호출되어야 합니다)
-                QuestManager.Instance.AcceptQuest(myQuest);
+                QuestNotifyUI notifyUI = FindObjectOfType<QuestNotifyUI>(true);
+                if (notifyUI != null)
+                {
+                    notifyUI.ShowNotice(myQuest);
+                }
+                // QuestManager.Instance.AcceptQuest(myQuest);
             }
             else if (myQuest.currentAmount >= myQuest.goalAmount && !myQuest.isCompleted)
             {

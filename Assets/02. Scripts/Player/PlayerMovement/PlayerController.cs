@@ -11,12 +11,12 @@ public class PlayerController : MonoBehaviour
 
 
     [Header("플레이어 상태")]
-    public bool isDead =false;
+    public bool isDead = false;
 
     //[Header("인벤토리 세팅")]
-    
 
-    
+
+
 
     void Awake()
     {
@@ -27,35 +27,38 @@ public class PlayerController : MonoBehaviour
     }
     void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        // Cursor.lockState = CursorLockMode.Locked;
+        // Cursor.visible = false;
     }
 
     void Update()
     {
-        if(isDead) return;
-        
-        if (Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.Tab))
-        {
-            UIManager.Instance.ToggleInventory();
-        }
+        if (isDead) return;
 
-        bool isInventoryOpen = UIManager.Instance.inventoryPanel.activeSelf;
+        // if (InputManager.Instance.GetKeyDown(EKeyAction.Inventory) || Input.GetKeyDown(KeyCode.Tab))
+        // {
+        //     UIManager.Instance.ToggleInventory();
+        // }
+        bool isUIOpen = (UIManager.Instance.inventoryPanel != null && UIManager.Instance.inventoryPanel.activeSelf)
+                            || UIManager.Instance.IsAnyPopupOpen;
 
-        if (isInventoryOpen)
-        {
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+        if (isUIOpen) return;
+        // bool isInventoryOpen = UIManager.Instance.inventoryPanel.activeSelf;
 
-            return;
-        }
-        else
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
-            
-        
+        // if (isInventoryOpen)
+        // {
+        //     Cursor.lockState = CursorLockMode.None;
+        //     Cursor.visible = true;
+
+        //     return;
+        // }
+        // else
+        // {
+        //     Cursor.lockState = CursorLockMode.Locked;
+        //     Cursor.visible = false;
+        // }
+
+
 
         //플레이어 회전 + 카메라
         float mouseX = Input.GetAxis("Mouse X");
@@ -87,7 +90,7 @@ public class PlayerController : MonoBehaviour
 
         //플레이어 공격
         if (Input.GetMouseButtonDown(0))
-        {   
+        {
             //TODO : 공격 애니메이션을 통해 해당 애니메이션 지점에서 Attack()함수 실행하기
             playerEquip.UseCurrentItem();
         }

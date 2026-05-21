@@ -1,12 +1,12 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class PauseMenuController : MonoBehaviour
+// 1. BasePopupUI 상속
+public class PauseMenuController : BasePopupUI
 {
-    public SaveLoadController saveLoadController;
-
     private void Awake()
     {
+        popupPanel = this.gameObject;
         if (UIManager.Instance != null)
         {
             UIManager.Instance.pauseMenuPanel = this.gameObject;
@@ -28,50 +28,57 @@ public class PauseMenuController : MonoBehaviour
         UIManager.Instance.TogglePauseMenu();
     }
 
-
     public void OnSaveClick()
     {
-        // 하이어라키에 꺼져있는 SaveLoad 패널을 찾아서 모드를 'Save'로 주입하고 켠다
         SaveLoadController saveLoader = FindFirstObjectByType<SaveLoadController>(FindObjectsInactive.Include);
         if (saveLoader != null)
         {
-            saveLoader.currentMode = Constants.ESaveLoadType.Save;
-            saveLoader.ReturnToPauseMenuOnClose = true;
-            gameObject.SetActive(false);
-            saveLoader.gameObject.SetActive(true);
+            HidePanel();
+            saveLoader.onCloseAction = () =>
+            {
+                this.ShowPanel();
+            };
+            saveLoader.Open(Constants.ESaveLoadType.Save);
+        }
+    }
+    public void OnLoadClick()
+    {
+        SaveLoadController saveLoader = FindFirstObjectByType<SaveLoadController>(FindObjectsInactive.Include);
+        if (saveLoader != null)
+        {
+            HidePanel();
+            saveLoader.onCloseAction = () =>
+            {
+                this.ShowPanel();
+            };
+            saveLoader.Open(Constants.ESaveLoadType.Load);
         }
     }
 
-    public void OnLoadClick()
-    {
-        // 똑같은 패널을 찾지만, 이번에는 모드를 'Load'로 주입하고 켠다
-        SaveLoadController saveLoader = FindFirstObjectByType<SaveLoadController>(FindObjectsInactive.Include);
-        if (saveLoader != null)
-        {
-            saveLoader.currentMode = Constants.ESaveLoadType.Load;
-            saveLoader.ReturnToPauseMenuOnClose = true;
-            gameObject.SetActive(false);
-            saveLoader.gameObject.SetActive(true);
-        }
-    }
     public void OnOptionsClick()
     {
         OptionsController options = FindFirstObjectByType<OptionsController>(FindObjectsInactive.Include);
         if (options != null)
         {
-            options.ReturnToPauseMenuOnClose = true;
-            gameObject.SetActive(false);
-            options.gameObject.SetActive(true);
+            HidePanel();
+
+            options.onCloseAction = () =>
+            {
+                this.ShowPanel();
+            };
+
+            // 3. 설정 창을 연다.
+            options.Open();
         }
     }
 
     public void OnMainMenuClick()
     {
-        // SetActive(false) 전에 LoadScene 먼저 → OnDisable 타이밍 문제 제거
         if (UIManager.Instance != null)
         {
+            // 씬 이동 시 일시정지 창을 스택에서 확실히 제거
+            UIManager.Instance.TogglePauseMenu();
             UIManager.Instance.LoadScene(Constants.ESceneType.PrototypeMain);
-            gameObject.SetActive(false); // LoadScene 이후에 끄기
             return;
         }
 

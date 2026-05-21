@@ -26,15 +26,16 @@ public class PlayerInteraction : MonoBehaviour
 
             if (interactable != null)
             {
-                // UI 텍스트 적는 곳
-                
-                //E 키를 누르면 상호작용 실행
-                if (Input.GetKeyDown(KeyCode.E))
+                UIManager.Instance.ShowInteractUI(interactable.GetInteractText(), interactable.GetInteractType());
+
+                if (InputManager.Instance.GetKeyDown(EKeyAction.Interact))
                 {
-                    Debug.Log($"[E] 키 입력 감지! {hit.collider.gameObject.name}와 상호작용을 시도합니다.");
+                    Debug.Log($"[Interact] 키 입력 감지! {hit.collider.gameObject.name}와 상호작용을 시도합니다.");
                     interactable.Interact(playerStat);
                 }
+                return;
             }
         }
+        UIManager.Instance.HideInteractUI();
     }
 }

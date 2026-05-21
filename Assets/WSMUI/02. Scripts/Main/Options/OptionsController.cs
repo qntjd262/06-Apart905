@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class OptionsController : MonoBehaviour
+// 1. MonoBehaviour가 아니라 BasePopupUI를 상속받아야 한다.
+public class OptionsController : BasePopupUI
 {
     [SerializeField] private GameObject[] tabPanels;
     [SerializeField] private Button[] tabButtons;
@@ -9,15 +10,30 @@ public class OptionsController : MonoBehaviour
     [SerializeField] private Button confirmButton;
     [SerializeField] private Button returnButton;
 
-    public bool ReturnToPauseMenuOnClose { get; set; }
-
+    [Header("세부 옵션 컴포넌트 연결")]
+    [SerializeField] private SoundOptions soundOptions;
+    [SerializeField] private GraphicOptions graphicOptions;
+    [SerializeField] private KeyBindOptions keyBindOptions;
 
     private void Awake()
     {
+        popupPanel = this.gameObject; // 부모 변수 연결
+
         confirmButton.onClick.AddListener(OnConfirmClick);
         returnButton.onClick.AddListener(OnReturnClick);
+
+        for (int i = 0; i < tabButtons.Length; i++)
+        {
+            int index = i;
+            tabButtons[i].onClick.AddListener(() => SwitchTab(index));
+        }
     }
 
+    // 2. 이 Open() 함수가 있어야 PauseMenuController에서 호출할 수 있다.
+    public void Open()
+    {
+        ShowPanel(); // UIManager 스택 등록 및 창 켜기
+    }
 
     private void OnEnable()
     {
@@ -25,6 +41,10 @@ public class OptionsController : MonoBehaviour
         {
             UIManager.Instance.OpenPopupWithEffects("설정");
         }
+
+        if (soundOptions != null) soundOptions.Initialize();
+        if (graphicOptions != null) graphicOptions.Initialize();
+        if (keyBindOptions != null) keyBindOptions.Initialize();
 
         if (tabPanels != null && tabPanels.Length > 0)
         {
@@ -37,12 +57,6 @@ public class OptionsController : MonoBehaviour
         if (UIManager.Instance != null)
         {
             UIManager.Instance.ClosePopupWithEffects();
-
-            if (ReturnToPauseMenuOnClose)
-            {
-                ReturnToPauseMenuOnClose = false;
-                UIManager.Instance.ShowPauseMenuWithoutChangingTimeScale();
-            }
         }
     }
 
@@ -71,6 +85,7 @@ public class OptionsController : MonoBehaviour
 
     private void OnReturnClick()
     {
-        gameObject.SetActive(false);
+        // 3. 직접 끄지 말고 부모 함수로 끈다.
+        HidePanel();
     }
 }

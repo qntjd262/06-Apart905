@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class EndingListController : MonoBehaviour
+public class EndingListController : BasePopupUI
 {
     [Header("UI 연결")]
     [SerializeField] private Transform slotContentParent;
@@ -18,18 +18,12 @@ public class EndingListController : MonoBehaviour
 
     private void OnEnable()
     {
-        if (UIManager.Instance != null)
-        {
-            UIManager.Instance.OpenPopupWithEffects("엔딩리스트");
-        }
+        ShowPanel();
     }
 
     private void OnDisable()
     {
-        if (UIManager.Instance != null)
-        {
-            UIManager.Instance.ClosePopupWithEffects();
-        }
+        HidePanel();
     }
 
     private void OnSlotSelected(int index)
@@ -39,6 +33,6 @@ public class EndingListController : MonoBehaviour
 
     private void OnReturnClick()
     {
-        gameObject.SetActive(false);
+        HidePanel();
     }
 }

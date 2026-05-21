@@ -37,7 +37,6 @@ public class PlayerStat : MonoBehaviour
     public event Action<float, float> OnHpChanged;
     public event Action OnPlayerDeath;
 
-    
     void Awake()
     {
         // 인벤토리 매니저의 Player 변수에 자기 자신(this)을 할당
@@ -134,8 +133,24 @@ public class PlayerStat : MonoBehaviour
 
         this.enabled = false;
         //TODO : 사망 애니메이션, 사망 UI ON, 게임 시간 멈춤 등 사망 처리
-
         OnPlayerDeath?.Invoke();
+        if (UIManager.Instance != null)
+        {
+            if (UIManager.Instance.gameOverPanel != null)
+            {
+                GameOverController gameOverCtrl = UIManager.Instance.gameOverPanel.GetComponent<GameOverController>();
+                if (gameOverCtrl != null)
+                {
+                    gameOverCtrl.Open();
+                }
+                else
+                { // 예외 방어용: 컴포넌트가 없다면 기본 활성화
+                    UIManager.Instance.gameOverPanel.SetActive(true);
+                    UIManager.Instance.RegisterUI(UIManager.Instance.gameOverPanel);
+                }
+            }
+            Time.timeScale = 0f;
+        }
     }
 
     //배고픔, 갈증 감소 함수
@@ -151,7 +166,6 @@ public class PlayerStat : MonoBehaviour
             Debug.Log($"현재 체력 : {hp.currentValue}");
         }
     }
-
     public void ApplyEatableEffect(EatableType type, float value)
     {
         Debug.Log($"아이템 효과 발동 타입 : {type}, 수치 : {value}");
@@ -166,12 +180,12 @@ public class PlayerStat : MonoBehaviour
             case EatableType.Stamina: targetStat = stamina; break;
             case EatableType.Infection: targetStat = infection; break;
         }
-        if(targetStat != null)
+        if (targetStat != null)
         {
             //로그찍기 위함
             float before = targetStat.currentValue;
 
-            if(type == EatableType.Infection) //감염도인 경우 수치 빼기
+            if (type == EatableType.Infection) //감염도인 경우 수치 빼기
             {
                 targetStat.currentValue -= value;
             }
@@ -184,9 +198,9 @@ public class PlayerStat : MonoBehaviour
             targetStat.currentValue = Mathf.Clamp(targetStat.currentValue, 0, targetStat.maxValue);
             Debug.Log($"{type} 변경 전 : {before} ->  변경 후 : {targetStat.currentValue}");
 
-            if(type == EatableType.Health)
+            if (type == EatableType.Health)
             {
-                OnHpChanged?.Invoke(hp.currentValue,hp.maxValue);
+                OnHpChanged?.Invoke(hp.currentValue, hp.maxValue);
             }
         }
     }
