@@ -13,6 +13,7 @@ public class GlobalItemCountManager : MonoBehaviour
     }
 
     //아이템 데이터 매니저에서 각각의 아이템 스폰 카운트만큼 아이템 덱에 추가
+    //TODO : 생성된 아이템 인스펙터창에서 볼 수 있도록 설정하기
     public void InitializeItemDeck(List<ItemData> allItems)
     {
         ItemDeck.Clear();
