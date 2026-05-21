@@ -43,7 +43,7 @@ public class EatableItemData : ItemData
 public class EquipItemData : ItemData
 {
     public float equipValue;
-
+    
     public GameObject equipPrefab;
 }
 
@@ -52,3 +52,6 @@ public class UseItemData : ItemData
     //특 수 아이템 공통 데이터 value
     public float useValue;
 }
+
+
+

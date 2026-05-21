@@ -77,10 +77,9 @@ public class InventoryManager : Singleton<InventoryManager>
         if (item is EatableItemData eatItem)
         {
             if (eatItem.eatableType_1 != EatableType.None)
-                ApplyEffect(player, eatItem.eatableType_1, eatItem.value_1);
+                player.ApplyEatableEffect(eatItem.eatableType_1, eatItem.value_1);
             if (eatItem.eatableType_2 != EatableType.None)
-                ApplyEffect(player, eatItem.eatableType_2, eatItem.value_2);
-
+                player.ApplyEatableEffect(eatItem.eatableType_2, eatItem.value_2);
             targetSlot.item = null;
 
             SyncQuestAndUI(item.Name);
@@ -122,32 +121,6 @@ public class InventoryManager : Singleton<InventoryManager>
         OnBagUpdated?.Invoke();
         OnQuickSlotUpdated?.Invoke();
     }
-
-    private void ApplyEffect(PlayerStat player, EatableType type, float value)
-    {
-        Debug.Log($"[아이템 효과 발동] 타입: {type}, 회복/감소량: {value}");
-        StatCondition targetStat = null;
-
-        switch (type)
-        {
-            case EatableType.Hunger: targetStat = player.hunger; break;
-            case EatableType.Thirst: targetStat = player.thirst; break;
-            case EatableType.Health: targetStat = player.hp; break;
-            case EatableType.Stamina: targetStat = player.stamina; break;
-            case EatableType.Infection: targetStat = player.infection; break;
-        }
-
-        if (targetStat != null)
-        {
-            float before = targetStat.currentValue;
-            if (type == EatableType.Infection) targetStat.currentValue -= value;
-            else targetStat.currentValue += value;
-
-            targetStat.currentValue = Mathf.Clamp(targetStat.currentValue, 0, targetStat.maxValue);
-            Debug.Log($"[{type}] 변경 전: {before} -> 변경 후: {targetStat.currentValue}");
-        }
-    }
-
     private void EquipToQuickSlot(int bagIndex)
     {
         int emptyIndex = -1;
