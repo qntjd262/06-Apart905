@@ -5,10 +5,18 @@ using UnityEngine.SceneManagement;
 
 public class PlayerGamemanager : MonoBehaviour
 {
+    public enum DayState
+    {
+        Day, Night
+    }
+    private DayState _currDayState;
+
     public static PlayerGamemanager Instance;
 
     
     public static event Action OnGameStatChangeTime;
+    // 몬스터에게 낮 밤 변경을 알리는 Action
+    public static event Action<DayState> OnDayStateChange;
 
     [Header("시간 설정")]
     private float timer = 0f;
@@ -37,6 +45,7 @@ public class PlayerGamemanager : MonoBehaviour
     void Update()
     {
         CalculateTime();
+        CalculateDayState();
     }
 
     private void CalculateTime()
@@ -66,8 +75,6 @@ public class PlayerGamemanager : MonoBehaviour
                 }
             }
         }
-
-        
     }
 
     //게임 시간을 UI상으로 표시하기 위한 함수
@@ -79,5 +86,21 @@ public class PlayerGamemanager : MonoBehaviour
     public void OnClickBack()
     {
         SceneManager.LoadScene(2);
+    }
+
+    // 낮밤 계산용 함수
+    private void CalculateDayState()
+    {
+        // 6시부터 18시 사이까지를 낮으로 판정
+        if (hours > 6 && hours < 18)
+        {
+            _currDayState = DayState.Day;
+        }
+        else
+        {
+            _currDayState = DayState.Night;
+        }
+  
+        OnDayStateChange?.Invoke(_currDayState);
     }
 }

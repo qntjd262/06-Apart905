@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -10,23 +9,23 @@ public class MonsterController : MonoBehaviour
     private NavMeshAgent _navMeshAgent;
     private Blackboard _blackboard;
     private Coroutine _visionSensor;
-    public MonsterStatSO monsterStatSO;
+    private LayerMask _monsterMask = ~(1 << 11);
+    [field : SerializeField]
+    public MonsterStatSO monsterStatSO { get; private set; }
+
+    // 죽었을 때 발동할 이벤트
+    public event Action OnDied;
 
     [Header("몬스터 체력")]
-    private float monsterHealth;
     [SerializeField] private float currentHealth;
+    private float monsterHealth;
 
     [Header("적 탐지 센서")]
-    //[SerializeField] private float detectRadius = 10f;
     [SerializeField] private float detectAngle = 60f;
 
     private void Awake()
     {
         monsterHealth = monsterStatSO.maxHP;
-    }
-
-    private void Start()
-    {
         currentHealth = monsterHealth;
         _blackboard = GetComponent<TestMonsterAI>().blackboard;
         _navMeshAgent = GetComponent<NavMeshAgent>();
@@ -51,12 +50,15 @@ public class MonsterController : MonoBehaviour
             float angle = Vector3.Angle(transform.forward, direction);
             // 시야각이 일정 각도 이내이고, 사이에 장애물이 없으면 발견 판정
             if (angle <= detectAngle &&
-                Physics.Raycast(_blackboard.Center.position, direction, out RaycastHit hit, distance + 0.5f))
+                Physics.Raycast(_blackboard.Center.position, direction, out RaycastHit hit, distance + 0.5f, _monsterMask))
             {
-                // hit한 오브젝트의 태그가 Player라면
                 if (hit.collider.CompareTag("Player"))
                 {
                     _blackboard.Player = player; // 플레이어 정보를 블랙보드에 저장
+                }
+                else
+                {
+                    _blackboard.Player = null; // 플레이어가 안보일시 플레이어 정보 삭제
                 }
             }
 
@@ -144,6 +146,33 @@ public class MonsterController : MonoBehaviour
 
         GetComponent<TestMonsterAI>().enabled = false;
         GetComponent<CapsuleCollider>().enabled = false;
+
+        // 시야 감지 코루틴 중지
+        if (_visionSensor != null)
+        {
+            StopCoroutine(_visionSensor);
+            _visionSensor = null;
+        }
+
+        // 사망한 좀비 처리에 따라 다르게 변경될 필요가 있음
+        OnDied?.Invoke();
+        MonsterSpawnManager.Instance.ReturnPoolObject(gameObject);
+    }
+
+    // 사망 후 monster 정보 리셋
+    public void ResetMonster()
+    {
+        currentHealth = monsterHealth;
+
+        _navMeshAgent.isStopped = false;
+        _navMeshAgent.enabled = true;
+
+        GetComponent<TestMonsterAI>().enabled = true;
+        GetComponent<CapsuleCollider>().enabled = true;
+
+        _blackboard.MonsterState = Blackboard.State.Idle;
+        _blackboard.Player = null;
+        _blackboard.CanHearPlayer = false;
     }
     #endregion
 }

@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class TestButtonUI : MonoBehaviour
@@ -16,5 +17,20 @@ public class TestButtonUI : MonoBehaviour
     {
         var blackboard = monsterAI.blackboard;
         blackboard.Self.GetComponent<MonsterController>().CanHearPlayerSound(player.transform.position);
+    }
+
+    public void ToggleDayState()
+    {
+        if (monsterAI.blackboard.CurrDayState == PlayerGamemanager.DayState.Day)
+        {
+            monsterAI.blackboard.CurrDayState = PlayerGamemanager.DayState.Night;
+        }
+        else
+        {
+            monsterAI.blackboard.CurrDayState = PlayerGamemanager.DayState.Day;
+        }
+    
+        TextMeshProUGUI text = GetComponentInChildren<TextMeshProUGUI>();
+        text.text = monsterAI.blackboard.CurrDayState.ToString();
     }
 }

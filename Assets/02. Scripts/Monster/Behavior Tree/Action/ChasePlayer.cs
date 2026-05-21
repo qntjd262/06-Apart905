@@ -40,12 +40,13 @@ public class ChasePlayer: ActionNode
             _navMeshAgent.SetDestination(player.transform.position); // 플레이어 쪽으로 이동하게 명령
             _chaseTime = 0f;
         }
-
+  
         // 플레이어한테 이동할 때 거리가 정지거리 이하면 정지
         if (!_navMeshAgent.pathPending && _navMeshAgent.remainingDistance <= _navMeshAgent.stoppingDistance)
         {
             _navMeshAgent.ResetPath(); // 경로 초기화하여 멈춤
             _chaseTime = _chaseInterval; // 다음 추적이 가능하게 타이머 초기화'
+            _blackboard.HasLostTarget = false;
             return NodeState.Success;
         }
 
@@ -56,9 +57,12 @@ public class ChasePlayer: ActionNode
     public override void OnStop()
     {
         base.OnStop();
-        _blackboard.LastPoint = _navMeshAgent.destination;
-        _blackboard.HasLostTarget = true;
         _chaseTime = _chaseInterval;
         _navMeshAgent.ResetPath();
+        if (_blackboard.Player == null)
+        {
+            _blackboard.LastPoint = _navMeshAgent.destination;
+            _blackboard.HasLostTarget = true;
+        }
     }
-}
+ }

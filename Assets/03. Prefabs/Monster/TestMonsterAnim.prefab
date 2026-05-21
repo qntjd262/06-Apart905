@@ -2068,7 +2068,7 @@ MonoBehaviour:
     m_Bits: 1024
   detectAngle: 60
   center: {fileID: 0}
-  _chaseInterval: 0.4
+  _chaseInterval: 0.25
   _chaseDuration: 3
   _halfExtents: {x: 0.92, y: 1.93, z: 1.2}
   _waitTime: 1
@@ -2092,6 +2092,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   monsterStatSO: {fileID: 11400000, guid: 8aa57cf68793caf43acd214ec17a2ff3, type: 2}
   currentHealth: 0
+  detectAngle: 60
 --- !u!136 &7028900299767475800
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -2124,9 +2125,9 @@ NavMeshAgent:
   m_GameObject: {fileID: 7679406937999697682}
   m_Enabled: 1
   m_AgentTypeID: 0
-  m_Radius: 0.5
+  m_Radius: 0.7
   m_Speed: 2.5
-  m_Acceleration: 8
+  m_Acceleration: 6
   avoidancePriority: 50
   m_AngularSpeed: 120
   m_StoppingDistance: 2

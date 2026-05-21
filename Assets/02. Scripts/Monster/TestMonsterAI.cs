@@ -45,6 +45,16 @@ public class TestMonsterAI : MonoBehaviour
         blackboard.Center = center;
     }
 
+    private void OnEnable()
+    {
+        PlayerGamemanager.OnDayStateChange += ChangeDayState;
+    }
+
+    private void OnDisable()
+    {
+        PlayerGamemanager.OnDayStateChange -= ChangeDayState;
+    }
+
     // SelectorNode -> 실패하면 다음 노드로
     // SequenceNode -> 성공하면 다음 노드로
     private void Start()
@@ -87,14 +97,6 @@ public class TestMonsterAI : MonoBehaviour
                     )
                 ),
 
-                // 적의 발소리가 들린다면 && 추적 중이 아니라면 
-                new SequenceNode
-                (
-                    new ConditionNode(() => blackboard.MonsterState != Blackboard.State.Chase &&
-                                            blackboard.CanHearPlayer),
-                    new LookAt(() => blackboard.SoundDirection, 1f, blackboard)
-                ),
-
                 // 추적 중 플레이어가 시야에서 사라진다면
                 new MemorySequenceNode
                 (
@@ -103,10 +105,19 @@ public class TestMonsterAI : MonoBehaviour
                     new LookAround(4f, 40f, blackboard)
                 ),
 
+                // 적의 발소리가 들린다면 && 추적 중이 아니라면 
+                new SequenceNode
+                (
+                    new ConditionNode(() => blackboard.MonsterState != Blackboard.State.Chase &&
+                                            blackboard.CanHearPlayer),
+                    new LookAt(() => blackboard.SoundDirection, 1f, blackboard)
+                ),
+
                 // 정찰 및 대기
                 new MemorySequenceNode
                 (
                     new Idle(minIdleTime, maxIdleTime, blackboard),
+                    new ConditionNode(() => blackboard.CurrDayState == PlayerGamemanager.DayState.Day),
                     new PatrolToFindPlayer(patrolRadius, blackboard)
                 )
             );
@@ -116,8 +127,6 @@ public class TestMonsterAI : MonoBehaviour
 
     private void Update()
     {
-        //Debug.Log(blackboard.MonsterState);
-        //Debug.Log(blackboard.HasLostTarget);
         _rootNode.Evaluate(); // 매 프레임마다 Behavior Tree 평가
     }
 
@@ -144,5 +153,10 @@ public class TestMonsterAI : MonoBehaviour
             Gizmos.color = Color.blue;
             Gizmos.DrawLine(this.center.position, blackboard.NavMeshAgent.destination);
         }
+    }
+
+    private void ChangeDayState(PlayerGamemanager.DayState dayState)
+    {
+        blackboard.CurrDayState = dayState;
     }
 }

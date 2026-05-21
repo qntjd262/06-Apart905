@@ -14,6 +14,7 @@ public class SelectorNode : CompositeNode
             switch (child.Evaluate())
             {
                 case NodeState.Success: // 하나라도 성공하면 성공 반환
+                    _currentChild = null;
                     return NodeState.Success;
 
                 case NodeState.Running: // 실행 중이면 상태 유지
