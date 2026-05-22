@@ -749,6 +749,7 @@ GameObject:
   - component: {fileID: 6981692675301501930}
   - component: {fileID: 4413059861479519790}
   - component: {fileID: 8627273310064511995}
+  - component: {fileID: 4316355255517421992}
   m_Layer: 0
   m_Name: StairCeiling
   m_TagString: Untagged
@@ -845,6 +846,26 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4316355255517421992
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2093795972469366945}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SerializedVersion: 0
+  m_OverrideArea: 1
+  m_Area: 1
+  m_OverrideGenerateLinks: 0
+  m_GenerateLinks: 0
+  m_IgnoreFromBuild: 0
+  m_ApplyToChildren: 1
+  m_AffectedAgents: ffffffff
 --- !u!1 &2186668398370896434
 GameObject:
   m_ObjectHideFlags: 0
@@ -926,6 +947,7 @@ GameObject:
   - component: {fileID: 8946490890477845654}
   - component: {fileID: 3911601664104730875}
   - component: {fileID: 1570770284879492835}
+  - component: {fileID: 4828212700973692341}
   m_Layer: 0
   m_Name: RoomFloor
   m_TagString: Untagged
@@ -1022,6 +1044,38 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4828212700973692341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2535347616940658668}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SerializedVersion: 0
+  m_AgentTypeID: 0
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_UseGeometry: 0
+  m_DefaultArea: 0
+  m_GenerateLinks: 1
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.1
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 23800000, guid: f626a59a48b70c34c971fd0789f2f0d0, type: 2}
+  m_BuildHeightMesh: 0
 --- !u!1 &2535843691502560271
 GameObject:
   m_ObjectHideFlags: 0
@@ -1142,6 +1196,7 @@ GameObject:
   - component: {fileID: 8643278201018289025}
   - component: {fileID: 4931450735162898520}
   - component: {fileID: 4582600856264831427}
+  - component: {fileID: 4840354060920521835}
   m_Layer: 0
   m_Name: Floor
   m_TagString: Untagged
@@ -1238,6 +1293,38 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4840354060920521835
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2551987879214898691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SerializedVersion: 0
+  m_AgentTypeID: 0
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_UseGeometry: 0
+  m_DefaultArea: 0
+  m_GenerateLinks: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.1
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 23800000, guid: 67e9f5467be585941a2271c20c8578c9, type: 2}
+  m_BuildHeightMesh: 0
 --- !u!1 &2613770676709621308
 GameObject:
   m_ObjectHideFlags: 0
@@ -1284,6 +1371,7 @@ GameObject:
   - component: {fileID: 879508463472286392}
   - component: {fileID: 4079501671745557875}
   - component: {fileID: 3523545283049964655}
+  - component: {fileID: 4375927639750239767}
   m_Layer: 0
   m_Name: StairHallwayFloor
   m_TagString: Untagged
@@ -1380,6 +1468,38 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &4375927639750239767
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2657816659210411617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SerializedVersion: 0
+  m_AgentTypeID: 0
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_UseGeometry: 0
+  m_DefaultArea: 0
+  m_GenerateLinks: 1
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.1
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 23800000, guid: 0016cbf39598327409461e66975643fb, type: 2}
+  m_BuildHeightMesh: 0
 --- !u!1 &2872211871169845790
 GameObject:
   m_ObjectHideFlags: 0
@@ -2659,6 +2779,7 @@ GameObject:
   - component: {fileID: 8733566914490405869}
   - component: {fileID: 9118535192267626607}
   - component: {fileID: 1742961455034636197}
+  - component: {fileID: 1012224646640954363}
   m_Layer: 0
   m_Name: StairMiddleFloor
   m_TagString: Untagged
@@ -2675,7 +2796,7 @@ Transform:
   m_GameObject: {fileID: 6879869919953605825}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -1.865, y: -0.05, z: 0.0025}
+  m_LocalPosition: {x: -1.865, y: 0.065, z: 0.0025}
   m_LocalScale: {x: 1.175, y: 0.2, z: 2.4}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2755,6 +2876,38 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1012224646640954363
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6879869919953605825}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SerializedVersion: 0
+  m_AgentTypeID: 0
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_UseGeometry: 0
+  m_DefaultArea: 0
+  m_GenerateLinks: 1
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.1
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 23800000, guid: 128919c67402def4d8f08ad7c9fb69ad, type: 2}
+  m_BuildHeightMesh: 0
 --- !u!1 &6888696468561496587
 GameObject:
   m_ObjectHideFlags: 0
@@ -3560,7 +3713,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5635755939826875228, guid: c8ad0bc75390db845b77cd9903d52551, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.65
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 5635755939826875228, guid: c8ad0bc75390db845b77cd9903d52551, type: 3}
       propertyPath: m_LocalScale.z
@@ -3572,7 +3725,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5635755939826875228, guid: c8ad0bc75390db845b77cd9903d52551, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 5635755939826875228, guid: c8ad0bc75390db845b77cd9903d52551, type: 3}
       propertyPath: m_LocalPosition.z
@@ -3665,7 +3818,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5064879244141013232, guid: 3f73e288386adc14196dd2bde956e4f6, type: 3}
       propertyPath: m_Enabled
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6132686093323344261, guid: 3f73e288386adc14196dd2bde956e4f6, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3705,6 +3858,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6132686093323344261, guid: 3f73e288386adc14196dd2bde956e4f6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6181034352100383656, guid: 3f73e288386adc14196dd2bde956e4f6, type: 3}
+      propertyPath: m_Enabled
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6804211832983834963, guid: 3f73e288386adc14196dd2bde956e4f6, type: 3}
@@ -3789,9 +3946,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 9084755217319663421, guid: c05cc70d1c6bf6e478c100ac179c7844, type: 3}
+    - target: {fileID: 7899007620392887397, guid: c05cc70d1c6bf6e478c100ac179c7844, type: 3}
       propertyPath: m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9084755217319663421, guid: c05cc70d1c6bf6e478c100ac179c7844, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3865,7 +4026,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5635755939826875228, guid: c8ad0bc75390db845b77cd9903d52551, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.65
+      value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 5635755939826875228, guid: c8ad0bc75390db845b77cd9903d52551, type: 3}
       propertyPath: m_LocalScale.z
