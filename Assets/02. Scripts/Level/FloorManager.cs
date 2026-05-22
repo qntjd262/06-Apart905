@@ -27,6 +27,9 @@ public class FloorManager : MonoBehaviour
     [Header("**퀘스트 NPC**")]
     [SerializeField] private GameObject[] _QuestNPCs = new GameObject[4];           // 고정 출현 퀘스트 NPC들(친한 형, 이상한 여자, 충격먹은 청년, 좀비가 된 경비원)
 
+    [Header("**각 층에 배치된 좀비 스포너들**")]
+    [SerializeField] private GameObject[] _ZombieSpawners = new GameObject[8];      // 2, 3, 6, 8, 9, 12, 14, 17 층의 스포너
+
 
     private Vector3 Floor9_leftpos;
     private Vector3 Floor9_rightpos;
@@ -56,6 +59,8 @@ public class FloorManager : MonoBehaviour
         RandomShuffle(_Presets);
         SetFurnitures();
         SetActiveFurnitures(_moveLevel.CurrLevel, false, true);
+        SetQuests(_moveLevel.CurrLevel);
+        SetZombies(_moveLevel.CurrLevel);
     }
 
     private void AllocatePresets()                              // 셔플할 인 게임상의 가구 프리셋들 할당
@@ -220,6 +225,39 @@ public class FloorManager : MonoBehaviour
             case 14:
                 _QuestNPCs[2].SetActive(true);
                 _QuestNPCs[3].SetActive(true);
+                break;
+        }    
+    }
+    public void SetZombies(int _currLevel)
+    {
+        foreach (var zSpawners in _ZombieSpawners)
+            zSpawners.SetActive(false);
+
+        switch (_currLevel) // 2, 3, 6, 8, 9, 12, 14, 17
+        {
+            case 2:
+                _ZombieSpawners[0].SetActive(true);
+                break;
+            case 3:
+                _ZombieSpawners[1].SetActive(true);
+                break;
+            case 6:
+                _ZombieSpawners[2].SetActive(true);
+                break;
+            case 8:
+                _ZombieSpawners[3].SetActive(true);
+                break;
+            case 9:
+                _ZombieSpawners[4].SetActive(true);
+                break;
+            case 12:
+                _ZombieSpawners[5].SetActive(true);
+                break;
+            case 14:
+                _ZombieSpawners[6].SetActive(true);
+                break;
+            case 17:
+                _ZombieSpawners[7].SetActive(true);
                 break;
         }    
     }

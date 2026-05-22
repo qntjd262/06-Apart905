@@ -55,6 +55,7 @@ public class MoveLevel : MonoBehaviour
 
         _currLevel++;
         _floorManager.SetQuests(_currLevel);
+        _floorManager.SetZombies(_currLevel);
     }
 
     public void MoveDown()
@@ -76,6 +77,7 @@ public class MoveLevel : MonoBehaviour
 
         _currLevel--;                               // 類 馬模
         _floorManager.SetQuests(_currLevel);
+        _floorManager.SetZombies(_currLevel);
     }
 
     private void IsMoveUp(bool isMoveUp)     // 類 檜翕 �� 類 嬪纂 褻薑
