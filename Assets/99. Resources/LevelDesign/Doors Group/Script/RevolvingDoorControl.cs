@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class RevolvingDoorControl : MonoBehaviour, IInteractable
 {
-    [Header("¹® °³Æó ¼³Á¤")]
+    [Header("ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
     public float openAngle = 90;
     public float openDuration = 1;
 
-    [Header("¹® °³Æó »ç¿îµå")]
+    [Header("ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½")]
     public AudioClip open;
     public AudioClip close;
 
@@ -71,5 +71,15 @@ public class RevolvingDoorControl : MonoBehaviour, IInteractable
     private void OnCloseSound()
     {
         audioSource.PlayOneShot(close);
+    }
+
+    public string GetInteractText()
+    {
+        return isOpen ? "ë¬¸ ë‹«ê¸°" : "ë¬¸ ì—´ê¸°";
+    }
+
+    public Constants.InteractType GetInteractType()
+    {
+        return Constants.InteractType.Door;
     }
 }
