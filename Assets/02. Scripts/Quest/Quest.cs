@@ -11,6 +11,7 @@ public class Quest : ScriptableObject
     public string targetID; //필요 아이템의 이름
     public int goalAmount; //필요 갯수
     public int currentAmount;
+    public bool isMainQuest;//UI용 추가
 
     [Header("Reward")]
     public ItemData rewardItemID; //보상 아이템의 이름

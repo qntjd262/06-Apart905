@@ -11,17 +11,7 @@ public class QuestManager : MonoBehaviour
 
     private PlayerStat pendingPlayer;
 
-    void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
-    }
+
 
     public void AcceptQuest(Quest newQuest, PlayerStat player)
     {
@@ -47,28 +37,6 @@ public class QuestManager : MonoBehaviour
             if(pendingPlayer != null) pendingPlayer.isInteracting = false;
             if(DialogueManager.Instance != null) DialogueManager.Instance.EndDialogue();
         }
-
-        // if(newQuest.type == QuestType.ItemCollection)
-        // {
-        //     if (InventoryManager.Instance != null)
-        //     {
-        //         int alreadyHaveCount = InventoryManager.Instance.GetItemCount(newQuest.targetID);
-        //         newQuest.currentAmount = alreadyHaveCount;
-        //     }
-        // }
-
-        // activeQuests.Add(newQuest);
-        // Debug.Log($"{newQuest.questName} 퀘스트를 수락했습니다.");
-
-        // QuestUI ui = FindObjectOfType<QuestUI>(true);
-        // if (ui != null)
-        // {
-        //     ui.RefreshQuestList();
-        // }
-        // else
-        // {
-        //     Debug.LogWarning("씬에서 QuestUI를 찾을 수 없습니다.");
-        // }
     }
 
     public void ConfirmAcceptQuest()
@@ -129,19 +97,26 @@ public class QuestManager : MonoBehaviour
         {
             DialogueManager.Instance.EndDialogue();
         }
+        if (trackingQuest == null) SetTrackingQuest(newQuest);
     }
 
     public void NotifyEvent(QuestType type, string id, int amount)
     {
-        foreach(var quest in activeQuests)
+        foreach (var quest in activeQuests)
         {
-            if(quest.type == type)
+            if (quest.type == type)
             {
                 quest.UpdateProgress(id, amount);
             }
         }
+        //UI용 추가
+        QuestTrackerUI[] trackers = FindObjectsOfType<QuestTrackerUI>();
+        foreach (var tracker in trackers)
+        {
+            tracker.UpdateProgress();
+        }
 
-        if(questUI != null && questUI.gameObject.activeSelf)
+        if (questUI != null && questUI.gameObject.activeSelf)
         {
             questUI.RefreshQuestList();
         }
@@ -149,11 +124,11 @@ public class QuestManager : MonoBehaviour
 
     public void OnPickUp()
     {
-        
+
     }
 
     public void OnKill()
     {
-        
+
     }
 }

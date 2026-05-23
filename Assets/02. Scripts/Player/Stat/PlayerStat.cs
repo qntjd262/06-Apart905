@@ -1,6 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using System;
+using Unity.AppUI.UI;
 
 public class PlayerStat : MonoBehaviour
 {
@@ -16,7 +17,7 @@ public class PlayerStat : MonoBehaviour
 
     public float AttackPower
     {
-        get { return attackPower;}
+        get { return attackPower; }
     }
 
     [Header("현재 생존 상태")]
@@ -33,10 +34,27 @@ public class PlayerStat : MonoBehaviour
     public bool isInteracting = false;
 
     public event Action<bool> OnInfectionStateBool;
+    public event Action<float, float> OnHpChanged;
+    public event Action OnPlayerDeath;
 
     void Awake()
     {
-        if(CharacterDataManager.Instance != null && CharacterDataManager.Instance.selectedCharacterSO != null)
+        // 인벤토리 매니저의 Player 변수에 자기 자신(this)을 할당
+        if (InventoryManager.Instance != null)
+        {
+            InventoryManager.Instance.Player = this;
+        }
+    }
+
+    void Start() // 데이터 매니저 참조는 Start가 안전합니다.
+    {
+        InitializeStats();
+    }
+
+    private void InitializeStats()
+    {
+
+        if (CharacterDataManager.Instance != null && CharacterDataManager.Instance.selectedCharacterSO != null)
         {
             CharacterStatSO myData = CharacterDataManager.Instance.selectedCharacterSO;
 
@@ -59,10 +77,14 @@ public class PlayerStat : MonoBehaviour
         infection = new StatCondition(100f);
         infection.currentValue = 0f;
     }
-
     void OnEnable()
     {
-        PlayerGamemanager.OnGameStatChangeTime += DecreasSurvivalStat;
+        PlayerGamemanager.OnGameStatChangeTime += DecreaseSurvivalStat;
+    }
+
+    void OnDisable()
+    {
+        PlayerGamemanager.OnGameStatChangeTime -= DecreaseSurvivalStat;
     }
 
 
@@ -70,10 +92,11 @@ public class PlayerStat : MonoBehaviour
     public void TakeDamage(float damage)
     {
         hp.DecreaseStat(damage);
-        
+        OnHpChanged?.Invoke(hp.currentValue, hp.maxValue);
+
         AddInfection();
 
-        if(hp.currentValue <= 0)
+        if (hp.currentValue <= 0)
         {
             Die();
         }
@@ -89,15 +112,15 @@ public class PlayerStat : MonoBehaviour
     {
         int targetStage = 0;
 
-        if(infection.currentValue >= 80f) targetStage = 3;
-        else if(infection.currentValue >= 50f) targetStage = 2;
-        else if(infection.currentValue >= 30f) targetStage = 1;
+        if (infection.currentValue >= 80f) targetStage = 3;
+        else if (infection.currentValue >= 50f) targetStage = 2;
+        else if (infection.currentValue >= 30f) targetStage = 1;
 
-        if(currentInfectionStage == 0 && targetStage > 0)
+        if (currentInfectionStage == 0 && targetStage > 0)
         {
             OnInfectionStateBool?.Invoke(true);
         }
-        else if(currentInfectionStage == 1 && targetStage == 0)
+        else if (currentInfectionStage == 1 && targetStage == 0)
         {
             OnInfectionStateBool?.Invoke(false);
         }
@@ -107,19 +130,78 @@ public class PlayerStat : MonoBehaviour
     public void Die()
     {
         Debug.Log("플레이어 사망");
+
+        this.enabled = false;
+        //TODO : 사망 애니메이션, 사망 UI ON, 게임 시간 멈춤 등 사망 처리
+        OnPlayerDeath?.Invoke();
+        if (UIManager.Instance != null)
+        {
+            if (UIManager.Instance.gameOverPanel != null)
+            {
+                GameOverController gameOverCtrl = UIManager.Instance.gameOverPanel.GetComponent<GameOverController>();
+                if (gameOverCtrl != null)
+                {
+                    gameOverCtrl.Open();
+                }
+                else
+                { // 예외 방어용: 컴포넌트가 없다면 기본 활성화
+                    UIManager.Instance.gameOverPanel.SetActive(true);
+                    UIManager.Instance.RegisterUI(UIManager.Instance.gameOverPanel);
+                }
+            }
+            Time.timeScale = 0f;
+        }
     }
 
     //배고픔, 갈증 감소 함수
-    private void DecreasSurvivalStat()
+    private void DecreaseSurvivalStat()
     {
         hunger.DecreaseStat(HungerDecreaseRate);
         thirst.DecreaseStat(ThirstDecreaseRate);
 
-        if(hunger.currentValue <= 0 || thirst.currentValue <= 0 || infection.currentValue >= 100f)
+        if (hunger.currentValue <= 0 || thirst.currentValue <= 0 || infection.currentValue >= 100f)
         {
             Debug.Log("허기 또는 갈증이 0 이하 체력깍임");
             hp.DecreaseStat(5f);
             Debug.Log($"현재 체력 : {hp.currentValue}");
+        }
+    }
+    public void ApplyEatableEffect(EatableType type, float value)
+    {
+        Debug.Log($"아이템 효과 발동 타입 : {type}, 수치 : {value}");
+
+        StatCondition targetStat = null;
+
+        switch (type)
+        {
+            case EatableType.Hunger: targetStat = hunger; break;
+            case EatableType.Thirst: targetStat = thirst; break;
+            case EatableType.Health: targetStat = hp; break;
+            case EatableType.Stamina: targetStat = stamina; break;
+            case EatableType.Infection: targetStat = infection; break;
+        }
+        if (targetStat != null)
+        {
+            //로그찍기 위함
+            float before = targetStat.currentValue;
+
+            if (type == EatableType.Infection) //감염도인 경우 수치 빼기
+            {
+                targetStat.currentValue -= value;
+            }
+            else //나머지는 수치 더하기
+            {
+                targetStat.currentValue += value;
+            }
+
+            //스탯이 0 ~ 최대값 범위를 벗어나지 않게 고정
+            targetStat.currentValue = Mathf.Clamp(targetStat.currentValue, 0, targetStat.maxValue);
+            Debug.Log($"{type} 변경 전 : {before} ->  변경 후 : {targetStat.currentValue}");
+
+            if (type == EatableType.Health)
+            {
+                OnHpChanged?.Invoke(hp.currentValue, hp.maxValue);
+            }
         }
     }
 }

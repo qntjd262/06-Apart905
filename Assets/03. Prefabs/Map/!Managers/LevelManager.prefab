@@ -1,0 +1,121 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8187276253953917822
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7188821774180427774}
+  - component: {fileID: 4821726991305752054}
+  - component: {fileID: 1724194040847291904}
+  m_Layer: 0
+  m_Name: LevelManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7188821774180427774
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8187276253953917822}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4821726991305752054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8187276253953917822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c95f9f3cab93a541ade6887f1b86512, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  state: 0
+  check: 0
+  _LevelBott: {fileID: 0}
+  _LevelMid: {fileID: 0}
+  _LevelTop: {fileID: 0}
+  _RoofTop: {fileID: 0}
+  _Ground: {fileID: 0}
+  _currLevel: 0
+--- !u!114 &1724194040847291904
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8187276253953917822}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc1ce136bef3c6441abc01409efe51c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Presets:
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 228e0028e63051b4a851bb48227b9d6f, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  - {fileID: 5347605987063301270, guid: 5d7b8189c0ad4d1408d4ec974e082512, type: 3}
+  - {fileID: 1371722573331116982, guid: 8a4164f787f4c4648abcc73d5a130670, type: 3}
+  Rooms:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  QuestItems:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  QuestNPCs:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}

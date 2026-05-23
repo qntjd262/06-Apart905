@@ -12,13 +12,12 @@ public class IsInAttackRange : Node
         _self = _blackboard.Self;
     }
 
-    public override NodeState Evaluate()
+    public override NodeState OnUpdate()
     {
         _player = _blackboard.Player;
 
-        if (Vector3.Distance(_self.transform.position, _player.transform.position) <= 2f)
+        if (Vector3.Distance(_self.transform.position, _player.transform.position) <= _blackboard.NavMeshAgent.stoppingDistance)
         {
-            Debug.Log("적 공격사거리 내에 있음");
             return NodeState.Success;
         }
         else

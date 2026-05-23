@@ -13,12 +13,11 @@ public class ReturnOriginPosition : ActionNode
     {
         _originPos = originPos;
         _blackboard = blackboard;
-        _animator = _blackboard.Animator;
         _self = _blackboard.Self;
         _navMeshAgent = _blackboard.NavMeshAgent;
     }
 
-    public override NodeState Evaluate()
+    public override NodeState OnUpdate()
     {
         // 원래 위치와의 거리가 0.5 이하면 Success 반환
         if (Vector3.Distance(_self.transform.position, _originPos) < 0.5f)

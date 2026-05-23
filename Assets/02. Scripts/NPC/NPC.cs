@@ -69,6 +69,16 @@ public class NPC : MonoBehaviour, IInteractable
         myRenderer.SetPropertyBlock(PropertyBlock);
     }
 
+    public string GetInteractText()
+    {
+        return "대화하기";
+    }
+
+    public Constants.InteractType GetInteractType()
+    {
+        return Constants.InteractType.Talk;
+    }
+
     public void Interact(PlayerStat player)
     {
         if(myQuest != null && myQuest.isCompleted)
@@ -86,7 +96,7 @@ public class NPC : MonoBehaviour, IInteractable
 
         // 현재 인벤토리 수량을 퀘스트 데이터에 동기화
         int currentBagCount = InventoryManager.Instance.GetItemCount(myQuest.targetID);
-        myQuest.ForceSyncProgress(currentBagCount); 
+        myQuest.ForceSyncProgress(currentBagCount);
 
         string[] currentDialogues;
 
@@ -115,16 +125,17 @@ public class NPC : MonoBehaviour, IInteractable
         DialogueManager.Instance.StartDialogue(currentDialogues, () => {
             //player.isInteracting = false; 
 
+
             int finalCheckCount = InventoryManager.Instance.GetItemCount(myQuest.targetID);
             myQuest.ForceSyncProgress(finalCheckCount);
-            
+
             // 다시 한번 현재 리스트에 있는지 확인
             bool stillActive = QuestManager.Instance.activeQuests.Exists(q => q.questName == myQuest.questName);
 
             if (!stillActive && !myQuest.isCompleted)
             {
-                // 퀘스트 수락 (이 안에서 UI 새로고침이 호출되어야 합니다)
                 QuestManager.Instance.AcceptQuest(myQuest, player);
+
             }
             else
             {

@@ -8,18 +8,22 @@ public class ChasePlayer: ActionNode
     private float _chaseTime = 0.3f;
     
     private NavMeshAgent _navMeshAgent;
-    private Animator _animator;
-
 
     public ChasePlayer(float chaseInterval, Blackboard blackboard)
     {
         _blackboard = blackboard;
         _chaseInterval = chaseInterval;
-        _animator = _blackboard.Animator;
+        _chaseTime = _chaseInterval;
         _navMeshAgent = _blackboard.NavMeshAgent;
     }
 
-    public override NodeState Evaluate()
+    public override void OnStart()
+    {
+        _blackboard.MonsterState = Blackboard.State.Chase;
+        _blackboard.Animator.OnChase();
+    }
+
+    public override NodeState OnUpdate()
     {
         // 매번 적이 있는지 확인 후, 없으면 Failure
         var player = _blackboard.Player;
@@ -36,17 +40,29 @@ public class ChasePlayer: ActionNode
             _navMeshAgent.SetDestination(player.transform.position); // 플레이어 쪽으로 이동하게 명령
             _chaseTime = 0f;
         }
-
+  
         // 플레이어한테 이동할 때 거리가 정지거리 이하면 정지
         if (!_navMeshAgent.pathPending && _navMeshAgent.remainingDistance <= _navMeshAgent.stoppingDistance)
         {
-            Debug.Log("Chase 끝");
             _navMeshAgent.ResetPath(); // 경로 초기화하여 멈춤
-            _chaseTime = _chaseInterval; // 다음 추적이 가능하게 타이머 초기화
+            _chaseTime = _chaseInterval; // 다음 추적이 가능하게 타이머 초기화'
+            _blackboard.HasLostTarget = false;
             return NodeState.Success;
         }
 
         // 거리가 아직 멀다면 Running 반환
         return NodeState.Running;
     }
-}
+
+    public override void OnStop()
+    {
+        base.OnStop();
+        _chaseTime = _chaseInterval;
+        _navMeshAgent.ResetPath();
+        if (_blackboard.Player == null)
+        {
+            _blackboard.LastPoint = _navMeshAgent.destination;
+            _blackboard.HasLostTarget = true;
+        }
+    }
+ }

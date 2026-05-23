@@ -19,20 +19,24 @@ public class PlayerMove : MonoBehaviour
     [Header("중력 세팅")]
     private float gravity = -9f;
     private Vector3 velocity;
+    
     [Header("스태미나 세팅")]
     private PlayerStat playerStat;
     [SerializeField] private float staminaDecreaseRate = 10f;
     [SerializeField] private float staminaRecoverRate = 0.1f;
     private bool isExhausted = false;
 
-    [Header("플레이어 애니메이션")]
+    [Header("플레이어 컴포넌트")]
     private Animator playerAnim;
+    private PlayerNoise playerNoise;
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
         playerAnim = GetComponentInChildren<Animator>();
         playerStat = GetComponent<PlayerStat>();
+
+        playerNoise = GetComponent<PlayerNoise>();
     }
 
     public void Move(float h, float v, bool isRunning, bool isCrouch)
@@ -73,21 +77,34 @@ public class PlayerMove : MonoBehaviour
             }
         }
 
+        //속도 및 소음 조절
+        float noiseRadius = 0f;
+
         if (!isMoving)
         {
             currentSpeed = 0f;
+            noiseRadius = 0f;
         }
         else if (isCrouch)
         {
             currentSpeed = crouchSpeed;
+            noiseRadius = 3f;
         }
         else if(isRunning && !isExhausted)
         {
             currentSpeed = runSpeed;
+            noiseRadius = 10f;
         }
         else
         {
             currentSpeed = moveSpeed;
+            noiseRadius = 5f;
+        }
+
+        //소음 발생
+        if(playerNoise != null)
+        {
+            playerNoise.SetNoiseRadius(noiseRadius);
         }
         
 

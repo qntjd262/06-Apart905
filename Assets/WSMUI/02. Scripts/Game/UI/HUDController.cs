@@ -3,32 +3,46 @@ using UnityEngine;
 public class HUDController : MonoBehaviour
 {
     private SurvivalGauge gauge;
+    private PlayerStat playerStat;
+
+    private bool isInitialized = false;
+    private float initTime;
 
     void Awake()
     {
-        // Start가 아닌 Awake에서 컴포넌트를 캐싱해야 안전하다.
         gauge = GetComponent<SurvivalGauge>();
     }
 
-    void Start()
+   public void InitHUD()
     {
-        InitHUD();
-    }
-
-    public void InitHUD()
-    {
-        if (GameManager.Instance == null || GameManager.Instance.SelectedCharacterData == null)
+        playerStat = FindFirstObjectByType<PlayerStat>();
+        if (playerStat == null)
         {
-            Debug.LogWarning("HUD: 초기화할 캐릭터 데이터가 존재하지 않습니다.");
+            Debug.LogWarning("HUD: PlayerStat을 찾을 수 없습니다.");
             return;
         }
 
-        var data = GameManager.Instance.SelectedCharacterData;
+        UpdateGauges(false); // 즉시 적용
 
-        // 플레이어 연동 시 주석 해제 필수
-        // gauge.UpdateStamina(data.maxStamina, data.maxStamina, false);
-        // gauge.UpdateHunger(data.maxHunger, data.maxHunger);
-        // gauge.UpdateThirst(data.maxThirst, data.maxThirst);
-        // gauge.UpdateSanity(0, data.maxSanity); 
+        isInitialized = true;
+        initTime = Time.time; // 시간 기록
+    }
+
+    void Update()
+    {
+        if (!isInitialized || playerStat == null || gauge == null) return;
+
+        // 핵심 방어: 시작하고 0.5초 동안은 스탯이 뒤늦게 100으로 차올라도 무조건 애니메이션 없이 스냅(false)시킨다.
+        bool useSmooth = (Time.time - initTime) > 0.5f;
+
+        UpdateGauges(useSmooth);
+    }
+
+    private void UpdateGauges(bool isSmooth)
+    {
+        gauge.UpdateStamina(playerStat.stamina.currentValue, playerStat.stamina.maxValue, isSmooth);
+        gauge.UpdateHunger(playerStat.hunger.currentValue, playerStat.hunger.maxValue, isSmooth);
+        gauge.UpdateThirst(playerStat.thirst.currentValue, playerStat.thirst.maxValue, isSmooth);
+        gauge.UpdateSanity(playerStat.infection.currentValue, playerStat.infection.maxValue, isSmooth);
     }
 }
