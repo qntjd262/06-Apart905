@@ -11,7 +11,30 @@ public class QuestManager : MonoBehaviour
 
     private PlayerStat pendingPlayer;
 
+    public Quest trackingQuest; // 현재 메인 트래커에 표시될 퀘스트
 
+    public void SetTrackingQuest(Quest quest)
+    {
+        trackingQuest = quest;
+
+        // 메인 트래커 갱신
+        if (UIManager.Instance != null && UIManager.Instance.MainTracker != null && quest != null)
+        {
+            UIManager.Instance.MainTracker.Setup(quest);
+        }
+    }
+
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     public void AcceptQuest(Quest newQuest, PlayerStat player)
     {
@@ -37,6 +60,7 @@ public class QuestManager : MonoBehaviour
             if(pendingPlayer != null) pendingPlayer.isInteracting = false;
             if(DialogueManager.Instance != null) DialogueManager.Instance.EndDialogue();
         }
+        if (trackingQuest == null) SetTrackingQuest(newQuest);
     }
 
     public void ConfirmAcceptQuest()
@@ -97,7 +121,6 @@ public class QuestManager : MonoBehaviour
         {
             DialogueManager.Instance.EndDialogue();
         }
-        if (trackingQuest == null) SetTrackingQuest(newQuest);
     }
 
     public void NotifyEvent(QuestType type, string id, int amount)

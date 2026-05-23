@@ -80,6 +80,7 @@ public class DialogueManager : Singleton<DialogueManager>
             yield return null;
             yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0));
         }
+    }
 
 
     private void Update()

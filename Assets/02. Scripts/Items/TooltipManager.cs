@@ -22,9 +22,9 @@ public class TooltipManager : MonoBehaviour
     {
         itemNameText.text = data.itemName;
         itemDescriptionText.text = data.description;
-        itemTypeText.text = GetTypeText(data.type); // 타입을 한글로 변환
+        itemTypeText.text = GetTypeText(data.itemType); // 타입을 한글로 변환
 
-        if (data.type == ItemType.Eatable && data.eatables != null)
+        if (data.itemType == ItemType.Eatable && data is EatableItemData eatableData)
         {
             StringBuilder sb = new StringBuilder();
             foreach (var effect in data.eatables)
