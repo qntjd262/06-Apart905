@@ -428,6 +428,12 @@ public class UIManager : Singleton<UIManager>
         _activeUIStack.Clear(); // 씬이 로드되면 스택 초기화
         CloseAllGlobalPopups();
 
+        if(fadeCanvasGroup == null)
+        {
+            //fadeCanvasGroup파괴 방어 코드 추가
+            fadeCanvasGroup = FindFirstObjectByType<CanvasGroup>(FindObjectsInactive.Include);
+        }
+
         GameObject sceneCanvasObj = GameObject.FindGameObjectWithTag("Canvas");
         if (sceneCanvasObj != null) hudCanvas = sceneCanvasObj.GetComponent<Canvas>();
 

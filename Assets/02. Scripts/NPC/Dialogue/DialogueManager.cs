@@ -35,23 +35,11 @@ public class DialogueManager : Singleton<DialogueManager>
         }
     }
 
-    public void StartDialogue(string npcName, Sprite portrait, string[] lines, System.Action onComplete)
+    public void StartDialogue(string[] lines, System.Action onComplete)
     {
         if (IsDialogueActive) return; // 이미 대화 중이면 중복 방지
         IsDialogueActive = true;
         dialoguePanel.SetActive(true);
-
-        nameText.text = npcName;
-        if (portrait != null)
-        {
-            npcPortrait.sprite = portrait;
-            npcPortrait.gameObject.SetActive(true);
-        }
-        else
-        {
-            npcPortrait.gameObject.SetActive(false); // 이미지가 없으면 숨김
-        }
-
         UIManager.Instance.UpdateCursorState();
         StartCoroutine(PlayDialogue(lines, onComplete));
     }

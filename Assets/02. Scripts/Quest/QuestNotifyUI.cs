@@ -57,8 +57,9 @@ public class QuestNotifyUI : BasePopupUI
             // 부모 클래스의 공통 함수 호출 (스택 해제 및 SetActive(false) 자동 수행)
             HidePanel();
             
+            PlayerStat player = FindFirstObjectByType<PlayerStat>();
             // 퀘스트 실제 수락 처리
-            QuestManager.Instance.AcceptQuest(currentQuest);
+            QuestManager.Instance.AcceptQuest(currentQuest, player);
             
             // 버튼 상태 원상복구 (다음에 팝업이 뜰 때를 대비)
             acceptButton.interactable = true;
