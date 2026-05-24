@@ -40,6 +40,14 @@ public class NPC : MonoBehaviour, IInteractable
         }
         else
         {
+            if(!QuestManager.Instance.IsQuestAvailable(myQuest) && !QuestManager.Instance.activeQuests.Exists(q => q.questName == myQuest.questName))
+            {
+                targetColor = Color.red;
+                status = "선행 퀘스트 미완료(잠김)";
+            }
+            else
+            {
+            
             bool isActive = QuestManager.Instance.activeQuests.Exists(q => q.questName == myQuest.questName);
 
             if(isActive)
@@ -61,6 +69,7 @@ public class NPC : MonoBehaviour, IInteractable
                 //퀘스트가 수락 가능한 상태인가?
                 targetColor = Color.green;
                 status = "수락 전(보유중)";
+            }
             }
         }
         Debug.Log($"{gameObject.name}의 퀘스트 상태: {status} / 설정 색상: {targetColor}");
@@ -85,6 +94,13 @@ public class NPC : MonoBehaviour, IInteractable
         {
             Debug.Log($"{gameObject.name}: 이미 완료된 퀘스트입니다. ");
             return;
+        }
+
+        if (myQuest != null && !QuestManager.Instance.IsQuestAvailable(myQuest) && !QuestManager.Instance.activeQuests.Exists(q => q.questName == myQuest.questName))
+        {
+            Debug.Log($"{gameObject.name}: 선행 퀘스트를 완료하지 않아 퀘스트를 줄 수 없습니다.");
+            // 여기에 선행 퀘스트가 막혔을 때 NPC가 던질 대사 등 추가 가능
+            return; 
         }
 
         if(npcData != null && NPCUIHandler.Instance != null)
@@ -122,7 +138,7 @@ public class NPC : MonoBehaviour, IInteractable
 
         player.isInteracting = true; 
         
-        DialogueManager.Instance.StartDialogue(currentDialogues, () => {
+        DialogueManager.Instance.StartDialogue(npcData, currentDialogues, () => {
             //player.isInteracting = false; 
 
 
@@ -158,6 +174,11 @@ public class NPC : MonoBehaviour, IInteractable
     {
         myQuest.isCompleted = true;
 
+        if(QuestManager.Instance != null && !QuestManager.Instance.completedQuestNames.Contains(myQuest.questName))
+        {
+            QuestManager.Instance.completedQuestNames.Add(myQuest.questName);
+        }
+
         //퀘스트 완료 시 목표 아이템 제거
         if (myQuest.type == QuestType.ItemCollection)
         {
@@ -172,6 +193,12 @@ public class NPC : MonoBehaviour, IInteractable
             }
 
         QuestManager.Instance.activeQuests.RemoveAll(q => q.questName == myQuest.questName);
+
+        NPC[] allNPCs = FindObjectsByType<NPC>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        foreach (NPC npc in allNPCs)
+        {
+            npc.UpdateOutlineColor();
+        }
 
         QuestUI ui = FindAnyObjectByType<QuestUI>(FindObjectsInactive.Include);
         if (ui != null) ui.RefreshQuestList();

@@ -7,11 +7,31 @@ public class QuestManager : MonoBehaviour
     public QuestUI questUI;
     public List<Quest> activeQuests = new List<Quest>();
 
+    public List<string> completedQuestNames = new List<string>();
+
     private Quest pendingQuest;
 
     private PlayerStat pendingPlayer;
 
     public Quest trackingQuest; // 현재 메인 트래커에 표시될 퀘스트
+
+    public bool IsQuestAvailable(Quest quest)
+    {
+        if(quest == null) return false;
+
+        if(completedQuestNames.Contains(quest.questName)) return false;
+
+        if(activeQuests.Exists(q => q.questName == quest.questName)) return false;
+
+        if(quest.prevQuest != null)
+        {
+            if(!completedQuestNames.Contains(quest.prevQuest.questName))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
 
     public void SetTrackingQuest(Quest quest)
     {
@@ -50,9 +70,9 @@ public class QuestManager : MonoBehaviour
         pendingQuest = newQuest;
         pendingPlayer = player;
 
-        if(QuestAcceptUI.Instance != null)
+        if(QuestNotifyUI.Instance != null)
         {
-            QuestAcceptUI.Instance.ShowPopup(newQuest);
+            QuestNotifyUI.Instance.ShowNotice(newQuest);
         }
         else
         {

@@ -46,7 +46,7 @@ public class InventoryManager : Singleton<InventoryManager>
                 BagSlots[i].item = itemToAdd;
 
                 if (QuestManager.Instance != null)
-                    QuestManager.Instance.NotifyEvent(QuestType.ItemCollection, itemToAdd.Name, 1);
+                    QuestManager.Instance.NotifyEvent(QuestType.ItemCollection, itemToAdd.itemName, 1);
 
                 SyncQuestAndUI(itemToAdd.itemName);
 
@@ -79,7 +79,7 @@ public class InventoryManager : Singleton<InventoryManager>
         int count = 0;
         foreach (var slot in BagSlots)
         {
-            if (slot.item != null && slot.item.Name == itemName) count++;
+            if (slot.item != null && slot.item.itemName == itemName) count++;
         }
         // 퀵슬롯은 이제 가방의 참조일 뿐이므로 중복 카운트 방지를 위해 가방만 체크한다.
         return count;
@@ -101,7 +101,7 @@ public class InventoryManager : Singleton<InventoryManager>
                 player.ApplyEatableEffect(eatItem.eatableType_2, eatItem.value_2);
             targetSlot.item = null;
 
-            SyncQuestAndUI(item.Name);
+            SyncQuestAndUI(item.itemName);
 
             if (isQuickSlot) OnQuickSlotUpdated?.Invoke();
             else OnBagUpdated?.Invoke();
@@ -119,7 +119,7 @@ public class InventoryManager : Singleton<InventoryManager>
 
         for (int i = 0; i < bagSize; i++)
         {
-            if (BagSlots[i].item != null && BagSlots[i].item.Name == itemName)
+            if (BagSlots[i].item != null && BagSlots[i].item.itemName == itemName)
             {
                 BagSlots[i].item = null;
                 removedCount++;
@@ -130,7 +130,7 @@ public class InventoryManager : Singleton<InventoryManager>
         // 가방에서 삭제되었으니 퀵슬롯에 걸려있던 링크도 끊어준다.
         for (int i = 0; i < quickSlotSize; i++)
         {
-            if (QuickSlots[i].item != null && QuickSlots[i].item.Name == itemName)
+            if (QuickSlots[i].item != null && QuickSlots[i].item.itemName == itemName)
             {
                 QuickSlots[i].item = null;
             }
@@ -211,6 +211,12 @@ public class InventoryManager : Singleton<InventoryManager>
         SwapSlots(CurrentStorageSlots[storageIndex], BagSlots[bagIndex]);
         OnStorageUpdated?.Invoke();
         OnBagUpdated?.Invoke();
+
+        if(BagSlots[bagIndex].item != null)
+        {
+            SyncQuestAndUI(BagSlots[bagIndex].item.itemName);
+        }
+        UpdateAllNPCOutlines();
     }
 
     public void OpenStorage(InventorySlot[] storageSlots)
@@ -231,7 +237,7 @@ public class InventoryManager : Singleton<InventoryManager>
 
         if (targetSlot.item != null)
         {
-            string itemName = targetSlot.item.Name;
+            string itemName = targetSlot.item.itemName;
 
             if (isQuickSlot)
             {
@@ -258,9 +264,14 @@ public class InventoryManager : Singleton<InventoryManager>
 
     private void SyncQuestAndUI(string itemName)
     {
+
+        Debug.Log($"[인벤토리 동기화 시스템 작동] 체크할 아이템 이름: {itemName}");
         if (QuestManager.Instance != null)
         {
             int currentCount = GetItemCount(itemName);
+
+            Debug.Log($"인벤토리 내 [{itemName}]의 개수: {currentCount}개");
+
             var targetQuest = QuestManager.Instance.activeQuests.Find(q => q.targetID == itemName);
             if (targetQuest != null) targetQuest.ForceSyncProgress(currentCount);
 
@@ -277,9 +288,14 @@ public class InventoryManager : Singleton<InventoryManager>
         {
             if (BagSlots[i].IsEmpty)
             {
+                string movedItemName = CurrentStorageSlots[storageIndex].item.itemName;
+
                 SwapSlots(CurrentStorageSlots[storageIndex], BagSlots[i]);
                 OnBagUpdated?.Invoke();
                 OnStorageUpdated?.Invoke();
+
+                SyncQuestAndUI(movedItemName);
+                UpdateAllNPCOutlines();
                 return;
             }
         }
@@ -294,9 +310,14 @@ public class InventoryManager : Singleton<InventoryManager>
         {
             if (CurrentStorageSlots[i].IsEmpty)
             {
+                string removedItemName = BagSlots[bagIndex].item.itemName;
+
                 SwapSlots(BagSlots[bagIndex], CurrentStorageSlots[i]);
                 OnBagUpdated?.Invoke();
                 OnStorageUpdated?.Invoke();
+
+                SyncQuestAndUI(removedItemName);
+                UpdateAllNPCOutlines();
                 return;
             }
         }

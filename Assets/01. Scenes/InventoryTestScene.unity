@@ -334,6 +334,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   questUI: {fileID: 0}
   activeQuests: []
+  trackingQuest: {fileID: 0}
 --- !u!1 &30035242
 GameObject:
   m_ObjectHideFlags: 0
@@ -401,16 +402,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   globalCanvas: {fileID: 0}
   hudCanvas: {fileID: 0}
-  loadingPanelPrefab: {fileID: 0}
   dimBackground: {fileID: 0}
   cinematicBars: {fileID: 0}
   globalWindowTitleText: {fileID: 0}
   inventoryPanel: {fileID: 487743096}
+  storagePanel: {fileID: 0}
   pauseMenuPanel: {fileID: 0}
+  gameOverPanel: {fileID: 0}
+  dialoguePanel: {fileID: 0}
   selectCharacterPanel: {fileID: 0}
   saveLoadPanel: {fileID: 0}
   endingListPanel: {fileID: 0}
   optionPanel: {fileID: 0}
+  loadingPanelPrefab: {fileID: 0}
+  fadeCanvasGroup: {fileID: 0}
+  interactIcons: []
+  saveLoadController: {fileID: 0}
 --- !u!4 &32460612
 Transform:
   m_ObjectHideFlags: 0
@@ -2057,6 +2064,8 @@ MonoBehaviour:
   dialoguePanel: {fileID: 244477905}
   dialogueText: {fileID: 179468859}
   typingSpeed: 0.05
+  nameText: {fileID: 0}
+  npcPortrait: {fileID: 0}
 --- !u!1001 &221072200
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3617,6 +3626,7 @@ GameObject:
   m_Component:
   - component: {fileID: 487743097}
   - component: {fileID: 487743098}
+  - component: {fileID: 487743099}
   m_Layer: 5
   m_Name: InventoryPanel
   m_TagString: Untagged
@@ -3659,6 +3669,26 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slotsParent: {fileID: 1946101948}
+  questSelectorObject: {fileID: 0}
+  portraitImage: {fileID: 0}
+  characterNameText: {fileID: 0}
+  infoPanel: {fileID: 0}
+  itemNameText: {fileID: 0}
+  itemDescText: {fileID: 0}
+  itemIconImage: {fileID: 0}
+  inventorySurvivalGauge: {fileID: 0}
+--- !u!225 &487743099
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 487743096}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &494589011
 GameObject:
   m_ObjectHideFlags: 0
@@ -6529,7 +6559,11 @@ MonoBehaviour:
   thirstRing: {fileID: 449503092}
   sanityGauge: {fileID: 494589013}
   staminaSlider: {fileID: 1345653080}
+  hungerText: {fileID: 0}
+  thirstText: {fileID: 0}
+  sanityText: {fileID: 0}
   duration: 0.3
+  isHalfCircleGauge: 0
 --- !u!114 &1074637627
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8377,7 +8411,7 @@ GameObject:
   - component: {fileID: 1363527628}
   - component: {fileID: 1363527627}
   - component: {fileID: 1363527626}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: NPC_Homeless
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9244,7 +9278,7 @@ MonoBehaviour:
   interactDistance: 3
   interactLayer:
     serializedVersion: 2
-    m_Bits: 384
+    m_Bits: 0
 --- !u!114 &1576566173
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9962,6 +9996,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerPrefab: {fileID: 0}
+  selectedEnding: {fileID: 0}
 --- !u!4 &1780047143
 Transform:
   m_ObjectHideFlags: 0

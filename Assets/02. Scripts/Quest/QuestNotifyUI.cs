@@ -5,6 +5,8 @@ using DG.Tweening;
 
 public class QuestNotifyUI : BasePopupUI
 {
+    public static QuestNotifyUI Instance { get; private set;}
+
     [Header("UI Components")]
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI storyText;
@@ -19,6 +21,9 @@ public class QuestNotifyUI : BasePopupUI
     
     private void Awake()
     {
+        if(Instance == null) Instance = this;
+        else Destroy(gameObject);
+
         acceptButton.onClick.AddListener(OnAcceptButtonClicked);
         
         if (popupPanel != null)
@@ -37,8 +42,10 @@ public class QuestNotifyUI : BasePopupUI
         titleText.color = quest.isMainQuest ? mainQuestColor : subQuestColor;
         
         // 스토리와 목표 세팅 (기존 Quest 데이터 구조 활용)
-        storyText.text = quest.beforeAcceptDialogues.Length > 0 ? quest.beforeAcceptDialogues[0] : "새로운 임무가 부여되었습니다.";
-        goalText.text = $"{quest.targetID} ({quest.currentAmount}/{quest.goalAmount})";
+        storyText.text = quest.questDiscrip;
+        //storyText.text = quest.beforeAcceptDialogues.Length > 0 ? quest.beforeAcceptDialogues[0] : "새로운 임무가 부여되었습니다.";
+        goalText.text = $"□ {quest.questGoal}";
+        //goalText.text = $"□ {quest.targetID} ({quest.currentAmount}/{quest.goalAmount})"; 수정 전 대목
 
         ShowPanel();
 
@@ -57,9 +64,10 @@ public class QuestNotifyUI : BasePopupUI
             // 부모 클래스의 공통 함수 호출 (스택 해제 및 SetActive(false) 자동 수행)
             HidePanel();
             
-            PlayerStat player = FindFirstObjectByType<PlayerStat>();
-            // 퀘스트 실제 수락 처리
-            QuestManager.Instance.AcceptQuest(currentQuest, player);
+            if(QuestManager.Instance != null)
+            {
+                QuestManager.Instance.ConfirmAcceptQuest();
+            }
             
             // 버튼 상태 원상복구 (다음에 팝업이 뜰 때를 대비)
             acceptButton.interactable = true;

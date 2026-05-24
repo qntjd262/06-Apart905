@@ -7,6 +7,13 @@ public class Quest : ScriptableObject
 {
     [Header("Quest Info")]
     public string questName;
+
+    public Quest prevQuest;
+
+    [TextArea(2, 5)]
+    public string questDiscrip; //퀘스트 설명
+    
+    public string questGoal; //목표 설명
     public QuestType type;
     public string targetID; //필요 아이템의 이름
     public int goalAmount; //필요 갯수
