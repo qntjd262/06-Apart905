@@ -45,6 +45,7 @@ public class UIManager : Singleton<UIManager>
     private HUDController _hudController;
     private int activePopupCount = 0;
     public bool IsAnyPopupOpen => activePopupCount > 0;
+    public bool IsAnyUIOpen => _activeUIStack.Count > 0;
 
     [Header("Interaction UI")]
     private InteractUI activeInteractUI;
@@ -151,18 +152,32 @@ public class UIManager : Singleton<UIManager>
             return;
         }
 
-        // 스택에 열려있는 창이 1개라도 있으면 커서 활성화, 없으면 비활성화
         bool showCursor = _activeUIStack.Count > 0;
 
-        if (showCursor)
+        if (showCursor) // UI가 화면을 가리고 있는 상태
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
+            SetHUDActive(false); // [핵심] UI 켜지면 트래커와 HUD 일괄 숨김
         }
-        else
+        else // 순수하게 게임만 플레이하는 상태
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
+            SetHUDActive(true);  // [핵심] 전부 닫히면 다시 표시
+        }
+    }
+
+    // [추가] 인게임 HUD와 트래커 묶음 통제 함수
+    private void SetHUDActive(bool isActive)
+    {
+        if (_hudController == null) _hudController = FindFirstObjectByType<HUDController>(FindObjectsInactive.Include);
+        if (_hudController != null) _hudController.gameObject.SetActive(isActive);
+
+        if (_cachedTracker != null)
+        {
+            // 켤 때 퀘스트가 없으면 OnEnable에서 알아서 거르므로 그냥 isActive를 넘긴다.
+            _cachedTracker.gameObject.SetActive(isActive);
         }
     }
 
@@ -203,11 +218,6 @@ public class UIManager : Singleton<UIManager>
         {
             UnregisterUI(inventoryPanel);
         }
-
-        if (_cachedTracker != null) _cachedTracker.gameObject.SetActive(!isNowActive);
-
-        if (_hudController == null) _hudController = FindFirstObjectByType<HUDController>(FindObjectsInactive.Include);
-        if (_hudController != null) _hudController.gameObject.SetActive(!isNowActive);
     }
 
     public void ToggleStorage(InventorySlot[] slots = null)
@@ -237,11 +247,6 @@ public class UIManager : Singleton<UIManager>
             UnregisterUI(inventoryPanel);
             InventoryManager.Instance.OpenStorage(null);
         }
-
-        if (_cachedTracker != null) _cachedTracker.gameObject.SetActive(!isNowActive);
-
-        if (_hudController == null) _hudController = FindFirstObjectByType<HUDController>(FindObjectsInactive.Include);
-        if (_hudController != null) _hudController.gameObject.SetActive(!isNowActive);
     }
 
     public void TogglePauseMenu()
@@ -317,6 +322,20 @@ public class UIManager : Singleton<UIManager>
         {
             optionPanel.SetActive(true);
             RegisterUI(optionPanel);
+        }
+    }
+    public void OpenGameOverUI()
+    {
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(true);
+
+            GameOverController ctrl = gameOverPanel.GetComponent<GameOverController>();
+            if (ctrl != null) ctrl.Open();
+        }
+        else
+        {
+            Debug.LogError("UIManager에 gameOverPanel이 연결되지 않았습니다! 인스펙터 창을 확인하세요.");
         }
     }
 
@@ -428,7 +447,7 @@ public class UIManager : Singleton<UIManager>
         _activeUIStack.Clear(); // 씬이 로드되면 스택 초기화
         CloseAllGlobalPopups();
 
-        if(fadeCanvasGroup == null)
+        if (fadeCanvasGroup == null)
         {
             //fadeCanvasGroup파괴 방어 코드 추가
             fadeCanvasGroup = FindFirstObjectByType<CanvasGroup>(FindObjectsInactive.Include);

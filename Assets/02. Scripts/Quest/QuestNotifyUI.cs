@@ -15,7 +15,7 @@ public class QuestNotifyUI : BasePopupUI
 
     [Header("Color Settings")]
     [SerializeField] private Color mainQuestColor = new Color(0.8f, 0.4f, 0f);
-    [SerializeField] private Color subQuestColor = Color.blue;
+    [SerializeField] private Color subQuestColor = Color.green;
 
     private Quest currentQuest;
     

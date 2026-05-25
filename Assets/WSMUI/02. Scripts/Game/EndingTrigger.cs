@@ -19,7 +19,7 @@ public class EndingTrigger : MonoBehaviour, IInteractable
 
     public Constants.InteractType GetInteractType()
     {
-        return Constants.InteractType.Pickup;
+        return Constants.InteractType.Door;
     }
 
     public void Interact(PlayerStat player)

@@ -194,6 +194,25 @@ public class NPC : MonoBehaviour, IInteractable
 
         QuestManager.Instance.activeQuests.RemoveAll(q => q.questName == myQuest.questName);
 
+         if (QuestManager.Instance.trackingQuest != null && QuestManager.Instance.trackingQuest.questName == myQuest.questName)
+        {
+            QuestManager.Instance.trackingQuest = null;
+
+            if (QuestManager.Instance.activeQuests.Count > 0)
+            {
+                Quest nextQuest = QuestManager.Instance.activeQuests[0];
+                QuestManager.Instance.SetTrackingQuest(nextQuest);
+            }
+            else
+            {
+                QuestTrackerUI tracker = FindFirstObjectByType<QuestTrackerUI>(FindObjectsInactive.Include);
+                if (tracker != null)
+                {
+                    tracker.HideTracker();
+                }
+            }
+        }
+
         NPC[] allNPCs = FindObjectsByType<NPC>(FindObjectsInactive.Include, FindObjectsSortMode.None);
         foreach (NPC npc in allNPCs)
         {

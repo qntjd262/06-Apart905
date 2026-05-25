@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using TMPro;
 using DG.Tweening;
 using UnityEngine.UI;
 
@@ -14,11 +13,6 @@ public class GameOverController : BasePopupUI
     private void Awake()
     {
         popupPanel = this.gameObject;
-
-        if (UIManager.Instance != null)
-        {
-            UIManager.Instance.gameOverPanel = this.gameObject;
-        }
 
         if (bloodSplatterEffect != null)
         {

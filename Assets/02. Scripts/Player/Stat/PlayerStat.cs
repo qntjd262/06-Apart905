@@ -132,25 +132,14 @@ public class PlayerStat : MonoBehaviour
         Debug.Log("플레이어 사망");
 
         this.enabled = false;
-        //TODO : 사망 애니메이션, 사망 UI ON, 게임 시간 멈춤 등 사망 처리
-        OnPlayerDeath?.Invoke();
+      
         if (UIManager.Instance != null)
         {
-            if (UIManager.Instance.gameOverPanel != null)
-            {
-                GameOverController gameOverCtrl = UIManager.Instance.gameOverPanel.GetComponent<GameOverController>();
-                if (gameOverCtrl != null)
-                {
-                    gameOverCtrl.Open();
-                }
-                else
-                { // 예외 방어용: 컴포넌트가 없다면 기본 활성화
-                    UIManager.Instance.gameOverPanel.SetActive(true);
-                    UIManager.Instance.RegisterUI(UIManager.Instance.gameOverPanel);
-                }
-            }
-            Time.timeScale = 0f;
+            UIManager.Instance.OpenGameOverUI();
         }
+        Time.timeScale = 0f;
+        OnPlayerDeath?.Invoke();
+
     }
 
     //배고픔, 갈증 감소 함수

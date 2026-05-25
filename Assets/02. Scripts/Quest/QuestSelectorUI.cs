@@ -72,7 +72,7 @@ public class QuestSelectorUI : MonoBehaviour
         if (q != null)
         {
             titleText.text = q.questName;
-            titleText.color = q.isMainQuest ? new Color(0.8f, 0.4f, 0f) : Color.blue;
+            titleText.color = q.isMainQuest ? new Color(0.8f, 0.4f, 0f) : Color.green;
             goalText.text = $"{q.targetID} ({q.currentAmount}/{q.goalAmount})";
         }
     }

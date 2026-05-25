@@ -75,7 +75,7 @@ public class RevolvingDoorControl : MonoBehaviour, IInteractable
 
     public string GetInteractText()
     {
-        return isOpen ? "문 닫기" : "문 열기";
+        return isOpen ? "문 열기" : "문 닫기";
     }
 
     public Constants.InteractType GetInteractType()

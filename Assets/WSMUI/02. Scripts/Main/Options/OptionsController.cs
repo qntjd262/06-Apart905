@@ -79,13 +79,14 @@ public class OptionsController : BasePopupUI
 
     private void OnConfirmClick()
     {
+        if (soundOptions != null) soundOptions.SaveOptions();
         PlayerPrefs.Save();
         Debug.Log("OptionsController: 설정 데이터가 저장되었습니다.");
     }
 
     private void OnReturnClick()
     {
-        // 3. 직접 끄지 말고 부모 함수로 끈다.
+        if (soundOptions != null) soundOptions.RevertOptions();
         HidePanel();
     }
 }
