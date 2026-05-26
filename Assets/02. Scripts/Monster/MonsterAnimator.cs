@@ -109,7 +109,7 @@ public class MonsterAnimator : MonoBehaviour
             yield return new WaitForSeconds(randomDelay);
 
             float randomExecute = Random.Range(0, 2);
-            if (_animator.GetBool(MonsterAniParamIsMoving) == false &&
+            if (_animator.GetInteger(MonsterAniParamWalkState) == 0 &&
                 randomExecute == 1)
             {
                 _soundController.OnMoanSound();
