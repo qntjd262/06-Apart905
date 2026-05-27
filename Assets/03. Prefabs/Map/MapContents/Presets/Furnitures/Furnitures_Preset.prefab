@@ -956,8 +956,9 @@ GameObject:
   - component: {fileID: 918251607290551506}
   - component: {fileID: 5887592495909700370}
   - component: {fileID: 2308977336962219872}
-  m_Layer: 8
-  m_Name: BathroomSink_Bottom
+  - component: {fileID: 551418587917597567}
+  m_Layer: 9
+  m_Name: BathroomSink_Bottom-Shelf
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1068,6 +1069,23 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0, z: 0}
   m_TimeToStationary: 0.5
+--- !u!114 &551418587917597567
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 931245779184068844}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c404a025e1b1b740887aa346571c982, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shelfID: 7bdab357-53ed-4d36-9976-691d4a0af638
+  fixedItems: []
+  minItems: 0
+  maxItems: 3
+  storageSize: 20
 --- !u!1 &931245779625416728
 GameObject:
   m_ObjectHideFlags: 0
@@ -1709,8 +1727,7 @@ GameObject:
   - component: {fileID: 7907826992907146164}
   - component: {fileID: 4930576541484301674}
   - component: {fileID: 4455494490528547193}
-  - component: {fileID: 6097639930571036242}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Door1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1786,27 +1803,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &6097639930571036242
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1515479007769930172}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.9918169, y: 1.428281, z: 0.1016124}
-  m_Center: {x: -0.46537036, y: -0.00000002980232, z: 0.024753487}
 --- !u!1 &1561211948776214294
 GameObject:
   m_ObjectHideFlags: 0
@@ -6264,8 +6260,7 @@ GameObject:
   - component: {fileID: 2655167417582439027}
   - component: {fileID: 1262236622636879147}
   - component: {fileID: 5109176132313781103}
-  - component: {fileID: 2289477522249694292}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Door2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6341,27 +6336,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &2289477522249694292
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5429631437026045856}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.9918169, y: 1.428281, z: 0.1016124}
-  m_Center: {x: 0.46537083, y: -0.00000002980232, z: 0.02475444}
 --- !u!1 &5792622718134112065
 GameObject:
   m_ObjectHideFlags: 0
@@ -9617,8 +9591,7 @@ GameObject:
   - component: {fileID: 8452286046472754010}
   - component: {fileID: 6928137617874348805}
   - component: {fileID: 2568277358783534730}
-  - component: {fileID: 3693366078929891137}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Door4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9694,27 +9667,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &3693366078929891137
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8339860527955608707}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.9918169, y: 1.428281, z: 0.1016124}
-  m_Center: {x: 0.46537012, y: -0.00000002980232, z: 0.02475444}
 --- !u!1 &8438184944880239550
 GameObject:
   m_ObjectHideFlags: 0
@@ -9812,8 +9764,7 @@ GameObject:
   - component: {fileID: 2044558529770528761}
   - component: {fileID: 8899788666863405892}
   - component: {fileID: 7934821798567030077}
-  - component: {fileID: 5870297036773442466}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Door3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9889,27 +9840,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &5870297036773442466
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8441798092227824375}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.9918169, y: 1.428281, z: 0.1016124}
-  m_Center: {x: -0.4653707, y: -0.00000002980232, z: 0.02475444}
 --- !u!1 &8470175755253432955
 GameObject:
   m_ObjectHideFlags: 0
@@ -10884,8 +10814,9 @@ GameObject:
   - component: {fileID: 3925955964080196047}
   - component: {fileID: 1245883663346287675}
   - component: {fileID: 6169908965471554252}
-  m_Layer: 0
-  m_Name: Sink
+  - component: {fileID: 1185868835683034254}
+  m_Layer: 9
+  m_Name: Sink-Shelf
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -10997,6 +10928,23 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0.279, y: 0.549, z: 0}
   m_TimeToStationary: 0.5
+--- !u!114 &1185868835683034254
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9181716452881671864}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c404a025e1b1b740887aa346571c982, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shelfID: 7bdab357-53ed-4d36-9976-691d4a0af638
+  fixedItems: []
+  minItems: 0
+  maxItems: 3
+  storageSize: 20
 --- !u!1001 &370157589907024093
 PrefabInstance:
   m_ObjectHideFlags: 0
