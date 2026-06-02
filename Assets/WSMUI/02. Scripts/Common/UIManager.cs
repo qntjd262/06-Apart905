@@ -485,6 +485,8 @@ public class UIManager : Singleton<UIManager>
             if (SoundManager.Instance != null)
                 SoundManager.Instance.PlaySceneBGM(scene.name);
         });
+        GraphicOptions graphicOpt = FindFirstObjectByType<GraphicOptions>(FindObjectsInactive.Include);
+        if (graphicOpt != null) graphicOpt.ApplySavedBrightnessToCurrentScene();
     }
 
     private void InitializeInGameUI()

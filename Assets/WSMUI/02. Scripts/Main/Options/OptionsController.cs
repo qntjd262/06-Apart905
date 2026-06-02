@@ -17,7 +17,7 @@ public class OptionsController : BasePopupUI
 
     private void Awake()
     {
-        popupPanel = this.gameObject; // 부모 변수 연결
+        popupPanel = this.gameObject;
 
         confirmButton.onClick.AddListener(OnConfirmClick);
         returnButton.onClick.AddListener(OnReturnClick);
@@ -29,10 +29,9 @@ public class OptionsController : BasePopupUI
         }
     }
 
-    // 2. 이 Open() 함수가 있어야 PauseMenuController에서 호출할 수 있다.
     public void Open()
     {
-        ShowPanel(); // UIManager 스택 등록 및 창 켜기
+        ShowPanel();
     }
 
     private void OnEnable()
@@ -79,14 +78,22 @@ public class OptionsController : BasePopupUI
 
     private void OnConfirmClick()
     {
+        // 모든 옵션 컴포넌트들의 실제 물리 저장 프로세스 일괄 가동
         if (soundOptions != null) soundOptions.SaveOptions();
+        if (graphicOptions != null) graphicOptions.SaveOptions();
+        if (keyBindOptions != null) keyBindOptions.SaveOptions(); // 추가
+
         PlayerPrefs.Save();
         Debug.Log("OptionsController: 설정 데이터가 저장되었습니다.");
     }
 
     private void OnReturnClick()
     {
+        // 디스크 저장 없이 창을 닫을 경우, 임시 변경 값들을 전부 원본 상태로 롤백
         if (soundOptions != null) soundOptions.RevertOptions();
+        if (graphicOptions != null) graphicOptions.RevertOptions();
+        if (keyBindOptions != null) keyBindOptions.RevertOptions(); // 추가
+
         HidePanel();
     }
 }

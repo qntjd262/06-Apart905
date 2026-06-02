@@ -8,12 +8,13 @@ public class KeyBindOptions : MonoBehaviour
     [System.Serializable]
     public class KeyBindData
     {
-        // [수정 핵심] 문자열 대신 인스펙터에서 드롭다운으로 고를 수 있게 변수 교체
         public EKeyAction targetAction;  
-        public string keyActionName;     // 저장 데이터 식별용 (예: "Key_Interact")
+        public string keyActionName;     
         public Button bindButton;        
         public TextMeshProUGUI bindText; 
         public KeyCode defaultKey;       
+        
+        [HideInInspector] public KeyCode tempKey; 
     }
 
     [Header("단축키 등록 리스트")]
@@ -30,8 +31,18 @@ public class KeyBindOptions : MonoBehaviour
         {
             KeyBindData data = keyBindings[i];
 
-            string savedKey = PlayerPrefs.GetString(data.keyActionName, data.defaultKey.ToString());
-            data.bindText.text = savedKey;
+            string savedKeyStr = PlayerPrefs.GetString(data.keyActionName, data.defaultKey.ToString());
+            
+            if (System.Enum.TryParse(savedKeyStr, out KeyCode savedKey))
+            {
+                data.tempKey = savedKey;
+            }
+            else
+            {
+                data.tempKey = data.defaultKey;
+            }
+
+            data.bindText.text = data.tempKey.ToString();
             data.bindText.color = Color.white;
 
             data.bindButton.onClick.RemoveAllListeners();
@@ -67,19 +78,18 @@ public class KeyBindOptions : MonoBehaviour
                     {
                         if (keyCode == KeyCode.Escape)
                         {
-                            string currentKey = PlayerPrefs.GetString(data.keyActionName, data.defaultKey.ToString());
-                            data.bindText.text = currentKey;
+                            // ESC를 누르면 변경을 취소하고 현재 들고 있던 tempKey 값으로 UI 복구
+                            data.bindText.text = data.tempKey.ToString();
                             isWaitingForKey = false;
                             break;
                         }
 
                         if (keyCode != KeyCode.Mouse0 && keyCode != KeyCode.Mouse1)
                         {
-                            PlayerPrefs.SetString(data.keyActionName, keyCode.ToString());
+                            // [핵심 수정] 즉시 PlayerPrefs나 InputManager를 건들지 않는다.
+                            // 오직 임시 변수(tempKey)와 화면 글씨만 실시간으로 바꿔서 유저에게 보여준다.
+                            data.tempKey = keyCode;
                             data.bindText.text = keyCode.ToString();
-
-                            // [수정 핵심] 지저분한 문자열 파싱을 지우고, 지정된 액션 열거형을 직접 꽂아 넣는다.
-                            InputManager.Instance.UpdateKey(data.targetAction, keyCode);
 
                             isWaitingForKey = false;
                             break;
@@ -91,5 +101,25 @@ public class KeyBindOptions : MonoBehaviour
         }
 
         data.bindText.color = Color.white;
+    }
+
+    public void SaveOptions()
+    {
+        for (int i = 0; i < keyBindings.Length; i++)
+        {
+            KeyBindData data = keyBindings[i];
+            
+            PlayerPrefs.SetString(data.keyActionName, data.tempKey.ToString());
+            
+            if (InputManager.Instance != null)
+            {
+                InputManager.Instance.UpdateKey(data.targetAction, data.tempKey);
+            }
+        }
+    }
+
+    public void RevertOptions()
+    {
+        Initialize();
     }
 }
