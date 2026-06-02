@@ -5736,10 +5736,10 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 1024
-  detectAngle: 70
+  detectAngle: 90
   center: {fileID: 2218429397411889786}
-  _chaseInterval: 0.25
-  _chaseDuration: 4
+  _chaseInterval: 0.15
+  _chaseDuration: 3
   _halfExtents: {x: 1, y: 1.2, z: 1.1}
   _waitTime: 1.5
   offset: {x: 0, y: -1.21, z: 0}
@@ -5807,7 +5807,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.45
   m_Height: 1.85
   m_Direction: 1
   m_Center: {x: 0, y: 0.925, z: 0}
