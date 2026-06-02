@@ -53,5 +53,3 @@ public class UseItemData : ItemData
     public float useValue;
 }
 
-
-
