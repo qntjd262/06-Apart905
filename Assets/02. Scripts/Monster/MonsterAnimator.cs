@@ -132,6 +132,7 @@ public class MonsterAnimator : MonoBehaviour
         StartCoroutine(SetKinematicTrue());
     }
 
+    // 피격 후, 일정시간 후에 isKinematic을 true로
     IEnumerator SetKinematicTrue()
     {
         while(_animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1f)

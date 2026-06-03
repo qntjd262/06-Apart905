@@ -3,11 +3,11 @@ using UnityEngine;
 
 public class RevolvingDoorControl : MonoBehaviour, IInteractable
 {
-    [Header("�� ���� ����")]
+    [Header("문 열리는 각도 및 시간")]
     public float openAngle = 90;
     public float openDuration = 1;
 
-    [Header("�� ���� ����")]
+    [Header("문 상호작용 사운드")]
     public AudioClip open;
     public AudioClip close;
 
