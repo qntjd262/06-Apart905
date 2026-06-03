@@ -1,5 +1,6 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class PlayerController : MonoBehaviour
 {
@@ -44,6 +45,10 @@ public class PlayerController : MonoBehaviour
 
         if (isUIOpen) return;
         // bool isInventoryOpen = UIManager.Instance.inventoryPanel.activeSelf;
+
+        if(DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive) return; //대화창 활성화 상태
+
+        if(QuestNotifyUI.Instance != null && QuestNotifyUI.Instance.IsProcessing) return; //퀘스트 수락창 활성화 상태
 
         // if (isInventoryOpen)
         // {
@@ -91,6 +96,10 @@ public class PlayerController : MonoBehaviour
         //플레이어 공격
         if (Input.GetMouseButtonDown(0))
         {
+            if(EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            {
+                return;
+            }
             //TODO : 공격 애니메이션을 통해 해당 애니메이션 지점에서 Attack()함수 실행하기
             playerEquip.UseCurrentItem();
         }

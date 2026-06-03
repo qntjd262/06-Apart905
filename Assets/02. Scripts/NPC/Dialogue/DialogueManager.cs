@@ -99,7 +99,7 @@ public class DialogueManager : Singleton<DialogueManager>
             yield return null;
             yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0));
         }
-        EndDialogue(onComplete);
+        StartCoroutine(EndDialogueRoutine(onComplete));
     }
 
 
@@ -110,6 +110,24 @@ public class DialogueManager : Singleton<DialogueManager>
         {
             skipRequested = true;
         }
+    }
+
+    private IEnumerator EndDialogueRoutine(System.Action onComplete)
+    {
+        if(dialoguePanel != null)
+        {
+            dialoguePanel.SetActive(false);
+        }
+        if(UIManager.Instance != null)
+        {
+            UIManager.Instance.UpdateCursorState();
+        }
+
+        yield return null;
+
+        IsDialogueActive = false;
+
+        onComplete?.Invoke();
     }
 
     private void EndDialogue(System.Action onComplete)

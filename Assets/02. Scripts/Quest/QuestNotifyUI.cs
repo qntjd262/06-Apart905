@@ -17,6 +17,8 @@ public class QuestNotifyUI : BasePopupUI
     [SerializeField] private Color mainQuestColor = new Color(0.8f, 0.4f, 0f);
     [SerializeField] private Color subQuestColor = Color.green;
 
+    public bool IsProcessing { get; private set; }
+
     private Quest currentQuest;
     
     private void Awake()
@@ -57,11 +59,12 @@ public class QuestNotifyUI : BasePopupUI
     {
         // 버튼 연타 방지
         acceptButton.interactable = false;
+        
+        IsProcessing = true;
 
         // 팝업 닫기 연출
         popupPanel.transform.DOScale(0f, 0.2f).SetEase(Ease.InBack).OnComplete(() =>
         {
-            // 부모 클래스의 공통 함수 호출 (스택 해제 및 SetActive(false) 자동 수행)
             HidePanel();
             
             if(QuestManager.Instance != null)
@@ -69,8 +72,15 @@ public class QuestNotifyUI : BasePopupUI
                 QuestManager.Instance.ConfirmAcceptQuest();
             }
             
-            // 버튼 상태 원상복구 (다음에 팝업이 뜰 때를 대비)
             acceptButton.interactable = true;
+
+            StartCoroutine(ReleasePlayerNextFrame());
         });
+    }
+
+    private System.Collections.IEnumerator ReleasePlayerNextFrame()
+    {
+        yield return null;
+        IsProcessing = false; // 이제 공격 가능하도록 해제
     }
 }
