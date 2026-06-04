@@ -4096,7 +4096,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &376239690
 Transform:
   m_ObjectHideFlags: 0
@@ -4659,6 +4659,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 376239690}
     m_Modifications:
+    - target: {fileID: 591166745728465349, guid: a7fe90c1354c8da4291538b84306dfa1, type: 3}
+      propertyPath: isRandomSpawn
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 591166745728465349, guid: a7fe90c1354c8da4291538b84306dfa1, type: 3}
+      propertyPath: selectedMonster
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6076955076723517931, guid: a7fe90c1354c8da4291538b84306dfa1, type: 3}
       propertyPath: m_LocalPosition.x
       value: 15.232513
@@ -6550,6 +6558,10 @@ PrefabInstance:
     - target: {fileID: 8264841581584060056, guid: abb78b82bd191964baa44a8f793e3f41, type: 3}
       propertyPath: m_Name
       value: 18Floors
+      objectReference: {fileID: 0}
+    - target: {fileID: 8264841581584060056, guid: abb78b82bd191964baa44a8f793e3f41, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -13458,6 +13470,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 376239690}
     m_Modifications:
+    - target: {fileID: 591166745728465349, guid: a7fe90c1354c8da4291538b84306dfa1, type: 3}
+      propertyPath: isRandomSpawn
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 591166745728465349, guid: a7fe90c1354c8da4291538b84306dfa1, type: 3}
+      propertyPath: selectedMonster
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6076955076723517931, guid: a7fe90c1354c8da4291538b84306dfa1, type: 3}
       propertyPath: m_LocalPosition.x
       value: 7.4214935
@@ -13651,7 +13671,7 @@ MonoBehaviour:
   m_OverrideTileSize: 0
   m_TileSize: 256
   m_OverrideVoxelSize: 0
-  m_VoxelSize: 0.1
+  m_VoxelSize: 0.06666667
   m_MinRegionArea: 2
   m_NavMeshData: {fileID: 23800000, guid: 06fbd2a8fb62cf14d839dceebcc4def0, type: 2}
   m_BuildHeightMesh: 0
@@ -19904,6 +19924,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 376239690}
     m_Modifications:
+    - target: {fileID: 591166745728465349, guid: a7fe90c1354c8da4291538b84306dfa1, type: 3}
+      propertyPath: isRandomSpawn
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 591166745728465349, guid: a7fe90c1354c8da4291538b84306dfa1, type: 3}
+      propertyPath: selectedMonster
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6076955076723517931, guid: a7fe90c1354c8da4291538b84306dfa1, type: 3}
       propertyPath: m_LocalPosition.x
       value: 16.547844
