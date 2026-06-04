@@ -152,6 +152,7 @@ public class PlayerStat : MonoBehaviour
         {
             Debug.Log("허기 또는 갈증이 0 이하 체력깍임");
             hp.DecreaseStat(5f);
+            //OnHpChanged?.Invoke(hp.currentValue, hp.maxValue);
             Debug.Log($"현재 체력 : {hp.currentValue}");
         }
     }

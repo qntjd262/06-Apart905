@@ -87,9 +87,8 @@ public class OptionsController : BasePopupUI
         Debug.Log("OptionsController: 설정 데이터가 저장되었습니다.");
     }
 
-    private void OnReturnClick()
+    public void OnReturnClick()
     {
-        // 디스크 저장 없이 창을 닫을 경우, 임시 변경 값들을 전부 원본 상태로 롤백
         if (soundOptions != null) soundOptions.RevertOptions();
         if (graphicOptions != null) graphicOptions.RevertOptions();
         if (keyBindOptions != null) keyBindOptions.RevertOptions(); // 추가

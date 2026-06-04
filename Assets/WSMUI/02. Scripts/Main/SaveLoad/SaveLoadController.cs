@@ -100,29 +100,16 @@ public class SaveLoadController : BasePopupUI
         {
             string slotDisplayName = (i == 0) ? "자동 저장" : $"슬롯 {i}";
 
-            // [해결 핵심] 하드코딩을 제거하고, 각 슬롯 인덱스(i)에 맞는 세이브 데이터를 독립적으로 조회한다.
-            // 아래는 실제 세이브 매니저(SaveManager)를 연동할 때 사용할 구조다.
-
             bool tempHasData = false;
             string tempDate = "빈 슬롯";
 
-            // 예시: PlayerPrefs나 ES3, 혹은 일반 JSON 파일이 해당 인덱스에 존재하는지 체크
-            // (지금은 세이브 매니저가 없으므로 파일이 없다고 가정하거나 아래처럼 테스트용 분기를 태운다)
+            // PlayerPrefs에 해당 슬롯 번호의 키가 있는지 진짜로 확인합니다.
             if (PlayerPrefs.HasKey($"SaveSlot_{i}"))
             {
                 tempHasData = true;
                 tempDate = PlayerPrefs.GetString($"SaveSlot_{i}_Date", "시간 정보 없음");
             }
-            else
-            {
-                // 테스트용: 세이브 매니저 만들기 전까지 슬롯별로 다르게 보고 싶다면 
-                // 인덱스별로 다른 값을 들고 있게 처리한다.
-                if (i == 0) { tempHasData = true; tempDate = "2026-05-17 21:00 (자동)"; }
-                else if (i == 1) { tempHasData = true; tempDate = "2026-05-17 21:30 (슬롯1)"; }
-                else { tempHasData = false; tempDate = "빈 슬롯"; }
-            }
 
-            // 이제 각 슬롯UI 인스턴스는 철저하게 분리된 독립 데이터를 주입받는다.
             spawnedSlots[i].Initialize(i, slotDisplayName, tempDate, tempHasData, OnSlotSelected);
             spawnedSlots[i].SetSelected(false);
         }
@@ -167,11 +154,20 @@ public class SaveLoadController : BasePopupUI
     private IEnumerator SaveProcessCoroutine()
     {
         if (saveNoticePanel != null) saveNoticePanel.SetActive(true);
-
         yield return new WaitForSecondsRealtime(saveDisplayDuration);
 
-        if (saveNoticePanel != null) saveNoticePanel.SetActive(false);
+        // [기존 코드] 시간 UI 기록
+        PlayerPrefs.SetInt($"SaveSlot_{selectedSlotIndex}", 1);
+        string currentDate = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm");
+        PlayerPrefs.SetString($"SaveSlot_{selectedSlotIndex}_Date", currentDate);
+        PlayerPrefs.Save();
 
+        // --- [추가] 실제 게임 데이터 JSON 저장 실행 ---
+        SaveManager.Instance.SaveGame(selectedSlotIndex);
+        // ------------------------------------------
+
+        UpdateSlotData();
+        if (saveNoticePanel != null) saveNoticePanel.SetActive(false);
         HidePanel();
     }
 

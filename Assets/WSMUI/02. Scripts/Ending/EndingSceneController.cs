@@ -1,6 +1,8 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections;
+// SceneManager 사용 안 함
 
 public class EndingSceneController : MonoBehaviour
 {
@@ -8,10 +10,17 @@ public class EndingSceneController : MonoBehaviour
     [SerializeField] private Image illustrationImage;
     [SerializeField] private TextMeshProUGUI descriptionText;
 
+    [Header("설정")]
+    [SerializeField, Tooltip("엔딩 화면을 자동으로 유지할 시간(초)")] 
+    private float displayDuration = 5.0f;
+    
+    [SerializeField, Tooltip("돌아갈 메인 타이틀 씬 열거형")] 
+    private Constants.ESceneType titleSceneType; 
+
+    private bool isTransitioning = false; 
+
     void Start()
     {
-        // 1. 전역 매니저에 저장된 엔딩 데이터가 있는지 확인
-        // (이전 씬의 팝업에서 수락 버튼을 눌렀을 때 이미 여기에 저장됨)
         EndingData data = GameManager.Instance.selectedEnding;
 
         if (data != null)
@@ -28,7 +37,33 @@ public class EndingSceneController : MonoBehaviour
             Debug.LogError("표시할 엔딩 데이터가 없습니다!");
         }
 
-        // 3. 연출 (UIManager를 이용한 부드러운 시작)
+        // 엔딩 씬에서는 커서를 무조건 풀어준다. (UIManager가 OnSceneLoaded에서 해주지만 명시적으로 한 번 더 방어)
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         UIManager.Instance.FadeIn(2.0f);
+        StartCoroutine(WaitAndReturnToMain());
+    }
+
+    void Update()
+    {
+        if (!isTransitioning && Input.anyKeyDown)
+        {
+            isTransitioning = true;
+            StopAllCoroutines();
+            
+            UIManager.Instance.LoadScene(titleSceneType, true); 
+        }
+    }
+
+    private IEnumerator WaitAndReturnToMain()
+    {
+        yield return new WaitForSeconds(displayDuration);
+        
+        if (!isTransitioning)
+        {
+            isTransitioning = true;
+            UIManager.Instance.LoadScene(titleSceneType, true); 
+        }
     }
 }

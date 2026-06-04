@@ -84,16 +84,27 @@ public class GameOverController : BasePopupUI
         }
     }
 
-    public void OnMainMenuClick()
+   public void OnMainMenuClick()
     {
-        HidePanel();
+        if (buttonGroup != null) buttonGroup.SetActive(false);
+
         Time.timeScale = 1f;
 
         if (UIManager.Instance != null)
         {
-            UIManager.Instance.LoadScene(Constants.ESceneType.PrototypeMain, false);
+            // 1. 씬 로드 호출 (0.5초 동안 서서히 페이드 아웃 됨)
+            UIManager.Instance.LoadScene(Constants.ESceneType.PrototypeMain, true);
+            
+            // 2. 화면이 완전히 까매지는 타이밍(0.5초 뒤)에 맞춰 패널을 숨기고 스택에서 제거
+            DOVirtual.DelayedCall(0.5f, () => 
+            {
+                HidePanel();
+            }).SetUpdate(true); // 타임스케일 영향을 받지 않도록 안전장치 추가
+            
             return;
         }
+
+        HidePanel();
         SceneManager.LoadScene(Constants.ESceneType.PrototypeMain.ToString());
     }
 }
