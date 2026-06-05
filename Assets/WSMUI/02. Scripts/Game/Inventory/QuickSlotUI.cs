@@ -32,6 +32,7 @@ public class QuickSlotUI : MonoBehaviour
                 uiSlots[i].UpdateSlot(InventoryManager.Instance.QuickSlots[i]);
             }
         }
+        
     }
 
     private void OnDestroy()

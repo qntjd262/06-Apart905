@@ -15,6 +15,8 @@ public class PlayerEquip : MonoBehaviour
     private GameObject currentEquipObject;
     private PlayerAttack playerAttack;
 
+    public Flashlight CurrentFlashlight { get; private set; }
+
     void Awake()
     {
         playerAttack = GetComponent<PlayerAttack>();
@@ -25,6 +27,11 @@ public class PlayerEquip : MonoBehaviour
 
     public void EquipItem(ItemData itemData)
     {
+        if(CurrentFlashlight != null)
+        {
+            CurrentFlashlight.ForceTurnOff();
+        }
+
         if(currentEquipItem != null)
         {
             currentEquipObject.SetActive(false);
@@ -32,6 +39,7 @@ public class PlayerEquip : MonoBehaviour
 
         currentEquipItem = null;
         currentEquipObject = null;
+        CurrentFlashlight = null;
 
         //슬롯이 비어있거나, 장착형 아이템이 아닌경우 맨손 상태 종료 (현재 장착형 아이템이 아니면 퀵슬롯에 아이템이 들어올 수 없지만 추후 수정할 경우 필요)
         if(itemData == null || itemData.itemType != ItemType.Equipable)
@@ -57,6 +65,10 @@ public class PlayerEquip : MonoBehaviour
             //기존에 생성이 되었던 아이템인 경우, instantiatedEquipItem에서 가져와서 활성화
             currentEquipObject = instantiatedEquipItem[equipData.ID];
             currentEquipObject.SetActive(true);
+
+            currentEquipObject.transform.localPosition = Vector3.zero;
+
+            currentEquipObject.transform.localRotation = equipData.equipPrefab.transform.localRotation;
         }
         else
         {
@@ -64,7 +76,7 @@ public class PlayerEquip : MonoBehaviour
             GameObject newEquip = Instantiate(equipData.equipPrefab, equipPoint);
 
             newEquip.transform.localPosition = Vector3.zero;
-            newEquip.transform.localRotation = Quaternion.identity;
+            newEquip.transform.localRotation = equipData.equipPrefab.transform.localRotation;
 
             instantiatedEquipItem.Add(equipData.ID, newEquip);
             currentEquipObject = newEquip;
@@ -74,7 +86,9 @@ public class PlayerEquip : MonoBehaviour
         Debug.Log($"{equipData.Name} 장착 완료");
         #endregion
 
-        bool isFlashlight = currentEquipObject.GetComponent<Flashlight>() != null;
+        CurrentFlashlight = currentEquipObject.GetComponent<Flashlight>();
+
+        bool isFlashlight = CurrentFlashlight != null;
         SetFlashlightAnimation(isFlashlight);
     }
 
@@ -87,12 +101,10 @@ public class PlayerEquip : MonoBehaviour
             return;
         }
 
-        Flashlight flashlight = currentEquipObject.GetComponent<Flashlight>();
-
-        if(flashlight != null)
+        if(CurrentFlashlight != null)
         {
             //TODO : 손전등 사용 로직
-            flashlight.ToggleFlashlight();
+            CurrentFlashlight.ToggleFlashlight();
         }
         else
         {
