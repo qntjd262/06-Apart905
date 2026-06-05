@@ -10,11 +10,13 @@ public class MonsterController : MonoBehaviour
     private Blackboard _blackboard;
     private Coroutine _visionSensor;
     private LayerMask _monsterMask = ~(1 << 11);
+
     [field : SerializeField]
     public MonsterStatSO monsterStatSO { get; private set; }
 
-    // 죽었을 때 발동할 이벤트
-    public event Action OnDied;
+    public event Action OnDied;         // 죽었을 때 발동할 이벤트       
+    private MonsterSpawner _spawner;    // 해당 몬스터를 스폰한 스포너
+    public MonsterSpawner Spawner { get => _spawner; set => _spawner = value; }
 
     [Header("몬스터 체력")]
     [SerializeField] private float currentHealth;
@@ -29,6 +31,11 @@ public class MonsterController : MonoBehaviour
         currentHealth = monsterHealth;
         _blackboard = GetComponent<TestMonsterAI>().blackboard;
         _navMeshAgent = GetComponent<NavMeshAgent>();
+    }
+
+    public void SetSpanwer(MonsterSpawner spanwer)
+    {
+        _spawner = spanwer;
     }
 
     #region 적 보이는지 체크
