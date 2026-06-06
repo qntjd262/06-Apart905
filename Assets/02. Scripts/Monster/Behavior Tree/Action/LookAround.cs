@@ -36,11 +36,9 @@ public class LookAround : ActionNode
 
         if (timer < _duration)
         {
-            
             float rotate = _currentAngle + Mathf.Sin(timer * degreePerSec) * _maxRotAngle;
 
             _blackboard.Self.transform.rotation = Quaternion.Euler(0f, rotate, 0f);
-
             return NodeState.Running;
         }
 
@@ -51,7 +49,11 @@ public class LookAround : ActionNode
     {
         base.OnStop();
         _blackboard.NavMeshAgent.updateRotation = true;
-        _blackboard.HasLostTarget = false;
         _blackboard.Self.transform.rotation = Quaternion.Euler(0f, _currentAngle, 0f);
+
+        // 추가 추적 관련 리셋
+        _blackboard.NavMeshAgent.ResetPath();
+        _blackboard.HasLostTarget = false;
+        _blackboard.LastPoint = Vector3.zero;
     }
 }

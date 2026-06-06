@@ -124,4 +124,9 @@ public class MoveLevel : MonoBehaviour
             door.SetStateImmediate(checkOpen); // 애니메이션 없이 즉시 적용
         }
     }
+
+    public void MonsterFloorMove(MonsterController targetMonster, bool isUp)
+    {
+        _floorManager.MonsterFloorMove(targetMonster, isUp);
+    }
 }

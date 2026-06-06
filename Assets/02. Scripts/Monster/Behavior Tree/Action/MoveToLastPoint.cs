@@ -23,8 +23,6 @@ public class MoveToLastPoint : ActionNode
     
     public override NodeState OnUpdate()
     {
-        Debug.Log("Chase 이후 추적 중");
-
         // 추가 탐색 후 일정 시간이 지났다면 성공 처리
         if (Time.time - _elapsedTime > _duration)
         {
