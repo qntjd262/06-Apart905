@@ -54,5 +54,16 @@ public class MoveChecker : MonoBehaviour
                 }
             }
         }
+
+        if (other.CompareTag("Monster"))
+        {
+            var targetMonster = other.GetComponent<MonsterController>();
+            if (isMid)
+            {
+                float dir = targetMonster.transform.position.y - transform.position.y;
+                Debug.Log(dir);
+                moveLevel.MonsterFloorMove(targetMonster, dir > 0);
+            }
+        }
     }
 }
