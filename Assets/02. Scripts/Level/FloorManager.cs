@@ -233,32 +233,51 @@ public class FloorManager : MonoBehaviour
         foreach (var zSpawners in _ZombieSpawners)
             zSpawners.SetActive(false);
 
-        switch (_currLevel) // 2, 3, 6, 8, 9, 12, 14, 17
+        // 현재 층 포함 위아래 층까지의 스포너를 활성화
+        for (int i = -2; i <= 0; i++)
         {
-            case 2:
-                _ZombieSpawners[0].SetActive(true);
-                break;
-            case 3:
-                _ZombieSpawners[1].SetActive(true);
-                break;
-            case 6:
-                _ZombieSpawners[2].SetActive(true);
-                break;
-            case 8:
-                _ZombieSpawners[3].SetActive(true);
-                break;
-            case 9:
-                _ZombieSpawners[4].SetActive(true);
-                break;
-            case 12:
-                _ZombieSpawners[5].SetActive(true);
-                break;
-            case 14:
-                _ZombieSpawners[6].SetActive(true);
-                break;
-            case 17:
-                _ZombieSpawners[7].SetActive(true);
-                break;
-        }    
+            int targetLevel = _currLevel + i;
+            if (targetLevel >= 0 && targetLevel < _ZombieSpawners.Length)
+            {
+                _ZombieSpawners[targetLevel].SetActive(true);
+            }
+        }
+
+
+        //switch (_currLevel) // 2, 3, 6, 8, 9, 12, 14, 17
+        //{
+        //    case 2:
+        //        _ZombieSpawners[0].SetActive(true);
+        //        break;
+        //    case 3:
+        //        _ZombieSpawners[1].SetActive(true);
+        //        break;
+        //    case 6:
+        //        _ZombieSpawners[2].SetActive(true);
+        //        break;
+        //    case 8:
+        //        _ZombieSpawners[3].SetActive(true);
+        //        break;
+        //    case 9:
+        //        _ZombieSpawners[4].SetActive(true);
+        //        break;
+        //    case 12:
+        //        _ZombieSpawners[5].SetActive(true);
+        //        break;
+        //    case 14:
+        //        _ZombieSpawners[6].SetActive(true);
+        //        break;
+        //    case 17:
+        //        _ZombieSpawners[7].SetActive(true);
+        //        break;
+        //}    
     }
+    public void MonsterFloorMove(MonsterController targetMonster, bool isUp)
+    {
+        int targetDir = isUp ? 1 : -1;
+        int targetFloor = targetMonster.Spawner.CurrFloor + targetDir - 1;
+        targetMonster.Spawner.transform.SetParent(_ZombieSpawners[targetFloor].transform);
+        targetMonster.Spawner.CurrFloor = targetFloor + 1;
+    }
+
 }

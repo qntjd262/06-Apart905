@@ -29,7 +29,6 @@ public class ChasePlayer: ActionNode
         var player = _blackboard.Player;
         if (player == null)
         {
-            _navMeshAgent.ResetPath();
             return NodeState.Failure;
         }
 
@@ -58,11 +57,14 @@ public class ChasePlayer: ActionNode
     {
         base.OnStop();
         _chaseTime = _chaseInterval;
-        _navMeshAgent.ResetPath();
+        // 종료 시 플레이어가 안보인다면, 이전까지 추적하던 위치 저장
         if (_blackboard.Player == null)
         {
             _blackboard.LastPoint = _navMeshAgent.destination;
             _blackboard.HasLostTarget = true;
         }
+
+       
+        _navMeshAgent.ResetPath();
     }
  }

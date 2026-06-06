@@ -101,4 +101,8 @@ public class MoveLevel : MonoBehaviour
             _LevelBott = LvBottom;         // 최하층을 3으로            
         }
     }
+    public void MonsterFloorMove(MonsterController targetMonster, bool isUp)
+    {
+        _floorManager.MonsterFloorMove(targetMonster, isUp);
+    }
 }
