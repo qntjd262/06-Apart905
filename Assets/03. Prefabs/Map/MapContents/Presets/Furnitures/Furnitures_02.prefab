@@ -83,7 +83,7 @@ Light:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 64
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
@@ -115,7 +115,7 @@ MonoBehaviour:
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
   m_LightLayerMask: 1
-  m_RenderingLayers: 1
+  m_RenderingLayers: 64
   m_CustomShadowLayers: 0
   m_ShadowLayerMask: 1
   m_ShadowRenderingLayers: 1
@@ -155,7 +155,7 @@ GameObject:
   - component: {fileID: 5802361232877305099}
   - component: {fileID: 1629915167435036009}
   m_Layer: 0
-  m_Name: Point Light
+  m_Name: Spot Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -225,7 +225,7 @@ Light:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 256
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
@@ -257,7 +257,7 @@ MonoBehaviour:
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
   m_LightLayerMask: 1
-  m_RenderingLayers: 1
+  m_RenderingLayers: 256
   m_CustomShadowLayers: 0
   m_ShadowLayerMask: 1
   m_ShadowRenderingLayers: 1
@@ -433,7 +433,7 @@ Light:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 128
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
@@ -465,7 +465,7 @@ MonoBehaviour:
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
   m_LightLayerMask: 1
-  m_RenderingLayers: 1
+  m_RenderingLayers: 128
   m_CustomShadowLayers: 0
   m_ShadowLayerMask: 1
   m_ShadowRenderingLayers: 1
@@ -553,7 +553,7 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 25
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 74df8238eb109f94681f98a9e8bcc60a, type: 2}
@@ -679,7 +679,7 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 25
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: cdbe46314d4b7ab4ca61d18f0462c8ba, type: 2}
@@ -822,7 +822,7 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 25
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: cdbe46314d4b7ab4ca61d18f0462c8ba, type: 2}
@@ -910,7 +910,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 926371558216822192}
-  - component: {fileID: 974068316241771790}
   m_Layer: 0
   m_Name: PFB_TVStand
   m_TagString: Untagged
@@ -936,28 +935,6 @@ Transform:
   - {fileID: 926371558768724298}
   m_Father: {fileID: 2722546471491912954}
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
---- !u!95 &974068316241771790
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 925096623743289344}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 6e134baca9b154265b12e6d080c74bb7, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &925096623857902604
 GameObject:
   m_ObjectHideFlags: 0
@@ -1051,7 +1028,7 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 25
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: cdbe46314d4b7ab4ca61d18f0462c8ba, type: 2}
@@ -1352,7 +1329,7 @@ Light:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 32
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
@@ -1384,7 +1361,7 @@ MonoBehaviour:
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
   m_LightLayerMask: 1
-  m_RenderingLayers: 1
+  m_RenderingLayers: 32
   m_CustomShadowLayers: 0
   m_ShadowLayerMask: 1
   m_ShadowRenderingLayers: 1
@@ -1472,7 +1449,7 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 25
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: cf3d52b3b76bf4c4ebf9164c88c1b585, type: 2}
@@ -1596,7 +1573,7 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 25
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 1f978b3447d417f4190dd764f506f90c, type: 2}
@@ -1897,7 +1874,7 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 5
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: cf3d52b3b76bf4c4ebf9164c88c1b585, type: 2}
@@ -1986,7 +1963,7 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 25
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 02f835df3225c4e439c699f0ed0e8a64, type: 2}
@@ -2127,7 +2104,7 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 25
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 1f978b3447d417f4190dd764f506f90c, type: 2}
@@ -2214,7 +2191,7 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 25
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 1f978b3447d417f4190dd764f506f90c, type: 2}
@@ -2301,7 +2278,7 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 33
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: cf3d52b3b76bf4c4ebf9164c88c1b585, type: 2}
@@ -2387,7 +2364,7 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 25
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 74df8238eb109f94681f98a9e8bcc60a, type: 2}
@@ -2473,7 +2450,7 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 161
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: cf3d52b3b76bf4c4ebf9164c88c1b585, type: 2}
@@ -2597,7 +2574,7 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 65
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: cf3d52b3b76bf4c4ebf9164c88c1b585, type: 2}
@@ -2705,7 +2682,7 @@ Light:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 8
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
@@ -2737,7 +2714,7 @@ MonoBehaviour:
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
   m_LightLayerMask: 1
-  m_RenderingLayers: 1
+  m_RenderingLayers: 8
   m_CustomShadowLayers: 0
   m_ShadowLayerMask: 1
   m_ShadowRenderingLayers: 1
@@ -2863,7 +2840,7 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 25
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 1f978b3447d417f4190dd764f506f90c, type: 2}
@@ -3040,7 +3017,7 @@ Light:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 2
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
@@ -3072,7 +3049,7 @@ MonoBehaviour:
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
   m_LightLayerMask: 1
-  m_RenderingLayers: 1
+  m_RenderingLayers: 2
   m_CustomShadowLayers: 0
   m_ShadowLayerMask: 1
   m_ShadowRenderingLayers: 1
@@ -3091,7 +3068,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4144428452c31843a84d459266f8212, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetLight: {fileID: 0}
+  targetLight: {fileID: 8287379772293742314}
   minIntensity: 10
   maxIntensity: 12
   flickerSpeed: 5
@@ -3192,7 +3169,7 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 161
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: f5ccec86270aecc4eab76122584f73fc, type: 2}
@@ -3278,7 +3255,7 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 161
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: a410a9048765ffe46afbbaee6e46e728, type: 2}
@@ -3364,7 +3341,7 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 161
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: f5ccec86270aecc4eab76122584f73fc, type: 2}
@@ -3453,7 +3430,7 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 161
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: f5ccec86270aecc4eab76122584f73fc, type: 2}
@@ -3718,7 +3695,7 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 161
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: cf3d52b3b76bf4c4ebf9164c88c1b585, type: 2}
@@ -3938,7 +3915,7 @@ Light:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 4
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
@@ -3970,7 +3947,7 @@ MonoBehaviour:
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
   m_LightLayerMask: 1
-  m_RenderingLayers: 1
+  m_RenderingLayers: 4
   m_CustomShadowLayers: 0
   m_ShadowLayerMask: 1
   m_ShadowRenderingLayers: 1
@@ -4058,7 +4035,7 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 25
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 3caa1830dc4a2ec498281a74bb8efd32, type: 2}
@@ -4215,7 +4192,7 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 25
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: cf3d52b3b76bf4c4ebf9164c88c1b585, type: 2}
@@ -4302,7 +4279,7 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 25
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: f53c87021cd4a8a4ca5a36be86fc762e, type: 2}
@@ -4409,7 +4386,7 @@ MeshRenderer:
   m_RayTracingAccelStructBuildFlagsOverride: 0
   m_RayTracingAccelStructBuildFlags: 1
   m_SmallMeshCulling: 1
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 161
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: cf3d52b3b76bf4c4ebf9164c88c1b585, type: 2}
@@ -4550,7 +4527,7 @@ Light:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 16
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
@@ -4582,7 +4559,7 @@ MonoBehaviour:
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
   m_LightLayerMask: 1
-  m_RenderingLayers: 1
+  m_RenderingLayers: 16
   m_CustomShadowLayers: 0
   m_ShadowLayerMask: 1
   m_ShadowRenderingLayers: 1
@@ -4677,6 +4654,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 365a738d0781bdd4c8d09df9ec276264, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4755,6 +4736,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: f7eb4702e9bbc6c44884dd3687164169, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 65
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4832,6 +4817,10 @@ PrefabInstance:
     - target: {fileID: 400000, guid: a48dc5861accd6f4f87f123be355e67f, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: a48dc5861accd6f4f87f123be355e67f, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 33
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -4935,6 +4924,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 3b14ef3f2d5f0ff499421c62cf8db091, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 65
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4956,6 +4949,18 @@ PrefabInstance:
     - target: {fileID: 1124843209013569571, guid: c0907c4945aa6b046b0ca1263e482e3d, type: 3}
       propertyPath: m_Name
       value: Lamp_Ceiling_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 4266884962821215787, guid: c0907c4945aa6b046b0ca1263e482e3d, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 65
+      objectReference: {fileID: 0}
+    - target: {fileID: 4889324354422193169, guid: c0907c4945aa6b046b0ca1263e482e3d, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 65
+      objectReference: {fileID: 0}
+    - target: {fileID: 6133014114948856728, guid: c0907c4945aa6b046b0ca1263e482e3d, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 65
       objectReference: {fileID: 0}
     - target: {fileID: 6136210199978121741, guid: c0907c4945aa6b046b0ca1263e482e3d, type: 3}
       propertyPath: m_LocalScale.x
@@ -5095,6 +5100,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 0.376
       objectReference: {fileID: 0}
+    - target: {fileID: 1031141199, guid: abc00000000001076255003919069748, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 65
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1031141195, guid: abc00000000001076255003919069748, type: 3}
     - {fileID: 1031141196, guid: abc00000000001076255003919069748, type: 3}
@@ -5177,6 +5186,22 @@ PrefabInstance:
     - target: {fileID: 400000, guid: 78cca8ac5dce04729af9f9377e69636c, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 78cca8ac5dce04729af9f9377e69636c, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 65
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300002, guid: 78cca8ac5dce04729af9f9377e69636c, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 65
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300008, guid: 78cca8ac5dce04729af9f9377e69636c, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 65
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300010, guid: 78cca8ac5dce04729af9f9377e69636c, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 65
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5304,6 +5329,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 0f3a0f44f58c8794cb284e79aacc9a3e, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5381,6 +5410,10 @@ PrefabInstance:
     - target: {fileID: 1031143678, guid: abc00000000014536016889047066663, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1031143683, guid: abc00000000014536016889047066663, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 65
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1031143679, guid: abc00000000014536016889047066663, type: 3}
@@ -5519,6 +5552,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: cfcf075e496092c489e38a82a64dd637, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 33
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5645,6 +5682,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 4618337802dfba249938f2b76935bbfe, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5723,6 +5764,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2300002, guid: 87dbd671cf01c4a2092308da3db7c073, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 33
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -5789,6 +5834,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 6225104047478964606}
     m_Modifications:
+    - target: {fileID: 2571170092814937951, guid: 3e025c70a23cabe438e620cd0e271497, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 33
+      objectReference: {fileID: 0}
     - target: {fileID: 5942267389505793422, guid: 3e025c70a23cabe438e620cd0e271497, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.15
@@ -5932,6 +5981,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 13f9d4a4e5bcff343b6ce8803f1549ef, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6009,6 +6062,10 @@ PrefabInstance:
     - target: {fileID: 400000, guid: a48dc5861accd6f4f87f123be355e67f, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: a48dc5861accd6f4f87f123be355e67f, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 33
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6099,6 +6156,18 @@ PrefabInstance:
     - target: {fileID: 400002, guid: 1a6cb6ae194964e949def57e23f52428, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 1a6cb6ae194964e949def57e23f52428, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300002, guid: 1a6cb6ae194964e949def57e23f52428, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300004, guid: 1a6cb6ae194964e949def57e23f52428, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -6324,6 +6393,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8115407949726299117, guid: 809563dc332f70e49b13dbbb71afec61, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 25
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5423948067845854676, guid: 809563dc332f70e49b13dbbb71afec61, type: 3}
     - {fileID: 223665984934550434, guid: 809563dc332f70e49b13dbbb71afec61, type: 3}
@@ -6398,6 +6471,18 @@ PrefabInstance:
     - target: {fileID: 1124843209013569571, guid: c0907c4945aa6b046b0ca1263e482e3d, type: 3}
       propertyPath: m_Name
       value: Lamp_Ceiling_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 4266884962821215787, guid: c0907c4945aa6b046b0ca1263e482e3d, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4889324354422193169, guid: c0907c4945aa6b046b0ca1263e482e3d, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6133014114948856728, guid: c0907c4945aa6b046b0ca1263e482e3d, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6136210199978121741, guid: c0907c4945aa6b046b0ca1263e482e3d, type: 3}
       propertyPath: m_LocalScale.x
@@ -6533,6 +6618,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: a48dc5861accd6f4f87f123be355e67f, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 33
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6638,6 +6727,10 @@ PrefabInstance:
     - target: {fileID: 1031140919, guid: abc00000000014212656864115977474, type: 3}
       propertyPath: m_LocalPosition.x
       value: -1.135
+      objectReference: {fileID: 0}
+    - target: {fileID: 1031140920, guid: abc00000000014212656864115977474, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 25
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1031140916, guid: abc00000000014212656864115977474, type: 3}
@@ -6770,6 +6863,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 41c697071e950ac4d8d735fff4f81a6c, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -6895,6 +6992,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2300002, guid: 22ec64bba89e94704b5b0eeee5767c9c, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 25
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6964,6 +7065,18 @@ PrefabInstance:
     - target: {fileID: 1124843209013569571, guid: c0907c4945aa6b046b0ca1263e482e3d, type: 3}
       propertyPath: m_Name
       value: Lamp_Ceiling_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 4266884962821215787, guid: c0907c4945aa6b046b0ca1263e482e3d, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 33
+      objectReference: {fileID: 0}
+    - target: {fileID: 4889324354422193169, guid: c0907c4945aa6b046b0ca1263e482e3d, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 33
+      objectReference: {fileID: 0}
+    - target: {fileID: 6133014114948856728, guid: c0907c4945aa6b046b0ca1263e482e3d, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 33
       objectReference: {fileID: 0}
     - target: {fileID: 6136210199978121741, guid: c0907c4945aa6b046b0ca1263e482e3d, type: 3}
       propertyPath: m_LocalScale.x
@@ -7099,6 +7212,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: e178e8136625b044b88ca3c44768f5db, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 25
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7209,6 +7326,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7001858866176645010, guid: dc2b4d7819a4d7b46a3d00f60647a25c, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 257
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7286,6 +7407,10 @@ PrefabInstance:
     - target: {fileID: 400000, guid: 820cf6d77bdd28b4cb699ff97d7216b5, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 820cf6d77bdd28b4cb699ff97d7216b5, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 65
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7388,6 +7513,10 @@ PrefabInstance:
     - target: {fileID: 400000, guid: 0ff06f939085dcd409bd39d591a98f97, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 0ff06f939085dcd409bd39d591a98f97, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7518,6 +7647,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: faf8eeece9a09c141a7024b5815f197e, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7595,6 +7728,10 @@ PrefabInstance:
     - target: {fileID: 400000, guid: 5113162c036712b43be25d368eb87904, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 5113162c036712b43be25d368eb87904, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7689,6 +7826,14 @@ PrefabInstance:
     - target: {fileID: 400000, guid: 5c6d8f8cd466cc242969377aad35084c, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 5c6d8f8cd466cc242969377aad35084c, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300002, guid: 5c6d8f8cd466cc242969377aad35084c, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7809,6 +7954,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Lamp_Ceiling_01
       objectReference: {fileID: 0}
+    - target: {fileID: 4266884962821215787, guid: c0907c4945aa6b046b0ca1263e482e3d, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4889324354422193169, guid: c0907c4945aa6b046b0ca1263e482e3d, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 6133014114948856728, guid: c0907c4945aa6b046b0ca1263e482e3d, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: 6136210199978121741, guid: c0907c4945aa6b046b0ca1263e482e3d, type: 3}
       propertyPath: m_LocalScale.x
       value: 0.5
@@ -7897,11 +8054,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 100004, guid: 6ebcd19768d26da418c09dbbc755e901, type: 3}
       propertyPath: m_Layer
-      value: 9
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 100006, guid: 6ebcd19768d26da418c09dbbc755e901, type: 3}
       propertyPath: m_Layer
-      value: 9
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400000, guid: 6ebcd19768d26da418c09dbbc755e901, type: 3}
       propertyPath: m_LocalScale.x
@@ -7959,6 +8116,18 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 6ebcd19768d26da418c09dbbc755e901, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300002, guid: 6ebcd19768d26da418c09dbbc755e901, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300004, guid: 6ebcd19768d26da418c09dbbc755e901, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 25
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -7972,65 +8141,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 100002, guid: 6ebcd19768d26da418c09dbbc755e901, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1786288938583113523}
-    - targetCorrespondingSourceObject: {fileID: 100004, guid: 6ebcd19768d26da418c09dbbc755e901, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 2930735463602636742}
-    - targetCorrespondingSourceObject: {fileID: 100006, guid: 6ebcd19768d26da418c09dbbc755e901, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 6527635623645395094}
   m_SourcePrefab: {fileID: 100100000, guid: 6ebcd19768d26da418c09dbbc755e901, type: 3}
---- !u!1 &7837912545999060840 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 100004, guid: 6ebcd19768d26da418c09dbbc755e901, type: 3}
-  m_PrefabInstance: {fileID: 7837912545998961100}
-  m_PrefabAsset: {fileID: 0}
---- !u!65 &2930735463602636742
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7837912545999060840}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.49999964, y: 0.4349996, z: 0.07699998}
-  m_Center: {x: 0.00000029802322, y: 0.98249906, z: 0.23649976}
---- !u!1 &7837912545999060842 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 100006, guid: 6ebcd19768d26da418c09dbbc755e901, type: 3}
-  m_PrefabInstance: {fileID: 7837912545998961100}
-  m_PrefabAsset: {fileID: 0}
---- !u!65 &6527635623645395094
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7837912545999060842}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 0.49999964, y: 0.7399993, z: 0.1549999}
-  m_Center: {x: 0.00000029802322, y: 0.38999963, z: 0.19749986}
 --- !u!1 &7837912545999060846 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100002, guid: 6ebcd19768d26da418c09dbbc755e901, type: 3}
@@ -8163,6 +8274,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 1b1fff38809631c4bb72f88b4d96af45, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 25
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8285,6 +8400,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2365693075379889073, guid: 3dfd246af93f46840a6c63047bd3037c, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7363478943013043600, guid: 3dfd246af93f46840a6c63047bd3037c, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 3
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8362,6 +8485,10 @@ PrefabInstance:
     - target: {fileID: 400000, guid: b82ea09c564244770861a67c8c28a0db, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: b82ea09c564244770861a67c8c28a0db, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 33
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8468,6 +8595,18 @@ PrefabInstance:
     - target: {fileID: 400002, guid: 1a6cb6ae194964e949def57e23f52428, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 1a6cb6ae194964e949def57e23f52428, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 65
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300002, guid: 1a6cb6ae194964e949def57e23f52428, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 65
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300004, guid: 1a6cb6ae194964e949def57e23f52428, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 65
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8599,6 +8738,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7001858866176645010, guid: dc2b4d7819a4d7b46a3d00f60647a25c, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 129
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8677,6 +8820,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: a48dc5861accd6f4f87f123be355e67f, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 33
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8754,6 +8901,10 @@ PrefabInstance:
     - target: {fileID: 400000, guid: b2faaff453e184e16b2caab0bf62ec2d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: b2faaff453e184e16b2caab0bf62ec2d, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 33
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8844,6 +8995,18 @@ PrefabInstance:
     - target: {fileID: 1124843209013569571, guid: c0907c4945aa6b046b0ca1263e482e3d, type: 3}
       propertyPath: m_Name
       value: Lamp_Ceiling_01
+      objectReference: {fileID: 0}
+    - target: {fileID: 4266884962821215787, guid: c0907c4945aa6b046b0ca1263e482e3d, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 4889324354422193169, guid: c0907c4945aa6b046b0ca1263e482e3d, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 6133014114948856728, guid: c0907c4945aa6b046b0ca1263e482e3d, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 17
       objectReference: {fileID: 0}
     - target: {fileID: 6136210199978121741, guid: c0907c4945aa6b046b0ca1263e482e3d, type: 3}
       propertyPath: m_LocalScale.x
@@ -8979,6 +9142,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: faf8eeece9a09c141a7024b5815f197e, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -9056,6 +9223,10 @@ PrefabInstance:
     - target: {fileID: 400000, guid: fd97a44fa1932cf4eb82de5958f4eb99, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: fd97a44fa1932cf4eb82de5958f4eb99, type: 3}
+      propertyPath: m_RenderingLayerMask
+      value: 25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
