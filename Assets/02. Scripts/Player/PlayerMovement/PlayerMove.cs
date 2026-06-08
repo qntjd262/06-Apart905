@@ -30,6 +30,9 @@ public class PlayerMove : MonoBehaviour
     private Animator playerAnim;
     private PlayerNoise playerNoise;
 
+    [Header("인벤토리 상태")]
+    public bool isInventoryOpen = false;
+
     void Start()
     {
         controller = GetComponent<CharacterController>();
@@ -41,12 +44,9 @@ public class PlayerMove : MonoBehaviour
 
     public void Move(float h, float v, bool isRunning, bool isCrouch)
     {   //npc와 대화 중 움직이지 않는 로직
-        if(playerStat != null && playerStat.isInteracting)
-        {
-            if(playerAnim != null)
-            {
-                playerAnim.SetFloat("Speed", 0, 0.1f, Time.deltaTime);
-            }
+        if(playerStat != null && playerStat.isInteracting || isInventoryOpen)
+        {            
+            PausePlayer();
             return;
         }
 
@@ -131,6 +131,21 @@ public class PlayerMove : MonoBehaviour
         yield return new WaitUntil(() =>playerStat.stamina.currentValue >= playerStat.stamina.maxValue);
 
         isExhausted = false;
+    }
+
+    public void PausePlayer()
+    {
+        currentSpeed = 0f;
+
+        if(playerAnim != null)
+        {
+            playerAnim.SetFloat("Speed",0f);
+        }
+
+        if(playerNoise != null)
+        {
+            playerNoise.SetNoiseRadius(0f);
+        }  
     }
 
 }

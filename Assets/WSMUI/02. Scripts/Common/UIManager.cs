@@ -101,6 +101,8 @@ public class UIManager : Singleton<UIManager>
             }
             TogglePauseMenu();
         }
+
+        
         if (InputManager.Instance.GetKeyDown(EKeyAction.Inventory) || Input.GetKeyDown(KeyCode.Tab))
         {
             ToggleInventory();
@@ -199,6 +201,8 @@ public class UIManager : Singleton<UIManager>
 
     public void ToggleInventory()
     {
+
+
         if (inventoryPanel == null) return;
         if (storagePanel != null && storagePanel.activeSelf)
         {
@@ -217,6 +221,18 @@ public class UIManager : Singleton<UIManager>
         else
         {
             UnregisterUI(inventoryPanel);
+        }
+
+        PlayerMove playerMove = FindFirstObjectByType<PlayerMove>();
+        if(playerMove != null)
+        {
+            playerMove.isInventoryOpen = isNowActive;
+
+            if (isNowActive)
+            {
+                playerMove.PausePlayer();
+                Debug.Log("인벤토리 열림 - 플레이어 이동 중지");
+            }
         }
     }
 
@@ -246,6 +262,18 @@ public class UIManager : Singleton<UIManager>
             UnregisterUI(storagePanel);
             UnregisterUI(inventoryPanel);
             InventoryManager.Instance.OpenStorage(null);
+        }
+
+        PlayerMove playerMove = FindFirstObjectByType<PlayerMove>();
+        if(playerMove != null)
+        {
+            playerMove.isInventoryOpen = isNowActive;
+
+            if (isNowActive)
+            {
+                playerMove.PausePlayer();
+                Debug.Log("인벤토리 열림 - 플레이어 이동 중지");
+            }
         }
     }
 
