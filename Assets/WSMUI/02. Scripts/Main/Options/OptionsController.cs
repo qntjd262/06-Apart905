@@ -9,11 +9,15 @@ public class OptionsController : BasePopupUI
 
     [SerializeField] private Button confirmButton;
     [SerializeField] private Button returnButton;
+    [SerializeField] private Button resetButton;
 
     [Header("세부 옵션 컴포넌트 연결")]
+    [SerializeField] private GeneralOptions generalOptions;
     [SerializeField] private SoundOptions soundOptions;
     [SerializeField] private GraphicOptions graphicOptions;
     [SerializeField] private KeyBindOptions keyBindOptions;
+
+    private int currentTabIndex = 0;
 
     private void Awake()
     {
@@ -21,6 +25,8 @@ public class OptionsController : BasePopupUI
 
         confirmButton.onClick.AddListener(OnConfirmClick);
         returnButton.onClick.AddListener(OnReturnClick);
+
+        if (resetButton != null) resetButton.onClick.AddListener(OnResetClick);
 
         for (int i = 0; i < tabButtons.Length; i++)
         {
@@ -44,6 +50,7 @@ public class OptionsController : BasePopupUI
         if (soundOptions != null) soundOptions.Initialize();
         if (graphicOptions != null) graphicOptions.Initialize();
         if (keyBindOptions != null) keyBindOptions.Initialize();
+        if (generalOptions != null) generalOptions.Initialize();
 
         if (tabPanels != null && tabPanels.Length > 0)
         {
@@ -61,6 +68,8 @@ public class OptionsController : BasePopupUI
 
     private void SwitchTab(int tabIndex)
     {
+        currentTabIndex = tabIndex; // [추가] 현재 선택된 탭 번호 기억하기
+
         for (int i = 0; i < tabPanels.Length; i++)
         {
             if (i == tabIndex)
@@ -76,12 +85,32 @@ public class OptionsController : BasePopupUI
         }
     }
 
+    private void OnResetClick()
+    {
+        switch (currentTabIndex)
+        {
+            case 0:
+                if (generalOptions != null) generalOptions.ResetToDefault();
+                break;
+            case 1:
+                if (graphicOptions != null) graphicOptions.ResetToDefault();
+                break;
+            case 2:
+                if (soundOptions != null) soundOptions.ResetToDefault();
+                break;
+            case 3:
+                if (keyBindOptions != null) keyBindOptions.ResetToDefault();
+                break;
+        }
+    }
+
     private void OnConfirmClick()
     {
         // 모든 옵션 컴포넌트들의 실제 물리 저장 프로세스 일괄 가동
         if (soundOptions != null) soundOptions.SaveOptions();
         if (graphicOptions != null) graphicOptions.SaveOptions();
         if (keyBindOptions != null) keyBindOptions.SaveOptions(); // 추가
+        if (generalOptions != null) generalOptions.SaveOptions(); // 추가
 
         PlayerPrefs.Save();
         Debug.Log("OptionsController: 설정 데이터가 저장되었습니다.");
@@ -92,6 +121,7 @@ public class OptionsController : BasePopupUI
         if (soundOptions != null) soundOptions.RevertOptions();
         if (graphicOptions != null) graphicOptions.RevertOptions();
         if (keyBindOptions != null) keyBindOptions.RevertOptions(); // 추가
+        if (generalOptions != null) generalOptions.RevertOptions(); // 추가
 
         HidePanel();
     }

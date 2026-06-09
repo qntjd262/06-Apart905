@@ -5,19 +5,36 @@ using UnityEngine.SceneManagement;
 
 public enum EKeyAction
 {
-    Interact,
-    Inventory,
-    Pause,
-    Flashlight,
+    MoveUp, MoveDown, MoveLeft, MoveRight, Sprint, Crouch,
+    Interact, Attack, Flashlight, Inventory,
+    QuickSlot1, QuickSlot2, QuickSlot3, QuickSlot4, QuickSlot5
 }
 
 public class InputManager : Singleton<InputManager>
 {
     private Dictionary<EKeyAction, KeyCode> keyBindings = new Dictionary<EKeyAction, KeyCode>();
 
+    private readonly Dictionary<EKeyAction, KeyCode> defaultBindings = new Dictionary<EKeyAction, KeyCode>()
+    {
+        { EKeyAction.MoveUp, KeyCode.W },
+        { EKeyAction.MoveDown, KeyCode.S },
+        { EKeyAction.MoveLeft, KeyCode.A },
+        { EKeyAction.MoveRight, KeyCode.D },
+        { EKeyAction.Sprint, KeyCode.LeftShift },
+        { EKeyAction.Crouch, KeyCode.LeftControl },
+        { EKeyAction.Interact, KeyCode.E },
+        { EKeyAction.Attack, KeyCode.Mouse0 },
+        { EKeyAction.Flashlight, KeyCode.F },
+        { EKeyAction.Inventory, KeyCode.I },
+        { EKeyAction.QuickSlot1, KeyCode.Alpha1 },
+        { EKeyAction.QuickSlot2, KeyCode.Alpha2 },
+        { EKeyAction.QuickSlot3, KeyCode.Alpha3 },
+        { EKeyAction.QuickSlot4, KeyCode.Alpha4 },
+        { EKeyAction.QuickSlot5, KeyCode.Alpha5 }
+    };
+
     protected override void Awake()
     {
-        // 1. [싱글톤 방어] 이미 인스턴스가 존재하는데 내가 중복 생성된 껍데기라면 즉시 파괴
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -25,12 +42,9 @@ public class InputManager : Singleton<InputManager>
         }
 
         base.Awake();
-
-        // 2. [씬 전환 방어] 씬이 바뀌어도 저장된 메모리가 파괴되지 않도록 루트로 승격
         transform.SetParent(null);
         DontDestroyOnLoad(gameObject);
 
-        // 3. 데이터 로드
         LoadAllKeys();
     }
 
@@ -38,12 +52,13 @@ public class InputManager : Singleton<InputManager>
     {
         if (keyBindings == null) keyBindings = new Dictionary<EKeyAction, KeyCode>();
 
-        keyBindings[EKeyAction.Interact] = ParseKey("Key_Interact", KeyCode.E);
-        keyBindings[EKeyAction.Inventory] = ParseKey("Key_Inventory", KeyCode.I);
-        keyBindings[EKeyAction.Pause] = ParseKey("Key_Pause", KeyCode.Escape);
-        keyBindings[EKeyAction.Flashlight] = ParseKey("Key_Flashlight", KeyCode.F);
-        
-        Debug.Log($"[InputManager] 모든 키 동기화 완료. 인벤토리 키: {keyBindings[EKeyAction.Inventory]}");
+        foreach (var kvp in defaultBindings)
+        {
+            string prefsKeyName = "Key_" + kvp.Key.ToString();
+            keyBindings[kvp.Key] = ParseKey(prefsKeyName, kvp.Value);
+        }
+
+        Debug.Log($"[InputManager] 모든 키 동기화 완료.");
     }
 
     private KeyCode ParseKey(string prefsKey, KeyCode defaultKey)
@@ -67,41 +82,59 @@ public class InputManager : Singleton<InputManager>
         }
     }
 
+    public KeyCode GetDefaultKey(EKeyAction action)
+    {
+        if (defaultBindings.TryGetValue(action, out KeyCode defaultKey)) return defaultKey;
+        return KeyCode.None;
+    }
+
+    public void ResetAllToDefaults()
+    {
+        foreach (var kvp in defaultBindings)
+        {
+            string prefsKeyName = "Key_" + kvp.Key.ToString();
+            PlayerPrefs.DeleteKey(prefsKeyName);
+            keyBindings[kvp.Key] = kvp.Value;
+        }
+        Debug.Log("[InputManager] 모든 단축키가 기본값으로 초기화되었습니다.");
+    }
+
     public bool GetKeyDown(EKeyAction action)
     {
-        if (keyBindings == null || keyBindings.Count == 0)
-        {
-            LoadAllKeys();
-        }
+        if (keyBindings == null || keyBindings.Count == 0) LoadAllKeys();
 
-        if (keyBindings.TryGetValue(action, out KeyCode key))
-        {
-            return Input.GetKeyDown(key);
-        }
+        if (keyBindings.TryGetValue(action, out KeyCode key)) return Input.GetKeyDown(key);
+        return false;
+    }
+
+    public bool GetKey(EKeyAction action)
+    {
+        if (keyBindings == null || keyBindings.Count == 0) LoadAllKeys();
+
+        if (keyBindings.TryGetValue(action, out KeyCode key)) return Input.GetKey(key);
+        return false;
+    }
+
+    public bool GetKeyUp(EKeyAction action)
+    {
+        if (keyBindings == null || keyBindings.Count == 0) LoadAllKeys();
+
+        if (keyBindings.TryGetValue(action, out KeyCode key)) return Input.GetKeyUp(key);
         return false;
     }
 
     public KeyCode GetKeyForAction(EKeyAction action)
     {
-        if (keyBindings == null || keyBindings.Count == 0)
-        {
-            LoadAllKeys();
-        }
+        if (keyBindings == null || keyBindings.Count == 0) LoadAllKeys();
 
-        if (keyBindings.TryGetValue(action, out KeyCode key))
-        {
-            return key;
-        }
+        if (keyBindings.TryGetValue(action, out KeyCode key)) return key;
         return KeyCode.None;
     }
 
     protected override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // 씬이 바뀔 때 하드디스크에 저장되어 있던 변경 데이터를 다시 정렬한다.
         LoadAllKeys();
     }
 
-    protected override void OnSceneUnloaded(Scene scene)
-    {
-    }
+    protected override void OnSceneUnloaded(Scene scene) { }
 }

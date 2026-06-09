@@ -165,7 +165,7 @@ public class GraphicOptions : MonoBehaviour
         }
     }
 
-   // --- 밝기(정수 스냅) 제어 로직 ---
+    // --- 밝기(정수 스냅) 제어 로직 ---
     private void SetBrightness(float value)
     {
         int step = Mathf.RoundToInt(value);
@@ -182,14 +182,14 @@ public class GraphicOptions : MonoBehaviour
         {
             // 3단계(기본)일 때 RGB 0.12 (완전 검은 배경에서 '겨우 보이는' 수준의 극어두운 회색)
             Color baseGray = new Color(0.12f, 0.12f, 0.12f, 1f);
-            
+
             // 단계별 스케일 폭을 키움 (0.25 -> 0.5)
             // 1단계(0배 = 완전블랙), 3단계(1배 = 겨우보임), 5단계(2배 = 선명해짐)
             float rgbScale = 1f + (step - 3) * 0.5f;
-            
+
             Color simulatedColor = baseGray * rgbScale;
             simulatedColor.a = 1f; // 알파(투명도)는 100% 유지
-            
+
             brightnessSampleText.color = simulatedColor;
         }
     }
@@ -197,6 +197,28 @@ public class GraphicOptions : MonoBehaviour
     private void UpdateBrightnessUI(int step)
     {
         if (brightnessText != null) brightnessText.text = $"{step}";
+    }
+
+    // [추가] 그래픽 설정 기본값으로 되돌리기
+    public void ResetToDefault()
+    {
+        // 1. 밝기 기본값 (3단계)
+        brightnessSlider.value = 3;
+
+        // 2. 해상도 기본값 (지원하는 가장 큰 해상도 = 배열의 마지막)
+        if (systemResolutions.Count > 0)
+        {
+            currentResIndex = systemResolutions.Count - 1;
+            UpdateResolutionDisplay();
+            ApplyResolution(currentResIndex);
+        }
+
+        // 3. 화면 모드 기본값 (전체 화면 = 0번)
+        currentModeIndex = 0;
+        UpdateDisplayModeDisplay();
+        ApplyDisplayMode(currentModeIndex);
+
+        Debug.Log("[GraphicOptions] 그래픽 설정이 기본값으로 초기화 대기 중입니다.");
     }
 
     public void SaveOptions()

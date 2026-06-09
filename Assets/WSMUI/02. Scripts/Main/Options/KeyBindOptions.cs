@@ -1,52 +1,55 @@
-using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
 using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class KeyBindOptions : MonoBehaviour
 {
-    [System.Serializable]
-    public class KeyBindData
-    {
-        public EKeyAction targetAction;  
-        public string keyActionName;     
-        public Button bindButton;        
-        public TextMeshProUGUI bindText; 
-        public KeyCode defaultKey;       
-        
-        [HideInInspector] public KeyCode tempKey; 
-    }
+    [Header("UI 연결")]
+    [SerializeField] private Transform contentParent;
+    [SerializeField] private GameObject keyBindItemPrefab;
 
-    [Header("단축키 등록 리스트")]
-    [SerializeField] private KeyBindData[] keyBindings;
-
+    private List<KeyBindList> instantiatedItems = new List<KeyBindList>();
     private bool isWaitingForKey = false;
+    private KeyCode[] cachedKeyCodes;
 
     public void Initialize()
     {
         StopAllCoroutines();
         isWaitingForKey = false;
 
-        for (int i = 0; i < keyBindings.Length; i++)
+        if (cachedKeyCodes == null)
         {
-            KeyBindData data = keyBindings[i];
+            cachedKeyCodes = (KeyCode[])System.Enum.GetValues(typeof(KeyCode));
+        }
 
-            string savedKeyStr = PlayerPrefs.GetString(data.keyActionName, data.defaultKey.ToString());
-            
-            if (System.Enum.TryParse(savedKeyStr, out KeyCode savedKey))
+        if (InputManager.Instance != null) InputManager.Instance.LoadAllKeys();
+
+        for (int i = contentParent.childCount - 1; i >= 0; i--)
+        {
+            DestroyImmediate(contentParent.GetChild(i).gameObject);
+        }
+        instantiatedItems.Clear();
+
+        // [핵심] EKeyAction 열거형에 있는 모든 항목을 자동으로 순회합니다.
+        foreach (EKeyAction action in System.Enum.GetValues(typeof(EKeyAction)))
+        {
+            // 만약 유저가 임의로 변경하면 안 되는 키(예: 일시정지)가 있다면 
+            // 아래처럼 예외 처리를 해서 리스트에 안 뜨게 막을 수 있습니다.
+            // if (action == EKeyAction.Pause) continue; 
+
+            GameObject go = Instantiate(keyBindItemPrefab, contentParent);
+            KeyBindList itemUI = go.GetComponent<KeyBindList>();
+
+            KeyCode currentKey = KeyCode.None;
+            if (InputManager.Instance != null)
             {
-                data.tempKey = savedKey;
-            }
-            else
-            {
-                data.tempKey = data.defaultKey;
+                currentKey = InputManager.Instance.GetKeyForAction(action);
             }
 
-            data.bindText.text = data.tempKey.ToString();
-            data.bindText.color = Color.white;
-
-            data.bindButton.onClick.RemoveAllListeners();
-            data.bindButton.onClick.AddListener(() => StartRebind(data));
+            itemUI.Initialize(action, currentKey, StartRebind);
+            instantiatedItems.Add(itemUI);
         }
     }
 
@@ -56,64 +59,99 @@ public class KeyBindOptions : MonoBehaviour
         isWaitingForKey = false;
     }
 
-    private void StartRebind(KeyBindData data)
+    private void StartRebind(KeyBindList targetItem)
     {
         if (isWaitingForKey) return;
-        StartCoroutine(WaitForKeyPressCoroutine(data));
+        StartCoroutine(WaitForKeyPressCoroutine(targetItem));
     }
 
-    private IEnumerator WaitForKeyPressCoroutine(KeyBindData data)
+    private bool IsPointerOverSelectableUI()
+    {
+        PointerEventData eventData = new PointerEventData(EventSystem.current);
+        eventData.position = Input.mousePosition;
+
+        List<RaycastResult> results = new List<RaycastResult>();
+        EventSystem.current.RaycastAll(eventData, results);
+
+        foreach (RaycastResult result in results)
+        {
+            if (result.gameObject.GetComponent<UnityEngine.UI.Selectable>() != null)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private IEnumerator WaitForKeyPressCoroutine(KeyBindList targetItem)
     {
         isWaitingForKey = true;
-        data.bindText.text = "<입력 대기>";
-        data.bindText.color = Color.red; 
+        targetItem.SetWaitingState();
+
+        // 마우스 클릭으로 인한 즉시 할당 방지
+        yield return new WaitUntil(() => !Input.GetMouseButton(0));
 
         while (isWaitingForKey)
         {
             if (Input.anyKeyDown)
             {
-                foreach (KeyCode keyCode in System.Enum.GetValues(typeof(KeyCode)))
+                foreach (KeyCode keyCode in cachedKeyCodes)
                 {
                     if (Input.GetKeyDown(keyCode))
                     {
                         if (keyCode == KeyCode.Escape)
                         {
-                            // ESC를 누르면 변경을 취소하고 현재 들고 있던 tempKey 값으로 UI 복구
-                            data.bindText.text = data.tempKey.ToString();
+                            targetItem.UpdateUI(targetItem.TempKey);
                             isWaitingForKey = false;
                             break;
                         }
 
-                        if (keyCode != KeyCode.Mouse0 && keyCode != KeyCode.Mouse1)
+                        if (keyCode == KeyCode.Mouse0 || keyCode == KeyCode.Mouse1 || keyCode == KeyCode.Mouse2)
                         {
-                            // [핵심 수정] 즉시 PlayerPrefs나 InputManager를 건들지 않는다.
-                            // 오직 임시 변수(tempKey)와 화면 글씨만 실시간으로 바꿔서 유저에게 보여준다.
-                            data.tempKey = keyCode;
-                            data.bindText.text = keyCode.ToString();
-
-                            isWaitingForKey = false;
-                            break;
+                            if (IsPointerOverSelectableUI())
+                            {
+                                continue;
+                            }
                         }
+
+                        KeyBindList duplicateItem = instantiatedItems.Find(x => x != targetItem && x.TempKey == keyCode);
+                        if (duplicateItem != null)
+                        {
+                            duplicateItem.UpdateUI(KeyCode.None);
+                        }
+
+                        targetItem.UpdateUI(keyCode);
+                        isWaitingForKey = false;
+                        break;
                     }
                 }
             }
             yield return null;
         }
+    }
 
-        data.bindText.color = Color.white;
+    public void ResetToDefault()
+    {
+        if (InputManager.Instance == null) return;
+
+        foreach (KeyBindList item in instantiatedItems)
+        {
+            KeyCode defaultKey = InputManager.Instance.GetDefaultKey(item.TargetAction);
+            item.UpdateUI(defaultKey);
+        }
+        Debug.Log("[KeyBindOptions] 화면의 단축키가 기본값으로 변경되었습니다. (확인 버튼을 눌러야 저장됩니다)");
     }
 
     public void SaveOptions()
     {
-        for (int i = 0; i < keyBindings.Length; i++)
+        foreach (KeyBindList item in instantiatedItems)
         {
-            KeyBindData data = keyBindings[i];
-            
-            PlayerPrefs.SetString(data.keyActionName, data.tempKey.ToString());
-            
+            string prefsKeyName = "Key_" + item.TargetAction.ToString();
+            PlayerPrefs.SetString(prefsKeyName, item.TempKey.ToString());
+
             if (InputManager.Instance != null)
             {
-                InputManager.Instance.UpdateKey(data.targetAction, data.tempKey);
+                InputManager.Instance.UpdateKey(item.TargetAction, item.TempKey);
             }
         }
     }
