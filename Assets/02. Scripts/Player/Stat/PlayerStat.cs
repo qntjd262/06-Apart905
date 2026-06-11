@@ -153,6 +153,11 @@ public class PlayerStat : MonoBehaviour
             Debug.Log("허기 또는 갈증이 0 이하 체력깍임");
             hp.DecreaseStat(5f);
             Debug.Log($"현재 체력 : {hp.currentValue}");
+
+            if(hp.currentValue <= 0)
+            {
+                Die();
+            }
         }
     }
     public void ApplyEatableEffect(EatableType type, float value)
