@@ -254,7 +254,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d298f02eba8942e4b873364b9d170fac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  monsterSoundSO: {fileID: 11400000, guid: 7285236c23c6c474ba5739b4dc8ab60c, type: 2}
+  soundSO: {fileID: 11400000, guid: 7285236c23c6c474ba5739b4dc8ab60c, type: 2}
 --- !u!136 &8583774606377600480
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -434,10 +434,10 @@ SphereCollider:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1024
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 8192
+    m_Bits: 0
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0
