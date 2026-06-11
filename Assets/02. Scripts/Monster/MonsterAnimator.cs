@@ -109,7 +109,7 @@ public class MonsterAnimator : MonoBehaviour
             yield return new WaitForSeconds(randomDelay);
 
             float randomExecute = Random.Range(0, 2);
-            if (_animator.GetBool(MonsterAniParamIsMoving) == false &&
+            if (_animator.GetInteger(MonsterAniParamWalkState) == 0 &&
                 randomExecute == 1)
             {
                 _soundController.OnMoanSound();
@@ -132,6 +132,7 @@ public class MonsterAnimator : MonoBehaviour
         StartCoroutine(SetKinematicTrue());
     }
 
+    // 피격 후, 일정시간 후에 isKinematic을 true로
     IEnumerator SetKinematicTrue()
     {
         while(_animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1f)

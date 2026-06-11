@@ -6,6 +6,8 @@ public class PlayerInteraction : MonoBehaviour
     public float interactDistance = 3f; //상호작용 거리
     public LayerMask interactLayer;     //아이템의 Layer
 
+    public LayerMask obstacleLayer; //플레이어 시야를 가리는 장애물 레이어
+
     private Camera cam;
     private PlayerStat playerStat;
 
@@ -20,7 +22,9 @@ public class PlayerInteraction : MonoBehaviour
         Ray ray = cam.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         RaycastHit hit;
 
-        if (Physics.Raycast(ray, out hit, interactDistance, interactLayer))
+        int combinedLayerMask = interactLayer | obstacleLayer;
+
+        if (Physics.Raycast(ray, out hit, interactDistance, combinedLayerMask))
         {
             IInteractable interactable = hit.collider.GetComponent<IInteractable>();
 

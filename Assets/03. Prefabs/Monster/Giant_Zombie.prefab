@@ -3945,18 +3945,18 @@ MonoBehaviour:
   playerLayer:
     serializedVersion: 2
     m_Bits: 1024
-  detectAngle: 70
+  detectAngle: 90
   center: {fileID: 3874732444577207063}
-  _chaseInterval: 0.25
-  _chaseDuration: 4
+  _chaseInterval: 0.15
+  _chaseDuration: 3
   _halfExtents: {x: 1, y: 1.3, z: 1.1}
   _waitTime: 1.5
   offset: {x: 0, y: -1.1, z: 0}
-  minPatrolTime: 10
-  maxPatrolTime: 15
+  minPatrolTime: 3
+  maxPatrolTime: 5
   patrolRadius: 10
-  minIdleTime: 10
-  maxIdleTime: 15
+  minIdleTime: 3
+  maxIdleTime: 5
 --- !u!114 &7787019753020274172
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3971,7 +3971,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <monsterStatSO>k__BackingField: {fileID: 11400000, guid: 272106a39a085fe469825e2673ae8ae2, type: 2}
   currentHealth: 0
-  detectAngle: 70
+  detectAngle: 90
 --- !u!114 &1049868710292544921
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4016,7 +4016,7 @@ CapsuleCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Radius: 0.6
+  m_Radius: 0.55
   m_Height: 2.2
   m_Direction: 1
   m_Center: {x: 0, y: 1.1, z: 0}
@@ -4051,7 +4051,7 @@ AudioSource:
   m_GameObject: {fileID: 5152905152235290107}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: 4096560201897133328, guid: 894320ae7a90f734b96161aa6314d038, type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 0}
   m_PlayOnAwake: 0
@@ -4179,7 +4179,7 @@ SphereCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8192
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
   m_ProvidesContacts: 0

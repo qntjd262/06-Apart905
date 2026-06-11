@@ -131,6 +131,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Shelf (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 3539744371948985399, guid: 8751f1f94ebe2bf4d9da10c191d47823, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3548589501292739750, guid: 8751f1f94ebe2bf4d9da10c191d47823, type: 3}
       propertyPath: m_LocalPosition.x
       value: 9.31
@@ -708,7 +712,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &667082569
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -824,6 +828,10 @@ PrefabInstance:
     - target: {fileID: 3539744371948985399, guid: 8751f1f94ebe2bf4d9da10c191d47823, type: 3}
       propertyPath: m_Name
       value: Shelf (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3539744371948985399, guid: 8751f1f94ebe2bf4d9da10c191d47823, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3548589501292739750, guid: 8751f1f94ebe2bf4d9da10c191d47823, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1361,7 +1369,7 @@ MonoBehaviour:
     m_Bits: 1
   m_VolumeTrigger: {fileID: 0}
   m_VolumeFrameworkUpdateModeOption: 2
-  m_RenderPostProcessing: 0
+  m_RenderPostProcessing: 1
   m_Antialiasing: 0
   m_AntialiasingQuality: 2
   m_StopNaN: 0
@@ -1520,7 +1528,7 @@ Light:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 4294967295
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
@@ -1567,7 +1575,7 @@ MonoBehaviour:
   m_UsePipelineSettings: 1
   m_AdditionalLightsShadowResolutionTier: 2
   m_LightLayerMask: 1
-  m_RenderingLayers: 1
+  m_RenderingLayers: 4294967295
   m_CustomShadowLayers: 0
   m_ShadowLayerMask: 1
   m_ShadowRenderingLayers: 1
@@ -1582,25 +1590,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3977213404227767790, guid: f44a8babd05698446b01b65326858dad, type: 3}
-      propertyPath: interactLayer.m_Bits
-      value: 576
-      objectReference: {fileID: 0}
     - target: {fileID: 4288447685097029145, guid: f44a8babd05698446b01b65326858dad, type: 3}
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 7715514215755262542, guid: f44a8babd05698446b01b65326858dad, type: 3}
+      propertyPath: bloodOverlay
+      value: 
+      objectReference: {fileID: 1868595442}
     - target: {fileID: 8037843760890725615, guid: f44a8babd05698446b01b65326858dad, type: 3}
       propertyPath: m_LocalPosition.x
       value: 13.11
       objectReference: {fileID: 0}
     - target: {fileID: 8037843760890725615, guid: f44a8babd05698446b01b65326858dad, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.68
+      value: -1.98
       objectReference: {fileID: 0}
     - target: {fileID: 8037843760890725615, guid: f44a8babd05698446b01b65326858dad, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -18.15
+      value: -20.16
       objectReference: {fileID: 0}
     - target: {fileID: 8037843760890725615, guid: f44a8babd05698446b01b65326858dad, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1632,56 +1640,20 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects:
-    - targetCorrespondingSourceObject: {fileID: 8037843760890725615, guid: f44a8babd05698446b01b65326858dad, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 260161040}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 4288447685097029145, guid: f44a8babd05698446b01b65326858dad, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1231009735}
+    m_AddedGameObjects: []
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f44a8babd05698446b01b65326858dad, type: 3}
 --- !u!114 &1231009732 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 9117212134077917824, guid: f44a8babd05698446b01b65326858dad, type: 3}
   m_PrefabInstance: {fileID: 1231009731}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1231009734}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1a88d5a0e6d99bd48b546db7ddd2aed8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &1231009733 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8037843760890725615, guid: f44a8babd05698446b01b65326858dad, type: 3}
-  m_PrefabInstance: {fileID: 1231009731}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &1231009734 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4288447685097029145, guid: f44a8babd05698446b01b65326858dad, type: 3}
-  m_PrefabInstance: {fileID: 1231009731}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1231009735
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1231009734}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70205321c975ebd4e9411932e704f7df, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerStat: {fileID: 1231009732}
-  bloodOverlay: {fileID: 1868595442}
-  alphaLevel1: 0.3
-  alphaLevel2: 0.6
-  alphaLevel3: 1
-  blinkSpeedLevel1: 2
-  blinkSpeedLevel2: 4
-  blinkSpeedLevel3: 8
 --- !u!1001 &1364314206
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1940,7 +1912,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1986208933
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2056,6 +2028,10 @@ PrefabInstance:
     - target: {fileID: 3539744371948985399, guid: 8751f1f94ebe2bf4d9da10c191d47823, type: 3}
       propertyPath: m_Name
       value: Shelf (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3539744371948985399, guid: 8751f1f94ebe2bf4d9da10c191d47823, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3548589501292739750, guid: 8751f1f94ebe2bf4d9da10c191d47823, type: 3}
       propertyPath: m_LocalPosition.x
