@@ -8,6 +8,9 @@ public class PlayerEquip : MonoBehaviour
     [Header("무기 장착 위치")]
     [SerializeField] private Transform equipPoint;
 
+    [Header("헤드라이트 컴포넌트")]
+    [SerializeField] private Headlight playerHeadlight;
+
     private Dictionary<string, GameObject> instantiatedEquipItem = new Dictionary<string, GameObject>();
 
     public EquipItemData currentEquipItem { get; private set;}
@@ -15,7 +18,7 @@ public class PlayerEquip : MonoBehaviour
     private GameObject currentEquipObject;
     private PlayerAttack playerAttack;
 
-    public Flashlight CurrentFlashlight { get; private set; }
+    public Headlight CurrentHeadlight => playerHeadlight;
 
     void Awake()
     {
@@ -23,15 +26,24 @@ public class PlayerEquip : MonoBehaviour
 
         if(playerAnimator == null)
             playerAnimator = GetComponentInChildren<Animator>();
+
+        if(playerHeadlight == null)
+            playerHeadlight = GetComponentInChildren<Headlight>(true);
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            if (playerHeadlight != null)
+            {
+                playerHeadlight.ToggleFlashlight();
+            }
+        }
     }
 
     public void EquipItem(ItemData itemData)
     {
-        if(CurrentFlashlight != null)
-        {
-            CurrentFlashlight.ForceTurnOff();
-        }
-
         if(currentEquipItem != null)
         {
             currentEquipObject.SetActive(false);
@@ -39,13 +51,11 @@ public class PlayerEquip : MonoBehaviour
 
         currentEquipItem = null;
         currentEquipObject = null;
-        CurrentFlashlight = null;
 
         //슬롯이 비어있거나, 장착형 아이템이 아닌경우 맨손 상태 종료 (현재 장착형 아이템이 아니면 퀵슬롯에 아이템이 들어올 수 없지만 추후 수정할 경우 필요)
         if(itemData == null || itemData.itemType != ItemType.Equipable)
         {
             Debug.Log("맨손");
-            SetFlashlightAnimation(false);
             return;
         }
 
@@ -55,7 +65,6 @@ public class PlayerEquip : MonoBehaviour
         if(equipData == null || equipData.equipPrefab == null)
         {
             Debug.Log($"{itemData.Name}의 프리팹 데이터가 존재하지 않음");
-            SetFlashlightAnimation(false);
             return;
         }
 
@@ -85,11 +94,6 @@ public class PlayerEquip : MonoBehaviour
         currentEquipItem = equipData;
         Debug.Log($"{equipData.Name} 장착 완료");
         #endregion
-
-        CurrentFlashlight = currentEquipObject.GetComponent<Flashlight>();
-
-        bool isFlashlight = CurrentFlashlight != null;
-        SetFlashlightAnimation(isFlashlight);
     }
 
     //현재 들고 있는 아이템에 따른 동작 분배기
@@ -101,17 +105,7 @@ public class PlayerEquip : MonoBehaviour
             return;
         }
 
-        if(CurrentFlashlight != null)
-        {
-            //TODO : 손전등 사용 로직
-            CurrentFlashlight.ToggleFlashlight();
-        }
-        else
-        {
-            if(playerAttack != null) playerAttack.Attack();
-        }
-
-        
+        if(playerAttack != null) playerAttack.Attack();       
     }
 
     public void EquipFromQuickSlot(int slotIndex)
@@ -129,13 +123,5 @@ public class PlayerEquip : MonoBehaviour
             EquipItem(slot.item);
         }
         
-    }
-
-    private void SetFlashlightAnimation(bool isHolding)
-    {
-        if(playerAnimator != null)
-        {
-            playerAnimator.SetBool("IsHoldFlashlight", isHolding);
-        }
     }
 }

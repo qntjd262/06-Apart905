@@ -1,9 +1,12 @@
 using UnityEngine;
 
-public class Flashlight : MonoBehaviour
+public class Headlight : MonoBehaviour
 {
     [Header("라이트 컴포넌트")]
     public Light spotLight; 
+    
+    [Header("획득 시스템")]
+    [SerializeField] private bool hasHeadlight = false;
 
     [Header("배터리 세팅")]
     [SerializeField] private float maxBattery = 100f;
@@ -13,6 +16,7 @@ public class Flashlight : MonoBehaviour
     private bool isOn = false;
 
     public float CurrentBattery => currentBattery;
+    public bool HasHeadlight => hasHeadlight;
 
     void Awake()
     {
@@ -52,25 +56,31 @@ public class Flashlight : MonoBehaviour
             {
                 currentBattery = 0f;
                 ForceTurnOff();
-                Debug.Log("배터리가 방전되어 손전등이 꺼졌습니다.");
+                Debug.Log("배터리가 방전되어 헤드라이트가 꺼졌습니다.");
             }
         }
     }
 
     public void ToggleFlashlight()
     {
-        if (spotLight == null) return;
-
-        if (!isOn && currentBattery <= 0f)
+        if(!hasHeadlight)
         {
-            Debug.Log("배터리가 없어서 손전등을 켤 수 없습니다.");
+            Debug.Log("헤드라이트를 획득하지 않아 사용할 수 없습니다.");
+            return;
+        }
+
+        if(spotLight == null) return;
+
+        if(!isOn && CurrentBattery <= 0f)
+        {
+            Debug.Log("배터리가 부족하여 사용할 수 없습니다.");
             return;
         }
 
         isOn = !isOn;
         spotLight.enabled = isOn;
 
-        Debug.Log(isOn ? $"손전등 켜짐 (남은 배터리: {currentBattery:F1}%)" : "손전등 꺼짐");
+        Debug.Log(isOn ? $"헤드라이트 켜짐 (남은 배터리: {currentBattery:F1}%)" : "헤드라이트 꺼짐");
     }
 
     public void ForceTurnOff()
@@ -86,5 +96,11 @@ public class Flashlight : MonoBehaviour
     {
         currentBattery = maxBattery;
         Debug.Log("배터리가 100% 충전되었습니다!");
+    }
+
+    public void AcquireHeadlight()
+    {
+        hasHeadlight = true;
+        Debug.Log("헤드라이트를 획득했습니다! 이제 사용할 수 있습니다.");
     }
 }

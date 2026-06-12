@@ -119,9 +119,9 @@ public class InventoryManager : Singleton<InventoryManager>
         {
             PlayerEquip playerEquip = player.GetComponent<PlayerEquip>();
 
-            if (playerEquip != null && playerEquip.CurrentFlashlight != null)
+            if (playerEquip != null && playerEquip.CurrentHeadlight != null)
             {
-                playerEquip.CurrentFlashlight.RechargeBattery();
+                playerEquip.CurrentHeadlight.RechargeBattery();
 
                 targetSlot.item = null;
                 SyncQuestAndUI(item.itemName);
