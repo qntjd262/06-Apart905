@@ -14,6 +14,11 @@ public class InputManager : Singleton<InputManager>
 {
     private Dictionary<EKeyAction, KeyCode> keyBindings = new Dictionary<EKeyAction, KeyCode>();
 
+    public float MouseSensH { get; set; }
+    public float MouseSensV { get; set; }
+
+    private const float DefaultSens = 2.0f;
+
     private readonly Dictionary<EKeyAction, KeyCode> defaultBindings = new Dictionary<EKeyAction, KeyCode>()
     {
         { EKeyAction.MoveUp, KeyCode.W },
@@ -58,7 +63,8 @@ public class InputManager : Singleton<InputManager>
             keyBindings[kvp.Key] = ParseKey(prefsKeyName, kvp.Value);
         }
 
-        Debug.Log($"[InputManager] 모든 키 동기화 완료.");
+        MouseSensH = PlayerPrefs.GetFloat("MouseSensH", DefaultSens);
+        MouseSensV = PlayerPrefs.GetFloat("MouseSensV", DefaultSens);
     }
 
     private KeyCode ParseKey(string prefsKey, KeyCode defaultKey)
@@ -71,6 +77,19 @@ public class InputManager : Singleton<InputManager>
         return defaultKey;
     }
 
+    public void SetSensitivityRealTime(float h, float v)
+    {
+        MouseSensH = h;
+        MouseSensV = v;
+    }
+
+    public void SaveSensitivityToDisk()
+    {
+        PlayerPrefs.SetFloat("MouseSensH", MouseSensH);
+        PlayerPrefs.SetFloat("MouseSensV", MouseSensV);
+        PlayerPrefs.Save();
+    }
+
     public void UpdateKey(EKeyAction action, KeyCode newKey)
     {
         if (keyBindings == null) LoadAllKeys();
@@ -78,7 +97,7 @@ public class InputManager : Singleton<InputManager>
         if (keyBindings.ContainsKey(action))
         {
             keyBindings[action] = newKey;
-            Debug.Log($"[InputManager] 메모리 실시간 갱신: {action} -> {newKey}");
+            // Debug.Log($"[InputManager] 메모리 실시간 갱신: {action} -> {newKey}");
         }
     }
 

@@ -1,18 +1,27 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class KeyBindOptions : MonoBehaviour
+public class ControlOptions : MonoBehaviour
 {
     [Header("UI 연결")]
     [SerializeField] private Transform contentParent;
     [SerializeField] private GameObject keyBindItemPrefab;
 
+    [Header("마우스 감도 슬라이더")]
+    [SerializeField] private Slider sliderH;
+    [SerializeField] private Slider sliderV;
+    [SerializeField] private TextMeshProUGUI textH;
+    [SerializeField] private TextMeshProUGUI textV;
+
     private List<KeyBindList> instantiatedItems = new List<KeyBindList>();
     private bool isWaitingForKey = false;
     private KeyCode[] cachedKeyCodes;
+
+    private const float DefaultSens = 1.0f;
 
     public void Initialize()
     {
@@ -26,13 +35,35 @@ public class KeyBindOptions : MonoBehaviour
 
         if (InputManager.Instance != null) InputManager.Instance.LoadAllKeys();
 
+        if (InputManager.Instance != null)
+        {
+            sliderH.onValueChanged.RemoveAllListeners();
+            sliderV.onValueChanged.RemoveAllListeners();
+
+            sliderH.value = InputManager.Instance.MouseSensH;
+            sliderV.value = InputManager.Instance.MouseSensV;
+
+            if (textH != null) textH.text = sliderH.value.ToString("F1");
+            if (textV != null) textV.text = sliderV.value.ToString("F1");
+
+            sliderH.onValueChanged.AddListener(v =>
+            {
+                if (textH != null) textH.text = v.ToString("F1");
+                InputManager.Instance.SetSensitivityRealTime(v, sliderV.value);
+            });
+
+            sliderV.onValueChanged.AddListener(v =>
+            {
+                if (textV != null) textV.text = v.ToString("F1");
+                InputManager.Instance.SetSensitivityRealTime(sliderH.value, v);
+            });
+        }
         for (int i = contentParent.childCount - 1; i >= 0; i--)
         {
             DestroyImmediate(contentParent.GetChild(i).gameObject);
         }
         instantiatedItems.Clear();
 
-        // [핵심] EKeyAction 열거형에 있는 모든 항목을 자동으로 순회합니다.
         foreach (EKeyAction action in System.Enum.GetValues(typeof(EKeyAction)))
         {
             // 만약 유저가 임의로 변경하면 안 되는 키(예: 일시정지)가 있다면 
@@ -132,6 +163,9 @@ public class KeyBindOptions : MonoBehaviour
 
     public void ResetToDefault()
     {
+        sliderH.value = 2.0f;
+        sliderV.value = 2.0f;
+
         if (InputManager.Instance == null) return;
 
         foreach (KeyBindList item in instantiatedItems)
@@ -144,6 +178,8 @@ public class KeyBindOptions : MonoBehaviour
 
     public void SaveOptions()
     {
+        InputManager.Instance.SaveSensitivityToDisk();
+
         foreach (KeyBindList item in instantiatedItems)
         {
             string prefsKeyName = "Key_" + item.TargetAction.ToString();

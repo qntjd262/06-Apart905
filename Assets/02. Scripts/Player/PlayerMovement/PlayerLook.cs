@@ -25,7 +25,7 @@ public class PlayerLook : MonoBehaviour
 
         Camera mainCam = Camera.main;
 
-        if(mainCam != null && cameraPos != null)
+        if (mainCam != null && cameraPos != null)
         {
             //카메라 cameraPos 오브젝트의 자식 이동
             mainCam.transform.SetParent(cameraPos);
@@ -39,13 +39,21 @@ public class PlayerLook : MonoBehaviour
     }
     public void Look(float mouseX, float mouseY)
     {
-        if(playerStat.isInteracting) return;
+        if (playerStat.isInteracting) return;
 
-        transform.Rotate(0f, mouseX * mouseSensitivity, 0f);
-        
-        currentVerticalRotation -= mouseY * mouseSensitivity;
+        float sensH = InputManager.Instance.MouseSensH;
+        float sensV = InputManager.Instance.MouseSensV;
 
+        transform.Rotate(0f, mouseX * sensH, 0f);
+
+        currentVerticalRotation -= mouseY * sensV;
         currentVerticalRotation = Mathf.Clamp(currentVerticalRotation, -upDownRange, upDownRange);
+
+        // transform.Rotate(0f, mouseX * mouseSensitivity, 0f);
+
+        // currentVerticalRotation -= mouseY * mouseSensitivity;
+
+        // currentVerticalRotation = Mathf.Clamp(currentVerticalRotation, -upDownRange, upDownRange);
 
         if(cameraPos != null)
         {
@@ -55,7 +63,7 @@ public class PlayerLook : MonoBehaviour
 
     public void SetCameraHeight(bool isCrouch)
     {
-        if(cameraPos != null)
+        if (cameraPos != null)
         {
             Vector3 newPos = cameraPos.localPosition;
             newPos.y = isCrouch ? crouchHeight : standHeight;

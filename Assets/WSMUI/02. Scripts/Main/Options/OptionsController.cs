@@ -15,7 +15,7 @@ public class OptionsController : BasePopupUI
     [SerializeField] private GeneralOptions generalOptions;
     [SerializeField] private SoundOptions soundOptions;
     [SerializeField] private GraphicOptions graphicOptions;
-    [SerializeField] private KeyBindOptions keyBindOptions;
+    [SerializeField] private ControlOptions controlOptions;
 
     private int currentTabIndex = 0;
 
@@ -49,7 +49,7 @@ public class OptionsController : BasePopupUI
 
         if (soundOptions != null) soundOptions.Initialize();
         if (graphicOptions != null) graphicOptions.Initialize();
-        if (keyBindOptions != null) keyBindOptions.Initialize();
+        if (controlOptions != null) controlOptions.Initialize();
         if (generalOptions != null) generalOptions.Initialize();
 
         if (tabPanels != null && tabPanels.Length > 0)
@@ -99,7 +99,7 @@ public class OptionsController : BasePopupUI
                 if (soundOptions != null) soundOptions.ResetToDefault();
                 break;
             case 3:
-                if (keyBindOptions != null) keyBindOptions.ResetToDefault();
+                if (controlOptions != null) controlOptions.ResetToDefault();
                 break;
         }
     }
@@ -109,7 +109,7 @@ public class OptionsController : BasePopupUI
         // 모든 옵션 컴포넌트들의 실제 물리 저장 프로세스 일괄 가동
         if (soundOptions != null) soundOptions.SaveOptions();
         if (graphicOptions != null) graphicOptions.SaveOptions();
-        if (keyBindOptions != null) keyBindOptions.SaveOptions(); // 추가
+        if (controlOptions != null) controlOptions.SaveOptions(); // 추가
         if (generalOptions != null) generalOptions.SaveOptions(); // 추가
 
         PlayerPrefs.Save();
@@ -120,7 +120,7 @@ public class OptionsController : BasePopupUI
     {
         if (soundOptions != null) soundOptions.RevertOptions();
         if (graphicOptions != null) graphicOptions.RevertOptions();
-        if (keyBindOptions != null) keyBindOptions.RevertOptions(); // 추가
+        if (controlOptions != null) controlOptions.RevertOptions(); // 추가
         if (generalOptions != null) generalOptions.RevertOptions(); // 추가
 
         HidePanel();
