@@ -5,13 +5,12 @@ using DG.Tweening;
 using System.Collections.Generic;
 using System.Linq;
 
-public class SelectCharacterController : MonoBehaviour
+public class SelectCharacterController : BasePopupUI
 {
     [Header("Data Source")]
     private List<CharacterStatSO> characterDatas = new List<CharacterStatSO>();
 
     [Header("UI References - Info Box (Left)")]
-
     [SerializeField] private TextMeshProUGUI descriptionText;
     [SerializeField] private TextMeshProUGUI hpText;
     [SerializeField] private TextMeshProUGUI atkText;
@@ -35,12 +34,25 @@ public class SelectCharacterController : MonoBehaviour
     private int currentIndex = 0;
     private int totalCount;
     private Transform[] cards;
-    private CharacterCard[] cardScripts; // 추가
+    private CharacterCard[] cardScripts;
+
+    // [핵심 추가] BasePopupUI 동작을 위한 초기화
+    private void Awake()
+    {
+        popupPanel = this.gameObject;
+        
+        // UIManager와 물리적 연결 (선택사항이지만 안전함)
+        if (UIManager.Instance != null)
+        {
+            // UIManager의 selectCharacterPanel 변수가 public이 아니면 생략 가능
+        }
+    }
 
     private void OnEnable()
     {
         if (UIManager.Instance != null)
             UIManager.Instance.OpenPopupWithEffects("캐릭터 선택");
+        
         currentIndex = 0;
         UpdateUI(true);
     }
@@ -55,13 +67,6 @@ public class SelectCharacterController : MonoBehaviour
 
     void Start()
     {
-        /*
-        if (container == null || characterDatas == null || characterDatas.Length == 0)
-        {
-            Debug.LogError("데이터나 컨테이너가 설정되지 않았습니다!");
-            return;
-        }
-        */
         if (CharacterDataManager.Instance != null && CharacterDataManager.Instance.characterDB.Count > 0)
         {
             characterDatas = CharacterDataManager.Instance.characterDB.Values.ToList();
@@ -72,22 +77,18 @@ public class SelectCharacterController : MonoBehaviour
             return;
         }
 
-
-        //아래는 기존 코드 동일 characterDatas.Length -> characterDatas.Count
         totalCount = characterDatas.Count;
         cards = new Transform[totalCount];
-        cardScripts = new CharacterCard[totalCount]; // 이 줄
-
+        cardScripts = new CharacterCard[totalCount]; 
 
         for (int i = 0; i < totalCount; i++)
         {
             cards[i] = container.GetChild(i);
-            cardScripts[i] = cards[i].GetComponent<CharacterCard>(); // 추가
+            cardScripts[i] = cards[i].GetComponent<CharacterCard>(); 
 
             if (cardScripts[i] != null)
                 cardScripts[i].SetCard(characterDatas[i]);
         }
-
 
         UpdateUI(true);
     }
@@ -112,7 +113,7 @@ public class SelectCharacterController : MonoBehaviour
 
     private void UpdateUI(bool isImmediate)
     {
-        if (cards == null || totalCount == 0) return; // 추가
+        if (cards == null || totalCount == 0) return; 
         float targetX = -currentIndex * spacing;
         container.DOKill();
 
@@ -142,18 +143,11 @@ public class SelectCharacterController : MonoBehaviour
 
     private void UpdateStats()
     {
-        //characterDatas.Length -> characterDatas.Count
         if (characterDatas == null || characterDatas.Count <= currentIndex) return;
 
-
-        //CharacterData -> CharacterStatSO
         CharacterStatSO data = characterDatas[currentIndex];
 
-
         if (descriptionText != null) descriptionText.text = $"Description : {data.description}";
-
-
-        //data.뒤에 변수명 수정
         if (hpText != null) hpText.text = $"HP : {data.Hp}";
         if (atkText != null) atkText.text = $"Attack : {data.AttackPower}";
         if (defText != null) defText.text = $"Def : {data.Def}";
@@ -161,7 +155,6 @@ public class SelectCharacterController : MonoBehaviour
         if (thirstText != null) thirstText.text = $"Thirst : {data.ThirstDecreaseRate}";
         if (hungerText != null) hungerText.text = $"Hunger : {data.HungerDecreaseRate}";
         if (sanityText != null) sanityText.text = $"Infection : {data.InfectionIncreaseRate}";
-
     }
 
     private void UpdateButtonState()
@@ -178,11 +171,16 @@ public class SelectCharacterController : MonoBehaviour
             Debug.Log($"선택된 캐릭터는 {characterDatas[currentIndex].Name}입니다.");
         }
 
+        HidePanel();
+
         if (UIManager.Instance != null)
         {
-            UIManager.Instance.CloseSelectCharacterPanel();
             UIManager.Instance.LoadScene(Constants.ESceneType.PrototypeGame);
         }
+    }
 
+    public void OnClickBackButton()
+    {
+        HidePanel();
     }
 }

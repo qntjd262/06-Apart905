@@ -117,10 +117,12 @@ public class InventoryUI : MonoBehaviour
     }
     private void OnDisable()
     {
-        // 창이 꺼질 때 정보창도 같이 끄기
         if (infoPanel != null) infoPanel.SetActive(false);
 
-        // (기존 캔버스 그룹 찌꺼기 방지 코드가 있다면 유지)
+        if (ItemMenuUI.Instance != null)
+        {
+            ItemMenuUI.Instance.CloseMenu();
+        }
     }
 
     public void SetQuestSelectorActive(bool isActive)
@@ -149,6 +151,7 @@ public class InventoryUI : MonoBehaviour
         if (itemNameText != null) itemNameText.text = slotData.item.Name;
         if (itemDescText != null) itemDescText.text = slotData.item.description;
         if (itemIconImage != null) itemIconImage.sprite = slotData.item.icon;
+        Debug.Log($"선택한 아이템: {slotData.item.Name}, 설명 텍스트: {slotData.item.description}", slotData.item);
     }
 
     private void RefreshUI()

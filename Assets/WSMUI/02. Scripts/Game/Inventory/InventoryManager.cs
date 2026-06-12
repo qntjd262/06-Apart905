@@ -66,7 +66,6 @@ public class InventoryManager : Singleton<InventoryManager>
         {
             if (npc.myQuest != null)
             {
-                // 인벤토리 수량을 NPC의 퀘스트 데이터에 다시 맞추고 색상 변경
                 int count = GetItemCount(npc.myQuest.targetID);
                 npc.myQuest.ForceSyncProgress(count);
                 npc.UpdateOutlineColor();
@@ -77,11 +76,15 @@ public class InventoryManager : Singleton<InventoryManager>
     public int GetItemCount(string itemName)
     {
         int count = 0;
+        // [수정] 아이템이 퀵슬롯으로 완전히 넘어갔으므로, 퀵슬롯의 아이템 개수도 합산해야 합니다.
         foreach (var slot in BagSlots)
         {
             if (slot.item != null && slot.item.itemName == itemName) count++;
         }
-        // 퀵슬롯은 이제 가방의 참조일 뿐이므로 중복 카운트 방지를 위해 가방만 체크한다.
+        foreach (var slot in QuickSlots)
+        {
+            if (slot.item != null && slot.item.itemName == itemName) count++;
+        }
         return count;
     }
 
@@ -108,8 +111,8 @@ public class InventoryManager : Singleton<InventoryManager>
         }
         else if (item.itemType == ItemType.Equipable)
         {
+            // 우클릭으로 퀵슬롯에 장착할 때 처리
             if (!isQuickSlot) EquipToQuickSlot(index);
-            else Debug.Log("이미 퀵슬롯에 장착된 아이템입니다.");
         }
     }
 
@@ -117,6 +120,7 @@ public class InventoryManager : Singleton<InventoryManager>
     {
         int removedCount = 0;
 
+        // 1. 가방에서 먼저 삭제
         for (int i = 0; i < bagSize; i++)
         {
             if (BagSlots[i].item != null && BagSlots[i].item.itemName == itemName)
@@ -127,12 +131,17 @@ public class InventoryManager : Singleton<InventoryManager>
             }
         }
 
-        // 가방에서 삭제되었으니 퀵슬롯에 걸려있던 링크도 끊어준다.
-        for (int i = 0; i < quickSlotSize; i++)
+        // 2. 가방에서 다 못 지웠다면 퀵슬롯도 검사하여 삭제
+        if (removedCount < countToRemove)
         {
-            if (QuickSlots[i].item != null && QuickSlots[i].item.itemName == itemName)
+            for (int i = 0; i < quickSlotSize; i++)
             {
-                QuickSlots[i].item = null;
+                if (QuickSlots[i].item != null && QuickSlots[i].item.itemName == itemName)
+                {
+                    QuickSlots[i].item = null;
+                    removedCount++;
+                    if (removedCount >= countToRemove) break;
+                }
             }
         }
 
@@ -140,6 +149,7 @@ public class InventoryManager : Singleton<InventoryManager>
         OnBagUpdated?.Invoke();
         OnQuickSlotUpdated?.Invoke();
     }
+
     private void EquipToQuickSlot(int bagIndex)
     {
         int emptyIndex = -1;
@@ -154,8 +164,11 @@ public class InventoryManager : Singleton<InventoryManager>
 
         if (emptyIndex != -1)
         {
-            // [수정됨] 퀵슬롯으로 복사만 하고 원본 가방 아이템은 지우지 않음 (참조 링크)
+            // [수정] 참조만 하는게 아니라 퀵슬롯으로 완전히 '이동'시키고 가방은 비웁니다.
             QuickSlots[emptyIndex].item = BagSlots[bagIndex].item;
+            BagSlots[bagIndex].item = null; 
+            
+            OnBagUpdated?.Invoke();
             OnQuickSlotUpdated?.Invoke();
         }
         else
@@ -170,24 +183,41 @@ public class InventoryManager : Singleton<InventoryManager>
         if (bagIndex < 0 || bagIndex >= bagSize) return;
         if (quickIndex < 0 || quickIndex >= quickSlotSize) return;
 
+        // 가방에 있는 아이템이 퀵슬롯에 들어갈 수 없는 타입인지 체크 (가방 슬롯이 비어있으면 스왑을 위해 통과)
         if (!BagSlots[bagIndex].IsEmpty && BagSlots[bagIndex].item.itemType != ItemType.Equipable)
         {
             Debug.Log("이 아이템은 퀵슬롯에 장착할 수 없습니다.");
             return;
         }
 
-        QuickSlots[quickIndex].item = BagSlots[bagIndex].item; // 가방에 놔두고 링크만
+        // [수정] 퀵슬롯과 가방 슬롯의 아이템을 서로 '스왑'합니다. (기존 퀵슬롯 아이템은 가방으로 돌아감)
+        SwapSlots(BagSlots[bagIndex], QuickSlots[quickIndex]);
+        
+        OnBagUpdated?.Invoke();
         OnQuickSlotUpdated?.Invoke();
     }
 
-    // 퀵슬롯에서 바깥으로 빼버릴 때 장착 해제
+    // 더블클릭 등으로 퀵슬롯에서 장착 해제할 때
     public void ClearQuickSlot(int quickIndex)
     {
-        QuickSlots[quickIndex].item = null;
-        OnQuickSlotUpdated?.Invoke();
+        if (QuickSlots[quickIndex].IsEmpty) return;
+
+        // [수정] 아이템을 삭제(null)하는게 아니라 가방의 빈 슬롯을 찾아 다시 넣어줍니다.
+        for (int i = 0; i < bagSize; i++)
+        {
+            if (BagSlots[i].IsEmpty)
+            {
+                BagSlots[i].item = QuickSlots[quickIndex].item;
+                QuickSlots[quickIndex].item = null;
+                
+                OnBagUpdated?.Invoke();
+                OnQuickSlotUpdated?.Invoke();
+                return;
+            }
+        }
+        Debug.Log("가방이 가득 차서 퀵슬롯에서 해제할 수 없습니다.");
     }
 
-    // 기존 스왑은 퀵슬롯끼리 위치 바꿀 때만 사용
     public void SwapItemWithinQuickSlot(int index1, int index2)
     {
         if (index1 < 0 || index1 >= quickSlotSize || index2 < 0 || index2 >= quickSlotSize) return;
@@ -231,7 +261,7 @@ public class InventoryManager : Singleton<InventoryManager>
         OnStorageUpdated?.Invoke();
     }
 
-    public void DiscardItem(int index, bool isQuickSlot)
+   public void DiscardItem(int index, bool isQuickSlot)
     {
         InventorySlot targetSlot = isQuickSlot ? QuickSlots[index] : BagSlots[index];
 
@@ -239,16 +269,9 @@ public class InventoryManager : Singleton<InventoryManager>
         {
             string itemName = targetSlot.item.itemName;
 
-            if (isQuickSlot)
-            {
-                // 퀵슬롯에서 버리면 링크만 해제 (가방 아이템은 유지)
-                targetSlot.item = null;
-            }
-            else
-            {
-                // 가방에서 버리면 완전 삭제
-                RemoveItem(itemName, 1);
-            }
+            targetSlot.item = null;
+
+            SyncQuestAndUI(itemName);
 
             if (isQuickSlot) OnQuickSlotUpdated?.Invoke();
             else OnBagUpdated?.Invoke();
@@ -264,14 +287,9 @@ public class InventoryManager : Singleton<InventoryManager>
 
     private void SyncQuestAndUI(string itemName)
     {
-
-        Debug.Log($"[인벤토리 동기화 시스템 작동] 체크할 아이템 이름: {itemName}");
         if (QuestManager.Instance != null)
         {
             int currentCount = GetItemCount(itemName);
-
-            Debug.Log($"인벤토리 내 [{itemName}]의 개수: {currentCount}개");
-
             var targetQuest = QuestManager.Instance.activeQuests.Find(q => q.targetID == itemName);
             if (targetQuest != null) targetQuest.ForceSyncProgress(currentCount);
 
@@ -327,14 +345,10 @@ public class InventoryManager : Singleton<InventoryManager>
     public void MoveAllFromStorageToBag()
     {
         if (CurrentStorageSlots == null) return;
-
-        // 보관함의 모든 슬롯을 검사
         for (int i = 0; i < CurrentStorageSlots.Length; i++)
         {
-            // 슬롯이 비어있지 않다면 이동 함수 호출
             if (!CurrentStorageSlots[i].IsEmpty)
             {
-                // MoveItemStorageToBag 내부에서 가방 공간 체크 및 UI 업데이트가 이뤄짐
                 MoveItemStorageToBag(i);
             }
         }

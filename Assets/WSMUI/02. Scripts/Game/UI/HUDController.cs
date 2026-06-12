@@ -22,17 +22,16 @@ public class HUDController : MonoBehaviour
             return;
         }
 
-        UpdateGauges(false); // 즉시 적용
+        UpdateGauges(false);
 
         isInitialized = true;
-        initTime = Time.time; // 시간 기록
+        initTime = Time.time; 
     }
 
     void Update()
     {
         if (!isInitialized || playerStat == null || gauge == null) return;
 
-        // 핵심 방어: 시작하고 0.5초 동안은 스탯이 뒤늦게 100으로 차올라도 무조건 애니메이션 없이 스냅(false)시킨다.
         bool useSmooth = (Time.time - initTime) > 0.5f;
 
         UpdateGauges(useSmooth);

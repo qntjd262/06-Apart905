@@ -13,17 +13,25 @@ public class EndingListController : BasePopupUI
 
     private void Awake()
     {
+        popupPanel = this.gameObject;
+        
         returnButton.onClick.AddListener(OnReturnClick);
     }
 
     private void OnEnable()
     {
-        ShowPanel();
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.OpenPopupWithEffects("엔딩 리스트");
+        }
     }
 
     private void OnDisable()
     {
-        HidePanel();
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.ClosePopupWithEffects();
+        }
     }
 
     private void OnSlotSelected(int index)

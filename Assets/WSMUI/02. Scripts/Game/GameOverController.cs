@@ -20,51 +20,51 @@ public class GameOverController : BasePopupUI
         }
     }
 
-    // [수정] 외부(PlayerStat 등)에서 사망 시 안전하게 열어주는 관문
     public void Open()
     {
-        ShowPanel(); // SetActive(true) 및 스택 등록
+        ShowPanel(); 
 
-        // 일시정지 상태에서 연출이 물리적으로 돌아가도록 Open 시점에 연출 강제 시작
         PlayGameOverSequence();
     }
 
     private void OnEnable()
     {
-        // 버튼 그룹은 연출이 끝나기 전까지 유저 조작을 막기 위해 꺼둔다.
         if (buttonGroup != null) buttonGroup.SetActive(false);
     }
 
-    private void PlayGameOverSequence()
+   private void PlayGameOverSequence()
     {
         if (bloodSplatterEffect == null) return;
 
-        // 초기 상태 설정
-        bloodSplatterEffect.transform.localScale = Vector3.zero;
+        // [초기 상태] 피 이미지를 절반 크기(0.5)와 투명한 상태로 시작
+        bloodSplatterEffect.transform.localScale = Vector3.one * 0.5f;
         if (bloodImage != null) bloodImage.color = new Color(1, 1, 1, 0);
 
         Sequence mainSeq = DOTween.Sequence().SetUpdate(true);
 
-        mainSeq.Append(bloodSplatterEffect.transform.DOScale(1.2f, 0.15f).SetEase(Ease.OutExpo).SetUpdate(true));
+        // 1. 피가 천천히 번지는 연출 (크기가 커짐과 동시에 서서히 진해짐)
+        // SetEase(Ease.OutCubic)을 사용하여 처음엔 확 퍼지다가 끝에서 끈적하게 느려지는 느낌을 줍니다.
+        mainSeq.Append(bloodSplatterEffect.transform.DOScale(1.1f, 1.0f).SetEase(Ease.OutCubic).SetUpdate(true));
+        
         if (bloodImage != null)
         {
-            mainSeq.Join(bloodImage.DOFade(1f, 0.1f).SetUpdate(true));
+            mainSeq.Join(bloodImage.DOFade(1f, 1f).SetEase(Ease.OutCubic).SetUpdate(true));
         }
-        mainSeq.Append(bloodSplatterEffect.transform.DOScale(1.0f, 0.1f).SetUpdate(true));
 
-        mainSeq.AppendInterval(0.1f);
+        mainSeq.AppendInterval(0.2f);
 
         mainSeq.OnComplete(() =>
         {
             if (buttonGroup != null)
             {
                 buttonGroup.SetActive(true);
-                buttonGroup.transform.localScale = Vector3.zero;
+                buttonGroup.transform.localScale = Vector3.one; // 크기는 정상 크기 유지
 
-                // 버튼이 백에서 튕겨 나오며 스케일업 되는 연출도 독립 시간 적용
-                buttonGroup.transform.DOScale(1.0f, 0.4f)
-                    .SetEase(Ease.OutBack)
-                    .SetUpdate(true);
+                CanvasGroup cg = buttonGroup.GetComponent<CanvasGroup>();
+                if (cg == null) cg = buttonGroup.AddComponent<CanvasGroup>();
+
+                cg.alpha = 0f;
+                cg.DOFade(1f, 0.5f).SetUpdate(true);
             }
         });
     }
@@ -84,16 +84,27 @@ public class GameOverController : BasePopupUI
         }
     }
 
-    public void OnMainMenuClick()
+   public void OnMainMenuClick()
     {
-        HidePanel();
+        if (buttonGroup != null) buttonGroup.SetActive(false);
+
         Time.timeScale = 1f;
 
         if (UIManager.Instance != null)
         {
-            UIManager.Instance.LoadScene(Constants.ESceneType.PrototypeMain, false);
+            // 1. 씬 로드 호출 (0.5초 동안 서서히 페이드 아웃 됨)
+            UIManager.Instance.LoadScene(Constants.ESceneType.PrototypeMain, true);
+            
+            // 2. 화면이 완전히 까매지는 타이밍(0.5초 뒤)에 맞춰 패널을 숨기고 스택에서 제거
+            DOVirtual.DelayedCall(0.5f, () => 
+            {
+                HidePanel();
+            }).SetUpdate(true); // 타임스케일 영향을 받지 않도록 안전장치 추가
+            
             return;
         }
+
+        HidePanel();
         SceneManager.LoadScene(Constants.ESceneType.PrototypeMain.ToString());
     }
 }
