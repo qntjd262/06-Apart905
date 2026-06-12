@@ -8,9 +8,11 @@ public class PlayerAttack : MonoBehaviour
     //TODO : 무기 개발 완료 후 공격 범위 가져오기
     [SerializeField] private float attackRange = 2f;
     //TODO : playerstat.cs 추가 후 수정 예정 임시 공격력
+
+    [SerializeField] private float attackStamina = 5f;
     private PlayerStat playerStat;
     private PlayerEquip playerEquip;
-
+    private PlayerMove playerMove;
     [SerializeField] private Transform cameraPos;
 
     [Header("공격 쿨 + 애니메이션 적용 타임")]
@@ -35,7 +37,7 @@ public class PlayerAttack : MonoBehaviour
     {
         //TODO : playerstat.cs에서 캐릭터 스탯 가져오기
         playerStat = GetComponent<PlayerStat>();
-
+        playerMove = GetComponent<PlayerMove>();
         playerNoise = GetComponent<PlayerNoise>();
         playerEquip = GetComponent<PlayerEquip>();
     }
@@ -45,6 +47,12 @@ public class PlayerAttack : MonoBehaviour
 
         if(isAttacking) return;
 
+        if(playerStat != null && playerMove.isExhausted)
+        {
+            Debug.Log("탈진 상태 진입");
+            return;
+        }
+
         StartCoroutine(AttackRoutine());
 
     }
@@ -52,8 +60,23 @@ public class PlayerAttack : MonoBehaviour
     //공격 코루틴
     IEnumerator AttackRoutine()
     {
-        if(anim != null) anim.SetTrigger("IsAttack");
+        
         isAttacking = true;
+
+        if(playerStat != null)
+        {
+            playerStat.stamina.DecreaseStat(attackStamina);
+            Debug.Log($"공격 스태미너 감소{attackStamina} 남은 스태미너 : {playerStat.stamina.currentValue}");
+
+            if(playerStat.stamina.currentValue <= 0 && playerMove != null)
+            {
+                playerMove.TriggerExhaustion();
+                Debug.Log("탈진 상태");
+            }
+        }
+
+
+        if(anim != null) anim.SetTrigger("IsAttack");
 
         //attackDelay = 애니메이션 동작 타임 제어
         yield return new WaitForSeconds(attackDelay);
