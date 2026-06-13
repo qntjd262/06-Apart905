@@ -2,6 +2,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using System;
 using Unity.AppUI.UI;
+using System.Collections;
 
 public class PlayerStat : MonoBehaviour
 {
@@ -37,6 +38,10 @@ public class PlayerStat : MonoBehaviour
     public event Action<float, float> OnHpChanged;
     public event Action OnPlayerDeath;
 
+    [Header("컴포넌트")]
+    private Animator anim;
+    private PlayerController playerController;
+
     void Awake()
     {
         // 인벤토리 매니저의 Player 변수에 자기 자신(this)을 할당
@@ -44,6 +49,11 @@ public class PlayerStat : MonoBehaviour
         {
             InventoryManager.Instance.Player = this;
         }
+
+        anim = GetComponentInChildren<Animator>();
+
+        if(anim == null) Debug.LogError("애니메이터 찾을 수 없음");
+        playerController = GetComponent<PlayerController>();
     }
 
     void Start() // 데이터 매니저 참조는 Start가 안전합니다.
@@ -131,8 +141,26 @@ public class PlayerStat : MonoBehaviour
     {
         Debug.Log("플레이어 사망");
 
-        this.enabled = false;
-      
+        if(playerController != null && playerController.isDead) return;
+
+        if(playerController != null)
+        {
+            playerController.isDead = true;
+            playerController.enabled = false;
+        }
+        if (TryGetComponent<PlayerMove>(out var move)) move.enabled = false;
+        if (TryGetComponent<PlayerEquip>(out var equip)) equip.enabled = false;
+        if (TryGetComponent<PlayerAttack>(out var attack)) attack.enabled = false;
+
+        if(anim != null) anim.SetBool("IsDead", true);
+
+        StartCoroutine(DieRoutine());
+    }
+
+    private IEnumerator DieRoutine()
+    { 
+        yield return new WaitForSeconds(5.0f);
+
         if (UIManager.Instance != null)
         {
             UIManager.Instance.OpenGameOverUI();
@@ -140,6 +168,7 @@ public class PlayerStat : MonoBehaviour
         Time.timeScale = 0f;
         OnPlayerDeath?.Invoke();
 
+        this.enabled = false;
     }
 
     //배고픔, 갈증 감소 함수
