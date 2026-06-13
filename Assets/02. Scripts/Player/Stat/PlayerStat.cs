@@ -42,6 +42,8 @@ public class PlayerStat : MonoBehaviour
     private Animator anim;
     private PlayerController playerController;
 
+    private Coroutine damageTiltCoroutine;
+
     void Awake()
     {
         // 인벤토리 매니저의 Player 변수에 자기 자신(this)을 할당
@@ -105,11 +107,53 @@ public class PlayerStat : MonoBehaviour
         OnHpChanged?.Invoke(hp.currentValue, hp.maxValue);
 
         AddInfection();
+        if (damageTiltCoroutine != null)
+        {
+            StopCoroutine(damageTiltCoroutine);
+        }
+
+        damageTiltCoroutine = StartCoroutine(DamageTiltRoutine());
 
         if (hp.currentValue <= 0)
         {
             Die();
         }
+    }
+
+    private IEnumerator DamageTiltRoutine()
+    {
+        if (Camera.main == null) yield break;
+
+        Transform camTransform = Camera.main.transform;
+        
+        Quaternion originalRot = Quaternion.identity; 
+        Quaternion targetRot = Quaternion.Euler(0, 0, 4f); 
+
+        float duration = 0.15f; // 기울어지는 시간
+        float elapsed = 0f;
+
+
+        while (elapsed < duration / 2f)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / (duration / 2f);
+            
+            
+            camTransform.localRotation = Quaternion.Slerp(originalRot, targetRot, t);
+            yield return null;
+        }
+
+        elapsed = 0f;
+        while (elapsed < duration / 2f)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / (duration / 2f);
+            
+            camTransform.localRotation = Quaternion.Slerp(targetRot, originalRot, t);
+            yield return null;
+        }
+
+        camTransform.localRotation = originalRot;
     }
 
     private void AddInfection()
