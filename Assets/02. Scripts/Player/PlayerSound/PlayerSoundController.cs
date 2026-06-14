@@ -16,10 +16,8 @@ public class PlayerSoundController : MonoBehaviour
     {
         _audioSource.clip = clip;
         _audioSource.Play();
-        Debug.Log(clip);
     }
 
     public void OnAttackSound() => PlaySound(soundSO.attackSound);
     public void OnAttackedSound() => PlaySound(soundSO.attackedSound);
-
 }
