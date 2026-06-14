@@ -1465,6 +1465,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3977213404227767790, guid: f44a8babd05698446b01b65326858dad, type: 3}
+      propertyPath: interactLayer.m_Bits
+      value: 2147483648
+      objectReference: {fileID: 0}
     - target: {fileID: 4288447685097029145, guid: f44a8babd05698446b01b65326858dad, type: 3}
       propertyPath: m_Name
       value: Player
@@ -1473,6 +1477,10 @@ PrefabInstance:
       propertyPath: bloodOverlay
       value: 
       objectReference: {fileID: 1868595442}
+    - target: {fileID: 7885230071447690142, guid: f44a8babd05698446b01b65326858dad, type: 3}
+      propertyPath: monsterLayer.m_Bits
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8037843760890725615, guid: f44a8babd05698446b01b65326858dad, type: 3}
       propertyPath: m_LocalPosition.x
       value: 13.11

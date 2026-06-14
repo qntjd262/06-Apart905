@@ -12,6 +12,7 @@ public struct DoorInfo : IEquatable<DoorInfo>
 
     public bool Equals(DoorInfo other)
         => floor == other.floor && isLeft == other.isLeft && doorNum == other.doorNum;
+
     public override int GetHashCode()
         => HashCode.Combine(floor, isLeft, doorNum);
 }
