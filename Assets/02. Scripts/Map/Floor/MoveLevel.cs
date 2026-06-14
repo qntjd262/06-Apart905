@@ -13,8 +13,6 @@ public class MoveLevel : MonoBehaviour
     [SerializeField] private FloorManager _floorManager;
     [SerializeField] private DoorManager _doorManager;
 
-    [SerializeField] private Door[] _currFloorDoors;
-
     public enum PlayerState         // �÷��̾��� �� �̵� ���� 
     {
         None, MoveUp, MoveDown
@@ -59,6 +57,7 @@ public class MoveLevel : MonoBehaviour
         _currLevel++;
         _floorManager.SetQuests(_currLevel);
         _floorManager.SetZombies(_currLevel);
+        OnFloorShifted();
     }
 
     public void MoveDown()
@@ -81,6 +80,7 @@ public class MoveLevel : MonoBehaviour
         _currLevel--;                               // �� ����
         _floorManager.SetQuests(_currLevel);
         _floorManager.SetZombies(_currLevel);
+        OnFloorShifted();
     }
 
     private void IsMoveUp(bool isMoveUp)     // �� �̵� �� �� ��ġ ����
@@ -105,28 +105,34 @@ public class MoveLevel : MonoBehaviour
         }
     }
 
-    public void OnFloorShifted(int newVisibleFloorStart)
+    public void OnFloorShifted()
     {
-        for (int i = 0; i < _currFloorDoors.Length; i++)
-        {
-            Door door = _currFloorDoors[i];
+        Door[] currDoors = _LevelMid.GetComponentsInChildren<Door>();
 
-            // �� ���� ��Ÿ���� ���� ��/��ġ ���
+        foreach (Door door in currDoors)
+        {
+            door.realFloor = _currLevel;
+
             DoorInfo info = new DoorInfo
             {
-                floor = newVisibleFloorStart + door.localFloorOffset,
+                floor = _currLevel,
                 isLeft = door.isLeft,
                 doorNum = door.doorNum
             };
 
-            // ����� ���� ���� (��� ������ �⺻�� = ����)
             bool checkOpen = _doorManager.IsDoorOpen(info);
-            door.SetStateImmediate(checkOpen); // �ִϸ��̼� ���� ��� ����
+            Debug.Log($"{checkOpen}, {door.isLeft}, {door.doorNum}");
+            door.SetStateImmediate(checkOpen);
         }
     }
 
     public void MonsterFloorMove(MonsterController targetMonster, bool isUp)
     {
         _floorManager.MonsterFloorMove(targetMonster, isUp);
+    }
+
+    private void GetChangedCurrLv()
+    {
+
     }
 }
