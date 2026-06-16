@@ -17,7 +17,7 @@ public class PlayerAttack : MonoBehaviour
 
     [Header("공격 쿨 + 애니메이션 적용 타임")]
     //TODO : 애니메이션 적용 할 때 타임 맞추기
-    private float attackDelay = 0.25f;
+    private float attackDelay = 1f;
     private float attackCoolDown = 5f;
     public bool isAttacking {get; private set;}
 

@@ -43,6 +43,7 @@ public class PlayerStat : MonoBehaviour
     private PlayerController playerController;
 
     private Coroutine damageTiltCoroutine;
+    private PlayerSoundController soundController;
 
     void Awake()
     {
@@ -52,6 +53,7 @@ public class PlayerStat : MonoBehaviour
             InventoryManager.Instance.Player = this;
         }
 
+        soundController = GetComponent<PlayerSoundController>();
         anim = GetComponentInChildren<Animator>();
 
         if(anim == null) Debug.LogError("애니메이터 찾을 수 없음");
@@ -103,6 +105,8 @@ public class PlayerStat : MonoBehaviour
     //몬스터에게 피격당할 시 호출되는 함수
     public void TakeDamage(float damage)
     {
+        soundController.OnAttackedSound();  // 피격 사운드 호출 
+
         hp.DecreaseStat(damage);
         OnHpChanged?.Invoke(hp.currentValue, hp.maxValue);
 
@@ -272,4 +276,7 @@ public class PlayerStat : MonoBehaviour
             }
         }
     }
+
+    // 현재 스태미나에 따라 공격 가능 여부 판정
+    public bool CanAttack(float amount) => stamina.currentValue >= amount;
 }
