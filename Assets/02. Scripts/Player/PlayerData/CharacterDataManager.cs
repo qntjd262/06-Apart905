@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 using Unity.VisualScripting;
+using System;
 
 public class CharacterDataManager : MonoBehaviour
 {
@@ -16,6 +17,10 @@ public class CharacterDataManager : MonoBehaviour
     public CharacterStatSO selectedCharacterSO;
     [Header("캐릭터 일러스트 모음")]
     [SerializeField] private Sprite[] allCharacterSprites;
+
+    //UI쪽 로딩 상태 확인을 줄 수 있는 이벤트
+    public bool IsDataLoaded {get; private set;} = false;
+    public event Action OnDataLoaded;
 
     void Awake()
     {
@@ -94,6 +99,9 @@ public class CharacterDataManager : MonoBehaviour
             }
         }
         Debug.Log("캐릭터 테이터 파싱 완료");
+
+        IsDataLoaded = true;
+        OnDataLoaded?.Invoke();
 
     }
 }

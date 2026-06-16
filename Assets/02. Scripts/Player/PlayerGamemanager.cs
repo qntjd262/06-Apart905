@@ -32,7 +32,7 @@ public class PlayerGamemanager : MonoBehaviour
 
     [Header("스탯 감소 인터벌")]
     //게임 시간 스탯 인터벌 (분 단위)
-    private int statDecreaseMinuteInterval = 3;
+    private int statDecreaseMinuteInterval = 10;
     private int minutePassCount = 0;
 
     void Awake()

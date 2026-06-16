@@ -5,70 +5,71 @@ public class PlayerLook : MonoBehaviour
     [Header("시점 회전 속도")]
     [SerializeField] private float mouseSensitivity = 2f;
 
-
     [Header("카메라 세팅")]
-    [SerializeField] private Transform cameraPos;
-    //상하 제한
+    [SerializeField] private Transform cameraPos;     
+    [SerializeField] private Transform cameraSocket;  
+
+    // 상하 제한
     [SerializeField] private float upDownRange = 80f;
-    //현재 카메라 상하각도 저장 변수
+    // 현재 카메라 상하각도 저장 변수
     private float currentVerticalRotation = 0f;
-    private float standHeight;
-    private float crouchHeight = 2.3f;
-    private float cameraForwardOffset = 0.35f;
+
+    [Header("카메라 벽뚫림 방지")]
+    [SerializeField] private LayerMask blockLayer;
+    [SerializeField] private float cameraRadius = 0.12f;
 
     private PlayerStat playerStat;
-
+    private Camera mainCam;
 
     void Start()
     {
         playerStat = GetComponent<PlayerStat>();
-
-        Camera mainCam = Camera.main;
+        mainCam = Camera.main;
 
         if (mainCam != null && cameraPos != null)
         {
-            //카메라 cameraPos 오브젝트의 자식 이동
             mainCam.transform.SetParent(cameraPos);
-
-            //카메라 위치, 회전값 cameraPos 오브젝트와 동일하게 맞추기
             mainCam.transform.localPosition = Vector3.zero;
             mainCam.transform.localRotation = Quaternion.identity;
-
-            standHeight = cameraPos.localPosition.y;
         }
     }
+
     public void Look(float mouseX, float mouseY)
     {
         if (playerStat.isInteracting) return;
 
-        float sensH = InputManager.Instance.MouseSensH;
-        float sensV = InputManager.Instance.MouseSensV;
+        // 좌우 회전: 플레이어 몸체 회전
+        transform.Rotate(0f, mouseX * mouseSensitivity, 0f);
 
-        transform.Rotate(0f, mouseX * sensH, 0f);
-
-        currentVerticalRotation -= mouseY * sensV;
+        // 상하 회전: cameraPos 회전
+        currentVerticalRotation -= mouseY * mouseSensitivity;
         currentVerticalRotation = Mathf.Clamp(currentVerticalRotation, -upDownRange, upDownRange);
 
-        // transform.Rotate(0f, mouseX * mouseSensitivity, 0f);
-
-        // currentVerticalRotation -= mouseY * mouseSensitivity;
-
-        // currentVerticalRotation = Mathf.Clamp(currentVerticalRotation, -upDownRange, upDownRange);
-
-        if(cameraPos != null)
+        if (cameraPos != null)
         {
             cameraPos.localEulerAngles = new Vector3(currentVerticalRotation, 0f, 0f);
         }
     }
 
-    public void SetCameraHeight(bool isCrouch)
+    private void LateUpdate()
     {
-        if (cameraPos != null)
+        if (cameraPos == null || cameraSocket == null) return;
+
+        cameraPos.position = cameraSocket.position;
+
+        float finalZOffset = 0f;
+        RaycastHit hit;
+
+        if (Physics.SphereCast(cameraSocket.position - (cameraPos.forward * 0.2f), cameraRadius, cameraPos.forward, out hit, 0.2f, blockLayer))
         {
-            Vector3 newPos = cameraPos.localPosition;
-            newPos.y = isCrouch ? crouchHeight : standHeight;
-            newPos.z = isCrouch ? cameraForwardOffset : 0f;
-            cameraPos.localPosition = newPos;
+            finalZOffset = -0.1f;
+        }
+
+        if (mainCam != null)
+        {
+            Vector3 camLocalPos = mainCam.transform.localPosition;
+            camLocalPos.z = finalZOffset;
+            mainCam.transform.localPosition = camLocalPos;
         }
     }
 }
