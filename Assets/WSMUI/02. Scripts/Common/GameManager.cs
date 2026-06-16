@@ -4,8 +4,6 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : Singleton<GameManager>
 {
-    [SerializeField] private GameObject playerPrefab;
-
     public CharacterStatSO SelectedCharacterData { get; private set; }
 
     public EndingData selectedEnding;
@@ -14,14 +12,31 @@ public class GameManager : Singleton<GameManager>
     {
         if (data != null) SelectedCharacterData = data;
     }
-    
+
     private GameObject _player;
 
     // 게임 시작 시 HUD 등 UI를 초기화하라는 이벤트
     public System.Action OnGameStart;
 
+    public bool IsPaused { get; private set; }
+
+    public void Pause()
+    {
+        IsPaused = true;
+        Time.timeScale = 0f;
+        SoundManager.Instance?.PauseBGM();
+    }
+
+    public void Resume()
+    {
+        IsPaused = false;
+        Time.timeScale = 1f;
+        SoundManager.Instance?.ResumeBGM();
+    }
+
     protected override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        Time.timeScale = 1f;
         // 게임 씬으로 진입했을 때만 실행
         if (scene.name == Constants.ESceneType.PrototypeGame.ToString())
         {
@@ -40,34 +55,6 @@ public class GameManager : Singleton<GameManager>
 
     private void SpawnAndInitializePlayer()
     {
-        // var spawnPointObj = GameObject.FindGameObjectWithTag("SpawnPoint");
-        // if (spawnPointObj == null) return;
-
-        // Transform spawnPoint = spawnPointObj.transform;
-
-        // // 1. 플레이어 생성 또는 위치 재조정
-        // if (_player == null)
-        // {
-        //     _player = Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
-        // }
-        // else
-        // {
-        //     _player.transform.position = spawnPoint.position;
-        //     _player.transform.rotation = spawnPoint.rotation;
-        //     _player.SetActive(true);
-        // }
-
-        // 2. 플레이어 데이터 주입 (플레이어 담당자 스크립트 연결)
-        // 주석 해제해서 사용해라.
-        /*
-        var playerStatus = _player.GetComponent<PlayerStatus>();
-        if (playerStatus != null && SelectedCharacterData != null)
-        {
-            // 캐릭터 기본 스탯 주입 (HP, Hunger, Thirst는 Max치, Sanity는 0으로)
-            playerStatus.SetInitialStatus(SelectedCharacterData);
-        }
-        */
-
         // 3. UI 초기화 이벤트 발생
         // UIManager가 이 신호를 듣고 알아서 HUD를 켤 것이다. GameManager가 HUD를 직접 찾을 필요 없다.
         OnGameStart?.Invoke();

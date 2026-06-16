@@ -109,7 +109,6 @@ public class SlotUI : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, ID
         }
     }
 
-    // --- 드래그 앤 드롭 로직 (변경 없음) ---
     public void OnBeginDrag(PointerEventData eventData)
     {
         if (icon.sprite == null || IsInGameQuickSlot) return;

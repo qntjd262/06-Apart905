@@ -4,8 +4,9 @@ using TMPro;
 using DG.Tweening;
 using UnityEngine.SceneManagement;
 
-// MonoBehaviour 대신 BasePopupUI 상속
-public class EndingPopupUI : BasePopupUI 
+// [추가] CanvasGroup이 무조건 있도록 강제
+[RequireComponent(typeof(CanvasGroup))]
+public class EndingPopupUI : BasePopupUI
 {
     [Header("UI Components")]
     [SerializeField] private TextMeshProUGUI noticeText;
@@ -16,11 +17,16 @@ public class EndingPopupUI : BasePopupUI
     private Color mainQuestColor = new Color(0.8f, 0.4f, 0f);
     private EndingData currentEnding;
 
+    // [추가] CanvasGroup 캐싱
+    private CanvasGroup canvasGroup;
+
     private void Awake()
     {
+        canvasGroup = GetComponent<CanvasGroup>();
+
         acceptButton.onClick.AddListener(OnAccept);
         cancelButton.onClick.AddListener(OnCancel);
-        
+
         if (popupPanel != null) popupPanel.SetActive(false);
     }
 
@@ -31,24 +37,29 @@ public class EndingPopupUI : BasePopupUI
         string coloredEndingName = $"<color=#{ColorUtility.ToHtmlStringRGB(mainQuestColor)}>{data.endingName}</color>";
         noticeText.text = $"{coloredEndingName} 엔딩\n진행하시겠습니까?";
 
-        // 부모의 공통 함수 호출 (SetActive(true) 및 스택 등록 자동 수행)
         ShowPanel();
 
-        // 자식만의 고유 연출
-        popupPanel.transform.localScale = Vector3.zero;
-        popupPanel.transform.DOScale(1f, 0.5f).SetEase(Ease.OutBack).SetUpdate(true);
+        // [수정] 튕기는 스케일 대신 살짝 큰 상태에서 정상 크기로 돌아오며 페이드 인
+        popupPanel.transform.DOKill();
+        canvasGroup.DOKill();
+
+        popupPanel.transform.localScale = Vector3.one * 1.05f;
+        canvasGroup.alpha = 0f;
+
+        popupPanel.transform.DOScale(1f, 0.4f).SetEase(Ease.OutCubic).SetUpdate(true);
+        canvasGroup.DOFade(1f, 0.4f).SetEase(Ease.OutCubic).SetUpdate(true);
     }
 
     private void OnAccept()
     {
         acceptButton.interactable = false;
         GameManager.Instance.selectedEnding = currentEnding;
-        
-        popupPanel.transform.DOScale(0f, 0.2f).OnComplete(() =>
+
+        popupPanel.transform.DOScale(0.9f, 0.15f).SetEase(Ease.InCubic).SetUpdate(true);
+        canvasGroup.DOFade(0f, 0.15f).SetEase(Ease.InCubic).SetUpdate(true).OnComplete(() =>
         {
-            // 부모의 공통 함수 호출 (스택 해제 및 SetActive(false) 자동 수행)
-            HidePanel(); 
-            
+            HidePanel();
+
             UIManager.Instance.FadeOut(1.5f, () =>
             {
                 SceneManager.LoadScene("PrototypeEnding");
@@ -58,9 +69,9 @@ public class EndingPopupUI : BasePopupUI
 
     private void OnCancel()
     {
-        popupPanel.transform.DOScale(0f, 0.2f).OnComplete(() =>
+        popupPanel.transform.DOScale(0.9f, 0.15f).SetEase(Ease.InCubic).SetUpdate(true);
+        canvasGroup.DOFade(0f, 0.15f).SetEase(Ease.InCubic).SetUpdate(true).OnComplete(() =>
         {
-            // 연출이 끝난 후 부모 함수를 통해 안전하게 해제 및 종료
             HidePanel();
         });
     }

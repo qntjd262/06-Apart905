@@ -3,9 +3,11 @@ using UnityEngine.UI;
 using TMPro;
 using DG.Tweening;
 
+// [추가] CanvasGroup이 무조건 있도록 강제
+[RequireComponent(typeof(CanvasGroup))]
 public class QuestNotifyUI : BasePopupUI
 {
-    public static QuestNotifyUI Instance { get; private set;}
+    public static QuestNotifyUI Instance { get; private set; }
 
     [Header("UI Components")]
     [SerializeField] private TextMeshProUGUI titleText;
@@ -18,18 +20,22 @@ public class QuestNotifyUI : BasePopupUI
     [SerializeField] private Color subQuestColor = Color.green;
 
     private Quest currentQuest;
-    
+
+    // [추가] CanvasGroup 캐싱
+    private CanvasGroup canvasGroup;
+
     private void Awake()
     {
-        if(Instance == null) Instance = this;
+        if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
+        canvasGroup = GetComponent<CanvasGroup>();
+
         acceptButton.onClick.AddListener(OnAcceptButtonClicked);
-        
+
         if (popupPanel != null)
         {
-            popupPanel.transform.localScale = Vector3.zero;
-            popupPanel.SetActive(false); // 씬 시작 시 단순 비활성화 (스택 로직 타지 않음)
+            popupPanel.SetActive(false);
         }
     }
 
@@ -37,39 +43,40 @@ public class QuestNotifyUI : BasePopupUI
     {
         currentQuest = quest;
 
-        // 1. 데이터 세팅
         titleText.text = quest.questName;
         titleText.color = quest.isMainQuest ? mainQuestColor : subQuestColor;
-        
-        // 스토리와 목표 세팅 (기존 Quest 데이터 구조 활용)
+
         storyText.text = quest.questDiscrip;
-        //storyText.text = quest.beforeAcceptDialogues.Length > 0 ? quest.beforeAcceptDialogues[0] : "새로운 임무가 부여되었습니다.";
         goalText.text = $"□ {quest.questGoal}";
-        //goalText.text = $"□ {quest.targetID} ({quest.currentAmount}/{quest.goalAmount})"; 수정 전 대목
 
         ShowPanel();
 
-        // 3. 자식만의 고유 연출 (중앙에서 커지며 등장)
-        popupPanel.transform.DOScale(1f, 0.4f).SetEase(Ease.OutBack).SetUpdate(true);
+        // [수정] 튕기는 스케일(OutBack) 제거, 무게감 있게 스르륵 나타나는 연출 적용
+        popupPanel.transform.DOKill();
+        canvasGroup.DOKill();
+
+        popupPanel.transform.localScale = Vector3.one * 1.05f;
+        canvasGroup.alpha = 0f;
+
+        popupPanel.transform.DOScale(1f, 0.4f).SetEase(Ease.OutCubic).SetUpdate(true);
+        canvasGroup.DOFade(1f, 0.4f).SetEase(Ease.OutCubic).SetUpdate(true);
     }
 
     private void OnAcceptButtonClicked()
     {
-        // 버튼 연타 방지
         acceptButton.interactable = false;
 
-        // 팝업 닫기 연출
-        popupPanel.transform.DOScale(0f, 0.2f).SetEase(Ease.InBack).OnComplete(() =>
+        // [수정] 0.15초 만에 순식간에 사라지며 게임으로 빠른 복귀
+        popupPanel.transform.DOScale(0.9f, 0.15f).SetEase(Ease.InCubic).SetUpdate(true);
+        canvasGroup.DOFade(0f, 0.15f).SetEase(Ease.InCubic).SetUpdate(true).OnComplete(() =>
         {
-            // 부모 클래스의 공통 함수 호출 (스택 해제 및 SetActive(false) 자동 수행)
             HidePanel();
-            
-            if(QuestManager.Instance != null)
+
+            if (QuestManager.Instance != null)
             {
                 QuestManager.Instance.ConfirmAcceptQuest();
             }
-            
-            // 버튼 상태 원상복구 (다음에 팝업이 뜰 때를 대비)
+
             acceptButton.interactable = true;
         });
     }

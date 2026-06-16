@@ -75,15 +75,6 @@ public class PlayerController : MonoBehaviour
         bool isCrouch = Input.GetKey(KeyCode.LeftControl);
 
 
-        if (Input.GetKeyDown(KeyCode.LeftControl))
-        {
-            playerLook.SetCameraHeight(true);
-        }
-        else if (Input.GetKeyUp(KeyCode.LeftControl))
-        {
-            playerLook.SetCameraHeight(false);
-        }
-
         playerMove.Move(h, v, isRunning, isCrouch);
 
         HandleQuickSlotItemEquip();

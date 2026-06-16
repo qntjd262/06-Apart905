@@ -42,7 +42,6 @@ public class SelectCharacterController : MonoBehaviour
         if (UIManager.Instance != null)
             UIManager.Instance.OpenPopupWithEffects("캐릭터 선택");
         currentIndex = 0;
-        UpdateUI(true);
     }
 
     private void OnDisable()
@@ -62,6 +61,39 @@ public class SelectCharacterController : MonoBehaviour
             return;
         }
         */
+
+        if(CharacterDataManager.Instance == null)
+        {
+            Debug.LogError("CharacterDataManager 인스턴스가 존재하지 않습니다!");
+            return;
+        }
+
+        if(CharacterDataManager.Instance.IsDataLoaded)
+        {
+            InitializeUI();
+        }
+        else
+        {
+            Debug.Log("캐릭터 데이터 대기 중");
+            CharacterDataManager.Instance.OnDataLoaded += OnDataLoadedCallback;
+        }
+        
+    }
+
+    private void OnDataLoadedCallback()
+    {
+        Debug.Log("데이터 수신 완료 UI 출력 시작");
+
+        if(CharacterDataManager.Instance != null)
+        {
+            CharacterDataManager.Instance.OnDataLoaded -= OnDataLoadedCallback;
+        }
+
+        InitializeUI();
+    }
+
+    private void InitializeUI()
+    {
         if (CharacterDataManager.Instance != null && CharacterDataManager.Instance.characterDB.Count > 0)
         {
             characterDatas = CharacterDataManager.Instance.characterDB.Values.ToList();
@@ -90,6 +122,15 @@ public class SelectCharacterController : MonoBehaviour
 
 
         UpdateUI(true);
+        
+    }
+
+    private void OnDestroy()
+    {
+        if(CharacterDataManager.Instance != null)
+        {
+            CharacterDataManager.Instance.OnDataLoaded -= OnDataLoadedCallback;
+        }
     }
 
     public void OnNextButton()

@@ -5,7 +5,7 @@ using TMPro;
 
 public class SoundOptions : MonoBehaviour
 {
-    [SerializeField] private AudioMixer audioMixer; 
+    [SerializeField] private AudioMixer audioMixer;
 
     [Header("마스터 볼륨")]
     [SerializeField] private Slider masterSlider;
@@ -60,8 +60,8 @@ public class SoundOptions : MonoBehaviour
     {
         if (slider == null) return;
         slider.interactable = true;
-        slider.minValue = 0.0001f;  
-        slider.maxValue = 1f;       
+        slider.minValue = 0.0001f;
+        slider.maxValue = 1f;
     }
 
     private void OnVolumeSliderChanged(string parameterName, float value, TextMeshProUGUI textComponent)
@@ -84,7 +84,15 @@ public class SoundOptions : MonoBehaviour
             textComponent.text = $"{(value * 100f):F0}%";
     }
 
-    // [추가] '확인' 버튼을 눌렀을 때만 호출되는 저장 함수
+    public void ResetToDefault()
+    {
+        if (masterSlider != null) masterSlider.value = 1f;
+        if (bgmSlider != null) bgmSlider.value = 1f;
+        if (sfxSlider != null) sfxSlider.value = 1f;
+
+        Debug.Log("[SoundOptions] 사운드 설정이 기본값으로 초기화 대기 중입니다.");
+    }
+
     public void SaveOptions()
     {
         PlayerPrefs.SetFloat("Volume_Master", masterSlider.value);
@@ -92,9 +100,8 @@ public class SoundOptions : MonoBehaviour
         PlayerPrefs.SetFloat("Volume_SFX", sfxSlider.value);
     }
 
-    // [추가] '돌아가기' 버튼을 누르면 믹서와 UI를 이전 저장 상태로 롤백하는 함수
     public void RevertOptions()
     {
-        Initialize(); 
+        Initialize();
     }
 }

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using DG.Tweening;
 
-// 1. BasePopupUI 상속
 public class PauseMenuController : BasePopupUI
 {
     private void Awake()
@@ -38,9 +38,13 @@ public class PauseMenuController : BasePopupUI
             {
                 this.ShowPanel();
             };
+
+            saveLoader.currentMode = Constants.ESaveLoadType.Save;
+            saveLoader.gameObject.SetActive(true);
             saveLoader.Open(Constants.ESaveLoadType.Save);
         }
     }
+
     public void OnLoadClick()
     {
         SaveLoadController saveLoader = FindFirstObjectByType<SaveLoadController>(FindObjectsInactive.Include);
@@ -51,6 +55,9 @@ public class PauseMenuController : BasePopupUI
             {
                 this.ShowPanel();
             };
+
+            saveLoader.currentMode = Constants.ESaveLoadType.Load;
+            saveLoader.gameObject.SetActive(true);
             saveLoader.Open(Constants.ESaveLoadType.Load);
         }
     }
@@ -67,7 +74,8 @@ public class PauseMenuController : BasePopupUI
                 this.ShowPanel();
             };
 
-            // 3. 설정 창을 연다.
+            options.gameObject.SetActive(true);
+
             options.Open();
         }
     }
@@ -76,13 +84,19 @@ public class PauseMenuController : BasePopupUI
     {
         if (UIManager.Instance != null)
         {
-            // 씬 이동 시 일시정지 창을 스택에서 확실히 제거
-            UIManager.Instance.TogglePauseMenu();
             UIManager.Instance.LoadScene(Constants.ESceneType.PrototypeMain);
+
+            DOVirtual.DelayedCall(0.5f, () =>
+            {
+                HidePanel();
+                UIManager.Instance.UnregisterUI(this.gameObject);
+            }).SetUpdate(true);
+
             return;
         }
 
         Time.timeScale = 1f;
+        HidePanel();
         SceneManager.LoadScene(Constants.ESceneType.PrototypeMain.ToString());
     }
 }
