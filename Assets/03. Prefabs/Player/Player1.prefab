@@ -1004,6 +1004,7 @@ Transform:
   - {fileID: 3546195751094279698}
   - {fileID: 9088159656438003437}
   - {fileID: 1420023178131781796}
+  - {fileID: 1434386084966794243}
   m_Father: {fileID: 683243346397358657}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3565870952261970091
@@ -1931,6 +1932,37 @@ Transform:
   - {fileID: 2480092150399185444}
   m_Father: {fileID: 6767600921494363757}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5290832661250418989
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1434386084966794243}
+  m_Layer: 0
+  m_Name: EquipPos
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1434386084966794243
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5290832661250418989}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.097, y: 0.005, z: 0.001}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1509630722403123737}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5710878210601941037
 GameObject:
   m_ObjectHideFlags: 0
@@ -2266,7 +2298,6 @@ GameObject:
   - component: {fileID: 7428833028604922658}
   - component: {fileID: 8457312404731008706}
   - component: {fileID: 7342706835784854003}
-  - component: {fileID: 4203862037478037198}
   - component: {fileID: 6147500991221969596}
   m_Layer: 10
   m_Name: Player1
@@ -2459,7 +2490,7 @@ MonoBehaviour:
   interactDistance: 3
   interactLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 768
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 1
@@ -2476,7 +2507,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerAnimator: {fileID: 0}
-  equipPoint: {fileID: 0}
+  equipPoint: {fileID: 1434386084966794243}
 --- !u!114 &7342706835784854003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2497,25 +2528,6 @@ MonoBehaviour:
   blinkSpeedLevel1: 2
   blinkSpeedLevel2: 4
   blinkSpeedLevel3: 8
---- !u!114 &4203862037478037198
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6693885897241388227}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ad0440ba2b8ae449ad1ff1fc7f6fad2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  interactDistance: 3
-  interactLayer:
-    serializedVersion: 2
-    m_Bits: 0
-  obstacleLayer:
-    serializedVersion: 2
-    m_Bits: 0
 --- !u!114 &6147500991221969596
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2534,7 +2546,7 @@ MonoBehaviour:
   upDownRange: 80
   blockLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 1
   cameraRadius: 0.12
 --- !u!1 &7194044837855107619
 GameObject:
