@@ -10,7 +10,7 @@ public class PlayerEquip : MonoBehaviour
 
     private Dictionary<string, GameObject> instantiatedEquipItem = new Dictionary<string, GameObject>();
 
-    public EquipItemData currentEquipItem { get; private set; }
+    public EquipItemData currentEquipItem { get; private set;}
 
     private GameObject currentEquipObject;
     private PlayerAttack playerAttack;
@@ -22,7 +22,7 @@ public class PlayerEquip : MonoBehaviour
     {
         playerAttack = GetComponent<PlayerAttack>();
 
-        if (playerAnimator == null)
+        if(playerAnimator == null)
             playerAnimator = GetComponentInChildren<Animator>();
     }
 
@@ -53,7 +53,7 @@ public class PlayerEquip : MonoBehaviour
 
     public void EquipItem(ItemData itemData)
     {
-        if (currentEquipItem != null)
+        if(currentEquipItem != null)
         {
             currentEquipObject.SetActive(false);
         }
@@ -72,7 +72,7 @@ public class PlayerEquip : MonoBehaviour
         //장착형 형변환 -> 프리팹
         EquipItemData equipData = itemData as EquipItemData;
 
-        if (equipData == null || equipData.equipPrefab == null)
+        if(equipData == null || equipData.equipPrefab == null)
         {
             Debug.Log($"{itemData.Name}의 프리팹 데이터가 존재하지 않음");
             SetFlashlightAnimation(false);
@@ -109,7 +109,7 @@ public class PlayerEquip : MonoBehaviour
     //현재 들고 있는 아이템에 따른 동작 분배기
     public void UseCurrentItem()
     {
-        if (currentEquipItem == null)
+        if(currentEquipItem == null)
         {
             playerAttack.Attack();
             return;
@@ -117,14 +117,14 @@ public class PlayerEquip : MonoBehaviour
 
         Flashlight flashlight = currentEquipObject.GetComponent<Flashlight>();
 
-        if (flashlight != null)
+        if(flashlight != null)
         {
             //TODO : 손전등 사용 로직
             flashlight.ToggleFlashlight();
         }
         else
         {
-            if (playerAttack != null) playerAttack.Attack();
+            if(playerAttack != null) playerAttack.Attack();
         }
 
 
@@ -132,14 +132,14 @@ public class PlayerEquip : MonoBehaviour
 
     public void EquipFromQuickSlot(int slotIndex)
     {
-        if (InventoryManager.Instance == null) return;
+        if(InventoryManager.Instance == null) return;
 
         // [추가] 단축키로 다른 슬롯을 선택했을 때 현재 번호를 갱신합니다.
         currentQuickSlotIndex = slotIndex;
         
         InventorySlot slot = InventoryManager.Instance.QuickSlots[slotIndex];
 
-        if (slot.IsEmpty || slot.item.itemType != ItemType.Equipable)
+        if(slot.IsEmpty || slot.item.itemType != ItemType.Equipable)
         {
             EquipItem(null);
         }
@@ -152,7 +152,7 @@ public class PlayerEquip : MonoBehaviour
 
     private void SetFlashlightAnimation(bool isHolding)
     {
-        if (playerAnimator != null)
+        if(playerAnimator != null)
         {
             playerAnimator.SetBool("IsHoldFlashlight", isHolding);
         }
