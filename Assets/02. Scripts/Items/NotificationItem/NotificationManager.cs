@@ -15,7 +15,8 @@ public class NotificationManager : Singleton<NotificationManager>
         if (container == null || itemPrefab == null) return;
 
         GameObject popUp = Instantiate(itemPrefab, container);
-        popUp.transform.SetAsLastSibling();
+        
+        popUp.transform.SetAsFirstSibling();
 
         NotificationItem notificationScript = popUp.GetComponent<NotificationItem>();
         
