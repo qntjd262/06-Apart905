@@ -5,16 +5,14 @@ public class PlayerLook : MonoBehaviour
     [Header("시점 회전 속도")]
     [SerializeField] private float mouseSensitivity = 2f;
 
-
     [Header("카메라 세팅")]
-    [SerializeField] private Transform cameraPos;
-    //상하 제한
+    [SerializeField] private Transform cameraPos;     
+    [SerializeField] private Transform cameraSocket;  
+
+    // 상하 제한
     [SerializeField] private float upDownRange = 80f;
-    //현재 카메라 상하각도 저장 변수
+    // 현재 카메라 상하각도 저장 변수
     private float currentVerticalRotation = 0f;
-    private float standHeight;
-    private float crouchHeight = 2.3f;
-    private float cameraForwardOffset = 0.35f;
 
     [Header("카메라 벽뚫림 방지")]
     [SerializeField] private LayerMask blockLayer;
@@ -23,83 +21,75 @@ public class PlayerLook : MonoBehaviour
     private PlayerStat playerStat;
     private Camera mainCam;
 
-    private bool isCrouching = false;
-
-
     void Start()
     {
         playerStat = GetComponent<PlayerStat>();
-
         mainCam = Camera.main;
 
-        if(mainCam != null && cameraPos != null)
+        if (mainCam != null && cameraPos != null)
         {
-            //카메라 cameraPos 오브젝트의 자식 이동
             mainCam.transform.SetParent(cameraPos);
-
-            //카메라 위치, 회전값 cameraPos 오브젝트와 동일하게 맞추기
             mainCam.transform.localPosition = Vector3.zero;
             mainCam.transform.localRotation = Quaternion.identity;
-
-            standHeight = cameraPos.localPosition.y;
         }
     }
+
     public void Look(float mouseX, float mouseY)
     {
-        if(playerStat.isInteracting) return;
+        if (playerStat.isInteracting) return;
 
-        transform.Rotate(0f, mouseX * mouseSensitivity, 0f);
+        // 좌우 회전: 플레이어 몸체 회전
+        float sensH = InputManager.Instance.MouseSensH;
+        float senV = InputManager.Instance.MouseSensV;
+
+        transform.Rotate(0f, mouseX * sensH, 0f);
         
-        currentVerticalRotation -= mouseY * mouseSensitivity;
+        currentVerticalRotation -= mouseY * senV;
 
-        currentVerticalRotation = Mathf.Clamp(currentVerticalRotation, -upDownRange, upDownRange);
+        // transform.Rotate(0f, mouseX * mouseSensitivity, 0f);
 
-        if(cameraPos != null)
+        // currentVerticalRotation -= mouseY * mouseSensitivity;
+
+        // currentVerticalRotation = Mathf.Clamp(currentVerticalRotation, -upDownRange, upDownRange);
+
+        if (cameraPos != null)
         {
             cameraPos.localEulerAngles = new Vector3(currentVerticalRotation, 0f, 0f);
         }
     }
 
+    private void LateUpdate()
+    {
+        if (cameraPos == null || cameraSocket == null) return;
+
+        cameraPos.position = cameraSocket.position;
+
+        float finalZOffset = 0f;
+        RaycastHit hit;
+
+        if (Physics.SphereCast(cameraSocket.position - (cameraPos.forward * 0.2f), cameraRadius, cameraPos.forward, out hit, 0.2f, blockLayer))
+        {
+            finalZOffset = -0.1f;
+        }
+
+        if (mainCam != null)
+        {
+            Vector3 camLocalPos = mainCam.transform.localPosition;
+            camLocalPos.z = finalZOffset;
+            mainCam.transform.localPosition = camLocalPos;
+        }
+    }
+
+    /* 해당 부분 카메라가 플레이어 Head 오브젝트의 자식으로 부착되어있기 때문에 필요 X
     public void SetCameraHeight(bool isCrouch)
     {
-        isCrouching = isCrouch;
         if(cameraPos != null)
         {
             Vector3 newPos = cameraPos.localPosition;
-            newPos.y = isCrouch ? crouchHeight : standHeight;
+            newPos.y = isCrouch ? 0.8f : 1.6f;
+            newPos.z = isCrouch ? cameraForwardOffset : 0f;
 
-            cameraPos.localPosition = newPos;
         }
     }
-
-    private void LateUpdate()
-    {
-        if(cameraPos == null) return;
-
-        float targetZOffset = isCrouching ? cameraForwardOffset : 0f;
-
-        Vector3 originPos = transform.position + transform.up * cameraPos.localPosition.y;
-
-        float finalZOffset = targetZOffset;
-
-        if(targetZOffset > 0f)
-        {
-            RaycastHit hit;
-
-            if(Physics.SphereCast(originPos, cameraRadius, transform.forward, out hit, targetZOffset, blockLayer))
-            {
-                finalZOffset = Mathf.Max(0f, hit.distance);
-            }
-        }
-
-        Vector3 currentLocalPos = cameraPos.localPosition;
-        currentLocalPos.z = finalZOffset;
-        cameraPos.localPosition = currentLocalPos;
-
-        if(mainCam != null)
-        {
-            mainCam.transform.localPosition = Vector3.zero;
-        }
-                
-    }
+    */
 }

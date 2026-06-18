@@ -2,6 +2,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using System;
 using Unity.AppUI.UI;
+using System.Collections;
 
 public class PlayerStat : MonoBehaviour
 {
@@ -37,6 +38,13 @@ public class PlayerStat : MonoBehaviour
     public event Action<float, float> OnHpChanged;
     public event Action OnPlayerDeath;
 
+    [Header("컴포넌트")]
+    private Animator anim;
+    private PlayerController playerController;
+
+    private Coroutine damageTiltCoroutine;
+    private PlayerSoundController soundController;
+
     void Awake()
     {
         // 인벤토리 매니저의 Player 변수에 자기 자신(this)을 할당
@@ -44,6 +52,12 @@ public class PlayerStat : MonoBehaviour
         {
             InventoryManager.Instance.Player = this;
         }
+
+        soundController = GetComponent<PlayerSoundController>();
+        anim = GetComponentInChildren<Animator>();
+
+        if(anim == null) Debug.LogError("애니메이터 찾을 수 없음");
+        playerController = GetComponent<PlayerController>();
     }
 
     void Start() // 데이터 매니저 참조는 Start가 안전합니다.
@@ -91,15 +105,59 @@ public class PlayerStat : MonoBehaviour
     //몬스터에게 피격당할 시 호출되는 함수
     public void TakeDamage(float damage)
     {
+        soundController.OnAttackedSound();  // 피격 사운드 호출 
+
         hp.DecreaseStat(damage);
         OnHpChanged?.Invoke(hp.currentValue, hp.maxValue);
 
         AddInfection();
+        if (damageTiltCoroutine != null)
+        {
+            StopCoroutine(damageTiltCoroutine);
+        }
+
+        damageTiltCoroutine = StartCoroutine(DamageTiltRoutine());
 
         if (hp.currentValue <= 0)
         {
             Die();
         }
+    }
+
+    private IEnumerator DamageTiltRoutine()
+    {
+        if (Camera.main == null) yield break;
+
+        Transform camTransform = Camera.main.transform;
+        
+        Quaternion originalRot = Quaternion.identity; 
+        Quaternion targetRot = Quaternion.Euler(0, 0, 4f); 
+
+        float duration = 0.15f; // 기울어지는 시간
+        float elapsed = 0f;
+
+
+        while (elapsed < duration / 2f)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / (duration / 2f);
+            
+            
+            camTransform.localRotation = Quaternion.Slerp(originalRot, targetRot, t);
+            yield return null;
+        }
+
+        elapsed = 0f;
+        while (elapsed < duration / 2f)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / (duration / 2f);
+            
+            camTransform.localRotation = Quaternion.Slerp(targetRot, originalRot, t);
+            yield return null;
+        }
+
+        camTransform.localRotation = originalRot;
     }
 
     private void AddInfection()
@@ -131,8 +189,26 @@ public class PlayerStat : MonoBehaviour
     {
         Debug.Log("플레이어 사망");
 
-        this.enabled = false;
-      
+        if(playerController != null && playerController.isDead) return;
+
+        if(playerController != null)
+        {
+            playerController.isDead = true;
+            playerController.enabled = false;
+        }
+        if (TryGetComponent<PlayerMove>(out var move)) move.enabled = false;
+        if (TryGetComponent<PlayerEquip>(out var equip)) equip.enabled = false;
+        if (TryGetComponent<PlayerAttack>(out var attack)) attack.enabled = false;
+
+        if(anim != null) anim.SetBool("IsDead", true);
+
+        StartCoroutine(DieRoutine());
+    }
+
+    private IEnumerator DieRoutine()
+    { 
+        yield return new WaitForSeconds(5.0f);
+
         if (UIManager.Instance != null)
         {
             UIManager.Instance.OpenGameOverUI();
@@ -140,6 +216,7 @@ public class PlayerStat : MonoBehaviour
         Time.timeScale = 0f;
         OnPlayerDeath?.Invoke();
 
+        this.enabled = false;
     }
 
     //배고픔, 갈증 감소 함수
@@ -152,6 +229,7 @@ public class PlayerStat : MonoBehaviour
         {
             Debug.Log("허기 또는 갈증이 0 이하 체력깍임");
             hp.DecreaseStat(5f);
+            //OnHpChanged?.Invoke(hp.currentValue, hp.maxValue);
             Debug.Log($"현재 체력 : {hp.currentValue}");
 
             if(hp.currentValue <= 0)
@@ -198,4 +276,7 @@ public class PlayerStat : MonoBehaviour
             }
         }
     }
+
+    // 현재 스태미나에 따라 공격 가능 여부 판정
+    public bool CanAttack(float amount) => stamina.currentValue >= amount;
 }

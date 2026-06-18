@@ -71,6 +71,7 @@ public class StorageUI : MonoBehaviour
         if (itemNameText != null) itemNameText.text = slotData.item.Name;
         if (itemDescText != null) itemDescText.text = slotData.item.description;
         if (itemIconImage != null) itemIconImage.sprite = slotData.item.icon;
+        Debug.Log($"선택한 아이템: {slotData.item.Name}, 설명 텍스트: {slotData.item.description}", slotData.item);
     }
 
     private void OnDisable()

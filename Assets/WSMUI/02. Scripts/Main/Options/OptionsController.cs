@@ -9,18 +9,24 @@ public class OptionsController : BasePopupUI
 
     [SerializeField] private Button confirmButton;
     [SerializeField] private Button returnButton;
+    [SerializeField] private Button resetButton;
 
     [Header("세부 옵션 컴포넌트 연결")]
+    [SerializeField] private GeneralOptions generalOptions;
     [SerializeField] private SoundOptions soundOptions;
     [SerializeField] private GraphicOptions graphicOptions;
-    [SerializeField] private KeyBindOptions keyBindOptions;
+    [SerializeField] private ControlOptions controlOptions;
+
+    private int currentTabIndex = 0;
 
     private void Awake()
     {
-        popupPanel = this.gameObject; // 부모 변수 연결
+        popupPanel = this.gameObject;
 
         confirmButton.onClick.AddListener(OnConfirmClick);
         returnButton.onClick.AddListener(OnReturnClick);
+
+        if (resetButton != null) resetButton.onClick.AddListener(OnResetClick);
 
         for (int i = 0; i < tabButtons.Length; i++)
         {
@@ -29,10 +35,9 @@ public class OptionsController : BasePopupUI
         }
     }
 
-    // 2. 이 Open() 함수가 있어야 PauseMenuController에서 호출할 수 있다.
     public void Open()
     {
-        ShowPanel(); // UIManager 스택 등록 및 창 켜기
+        ShowPanel();
     }
 
     private void OnEnable()
@@ -44,7 +49,8 @@ public class OptionsController : BasePopupUI
 
         if (soundOptions != null) soundOptions.Initialize();
         if (graphicOptions != null) graphicOptions.Initialize();
-        if (keyBindOptions != null) keyBindOptions.Initialize();
+        if (controlOptions != null) controlOptions.Initialize();
+        if (generalOptions != null) generalOptions.Initialize();
 
         if (tabPanels != null && tabPanels.Length > 0)
         {
@@ -62,6 +68,8 @@ public class OptionsController : BasePopupUI
 
     private void SwitchTab(int tabIndex)
     {
+        currentTabIndex = tabIndex; // [추가] 현재 선택된 탭 번호 기억하기
+
         for (int i = 0; i < tabPanels.Length; i++)
         {
             if (i == tabIndex)
@@ -77,16 +85,44 @@ public class OptionsController : BasePopupUI
         }
     }
 
+    private void OnResetClick()
+    {
+        switch (currentTabIndex)
+        {
+            case 0:
+                if (generalOptions != null) generalOptions.ResetToDefault();
+                break;
+            case 1:
+                if (graphicOptions != null) graphicOptions.ResetToDefault();
+                break;
+            case 2:
+                if (soundOptions != null) soundOptions.ResetToDefault();
+                break;
+            case 3:
+                if (controlOptions != null) controlOptions.ResetToDefault();
+                break;
+        }
+    }
+
     private void OnConfirmClick()
     {
+        // 모든 옵션 컴포넌트들의 실제 물리 저장 프로세스 일괄 가동
         if (soundOptions != null) soundOptions.SaveOptions();
+        if (graphicOptions != null) graphicOptions.SaveOptions();
+        if (controlOptions != null) controlOptions.SaveOptions(); // 추가
+        if (generalOptions != null) generalOptions.SaveOptions(); // 추가
+
         PlayerPrefs.Save();
         Debug.Log("OptionsController: 설정 데이터가 저장되었습니다.");
     }
 
-    private void OnReturnClick()
+    public void OnReturnClick()
     {
         if (soundOptions != null) soundOptions.RevertOptions();
+        if (graphicOptions != null) graphicOptions.RevertOptions();
+        if (controlOptions != null) controlOptions.RevertOptions(); // 추가
+        if (generalOptions != null) generalOptions.RevertOptions(); // 추가
+
         HidePanel();
     }
 }

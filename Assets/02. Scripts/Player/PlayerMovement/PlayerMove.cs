@@ -23,8 +23,12 @@ public class PlayerMove : MonoBehaviour
     [Header("스태미나 세팅")]
     private PlayerStat playerStat;
     [SerializeField] private float staminaDecreaseRate = 10f;
-    [SerializeField] private float staminaRecoverRate = 0.1f;
-    private bool isExhausted = false;
+    [SerializeField] private float staminaRecoverRate = 0.01f;
+    [SerializeField] private float recoveryDelay = 1f;
+    public bool isExhausted = false;
+
+    private bool isRecoveryPaused = false;
+
 
     [Header("플레이어 컴포넌트")]
     private Animator playerAnim;
@@ -66,12 +70,12 @@ public class PlayerMove : MonoBehaviour
 
             if(playerStat.stamina.currentValue <= 0)
             {
-                StartCoroutine(ExhaustionRoutine());
+                TriggerExhaustion();
             }
         }
         else
         {
-            if(playerStat.stamina.currentValue < playerStat.stamina.maxValue)
+            if(!isRecoveryPaused && playerStat.stamina.currentValue < playerStat.stamina.maxValue)
             {
                 playerStat.stamina.AddStat(staminaRecoverRate * Time.deltaTime);
             }
@@ -124,9 +128,22 @@ public class PlayerMove : MonoBehaviour
 
     }
 
+    public void TriggerExhaustion()
+    {
+        if (!isExhausted)
+        {
+            StartCoroutine(ExhaustionRoutine());
+        }
+    }
     private IEnumerator ExhaustionRoutine()
     {
         isExhausted = true;
+
+        isRecoveryPaused = true;
+
+        yield return new WaitForSeconds(recoveryDelay);
+
+        isRecoveryPaused = false;
 
         yield return new WaitUntil(() =>playerStat.stamina.currentValue >= playerStat.stamina.maxValue);
 

@@ -38,9 +38,8 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] private CanvasGroup fadeCanvasGroup;
 
     [Header("UI Stack Management")]
-    // 현재 화면에 켜져 있는 UI들을 순서대로 담아두는 리스트 (스택 역할)
     private List<GameObject> _activeUIStack = new List<GameObject>();
-    private bool _isSceneLoading = false; // 씬 로딩 중 커서 제어 방어용
+    private bool _isSceneLoading = false;
 
     private HUDController _hudController;
     private int activePopupCount = 0;
@@ -57,6 +56,9 @@ public class UIManager : Singleton<UIManager>
     private float _lastStorageToggleTime;
 
     public SaveLoadController saveLoadController;
+
+    // [최적화 핵심] 매 프레임 문자열 비교를 방지하기 위한 캐싱 변수
+    private bool _isCurrentSceneGame = false;
 
     protected override void Awake()
     {
@@ -75,12 +77,13 @@ public class UIManager : Singleton<UIManager>
             GameManager.Instance.OnGameStart += InitializeInGameUI;
         }
     }
+
     private void Update()
     {
-        if (SceneManager.GetActiveScene().name != Constants.ESceneType.PrototypeGame.ToString()) return;
+        // [최적화] 매 프레임 스트링을 생성하던 무거운 코드를 단순 bool 체크로 변경
+        if (!_isCurrentSceneGame) return;
 
-        // 메뉴/뒤로가기 키 (기존 로직 유지. 필요시 InputManager에 편입 가능)
-        if (Input.GetKeyDown(KeyCode.Backspace))
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (SlotUI.PickedSlot != null) SlotUI.PickedSlot.CancelPick();
             if (_activeUIStack.Count > 0)
@@ -90,23 +93,39 @@ public class UIManager : Singleton<UIManager>
                 else if (topUI == storagePanel) ToggleStorage();
                 else if (topUI == inventoryPanel) ToggleInventory();
                 else if (topUI == pauseMenuPanel) TogglePauseMenu();
-                else if (topUI == dialoguePanel) { /* DialogueManager 등에서 닫도록 처리 */ }
+                else if (topUI == dialoguePanel) { }
+                else if (topUI == optionPanel)
+                {
+                    topUI.GetComponent<OptionsController>().OnReturnClick();
+                }
+                else if (topUI == saveLoadPanel)
+                {
+                    if (saveLoadController != null)
+                    {
+                        System.Action closeAction = saveLoadController.onCloseAction;
+                        saveLoadController.onCloseAction = null;
+
+                        UnregisterUI(topUI);
+                        topUI.SetActive(false);
+
+                        closeAction?.Invoke();
+                    }
+                }
                 else
                 {
                     UnregisterUI(topUI);
                     topUI.SetActive(false);
                 }
-
                 return;
             }
             TogglePauseMenu();
         }
 
-        
         if (InputManager.Instance.GetKeyDown(EKeyAction.Inventory) || Input.GetKeyDown(KeyCode.Tab))
         {
             ToggleInventory();
         }
+
         if (InputManager.Instance.GetKeyDown(EKeyAction.Interact))
         {
             if (storagePanel != null && storagePanel.activeSelf)
@@ -143,11 +162,12 @@ public class UIManager : Singleton<UIManager>
 
     public void UpdateCursorState()
     {
-        if (_isSceneLoading) return; // 씬 로딩 중에는 상태 변경 차단
+        if (_isSceneLoading) return;
 
         _activeUIStack.RemoveAll(ui => ui == null || !ui.activeSelf);
-        string currentScene = SceneManager.GetActiveScene().name;
-        if (currentScene != Constants.ESceneType.PrototypeGame.ToString())
+
+        // [최적화] 여기서도 문자열 비교 대신 미리 구해둔 bool 값을 활용
+        if (!_isCurrentSceneGame)
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
@@ -156,21 +176,20 @@ public class UIManager : Singleton<UIManager>
 
         bool showCursor = _activeUIStack.Count > 0;
 
-        if (showCursor) // UI가 화면을 가리고 있는 상태
+        if (showCursor)
         {
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-            SetHUDActive(false); // [핵심] UI 켜지면 트래커와 HUD 일괄 숨김
+            SetHUDActive(false);
         }
-        else // 순수하게 게임만 플레이하는 상태
+        else
         {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
-            SetHUDActive(true);  // [핵심] 전부 닫히면 다시 표시
+            SetHUDActive(true);
         }
     }
 
-    // [추가] 인게임 HUD와 트래커 묶음 통제 함수
     private void SetHUDActive(bool isActive)
     {
         if (_hudController == null) _hudController = FindFirstObjectByType<HUDController>(FindObjectsInactive.Include);
@@ -178,7 +197,6 @@ public class UIManager : Singleton<UIManager>
 
         if (_cachedTracker != null)
         {
-            // 켤 때 퀘스트가 없으면 OnEnable에서 알아서 거르므로 그냥 isActive를 넘긴다.
             _cachedTracker.gameObject.SetActive(isActive);
         }
     }
@@ -188,7 +206,8 @@ public class UIManager : Singleton<UIManager>
     {
         if (_isSceneLoading) return;
 
-        if (SceneManager.GetActiveScene().name == Constants.ESceneType.PrototypeGame.ToString())
+        // [최적화] 에디터용 렉 유발 스트링 체크 코드 수정
+        if (_isCurrentSceneGame)
         {
             if (_activeUIStack.Count == 0 && Cursor.lockState != CursorLockMode.Locked)
             {
@@ -201,8 +220,6 @@ public class UIManager : Singleton<UIManager>
 
     public void ToggleInventory()
     {
-
-
         if (inventoryPanel == null) return;
         if (storagePanel != null && storagePanel.activeSelf)
         {
@@ -222,25 +239,12 @@ public class UIManager : Singleton<UIManager>
         {
             UnregisterUI(inventoryPanel);
         }
-
-        PlayerMove playerMove = FindFirstObjectByType<PlayerMove>();
-        if(playerMove != null)
-        {
-            playerMove.isInventoryOpen = isNowActive;
-
-            if (isNowActive)
-            {
-                playerMove.PausePlayer();
-                Debug.Log("인벤토리 열림 - 플레이어 이동 중지");
-            }
-        }
     }
 
     public void ToggleStorage(InventorySlot[] slots = null)
     {
         if (storagePanel == null || inventoryPanel == null) return;
 
-        // [수정 3 핵심] 0.1초 이내에 토글이 연달아 호출되면 무시 (E키 충돌 방지)
         if (Time.unscaledTime - _lastStorageToggleTime < 0.1f) return;
         _lastStorageToggleTime = Time.unscaledTime;
 
@@ -263,18 +267,6 @@ public class UIManager : Singleton<UIManager>
             UnregisterUI(inventoryPanel);
             InventoryManager.Instance.OpenStorage(null);
         }
-
-        PlayerMove playerMove = FindFirstObjectByType<PlayerMove>();
-        if(playerMove != null)
-        {
-            playerMove.isInventoryOpen = isNowActive;
-
-            if (isNowActive)
-            {
-                playerMove.PausePlayer();
-                Debug.Log("인벤토리 열림 - 플레이어 이동 중지");
-            }
-        }
     }
 
     public void TogglePauseMenu()
@@ -286,15 +278,13 @@ public class UIManager : Singleton<UIManager>
         if (isPaused)
         {
             RegisterUI(pauseMenuPanel);
-            SoundManager.Instance?.PauseBGM();
+            GameManager.Instance?.Pause();
         }
         else
         {
             UnregisterUI(pauseMenuPanel);
-            SoundManager.Instance?.ResumeBGM();
+            GameManager.Instance?.Resume();
         }
-
-        Time.timeScale = isPaused ? 0f : 1f;
     }
 
     public void ShowPauseMenuWithoutChangingTimeScale()
@@ -363,7 +353,7 @@ public class UIManager : Singleton<UIManager>
         }
         else
         {
-            Debug.LogError("UIManager에 gameOverPanel이 연결되지 않았습니다! 인스펙터 창을 확인하세요.");
+            Debug.LogError("UIManager에 gameOverPanel이 연결되지 않았습니다!");
         }
     }
 
@@ -428,7 +418,6 @@ public class UIManager : Singleton<UIManager>
         {
             if (loadingPanelPrefab == null)
             {
-                Debug.LogError("UIManager: loadingPanelPrefab reference is missing.");
                 SceneManager.LoadScene(sceneType.ToString());
                 yield break;
             }
@@ -451,33 +440,53 @@ public class UIManager : Singleton<UIManager>
             yield return null;
         }
 
-        if (withLoadingPanel) loadingPanelPrefab.SetProgress(1f);
-
-        fadeDone = false;
-        FadeOut(0.5f, () => fadeDone = true);
-        yield return new WaitUntil(() => fadeDone);
-
-        asyncOperation.allowSceneActivation = true;
-        yield return new WaitUntil(() => asyncOperation.isDone);
-
         if (withLoadingPanel)
         {
+            loadingPanelPrefab.SetProgress(1f);
+
+            fadeDone = false;
+            FadeOut(0.5f, () => fadeDone = true);
+            yield return new WaitUntil(() => fadeDone);
+
             loadingPanelPrefab.gameObject.SetActive(false);
             CloseAllGlobalPopups();
         }
+
+        asyncOperation.allowSceneActivation = true;
+        yield return new WaitUntil(() => asyncOperation.isDone);
 
         _isSceneLoading = false;
         UpdateCursorState();
     }
 
+    public void FadeIn(float duration = 0.5f, Action onComplete = null)
+    {
+        fadeCanvasGroup.DOKill();
+        fadeCanvasGroup.gameObject.SetActive(true);
+
+        fadeCanvasGroup.DOFade(0f, duration).SetUpdate(true).OnComplete(() =>
+        {
+            fadeCanvasGroup.gameObject.SetActive(false);
+            onComplete?.Invoke();
+        });
+    }
+
+    public void FadeOut(float duration = 0.5f, Action onComplete = null)
+    {
+        fadeCanvasGroup.DOKill();
+        fadeCanvasGroup.gameObject.SetActive(true);
+
+        fadeCanvasGroup.DOFade(1f, duration).SetUpdate(true).OnComplete(() => onComplete?.Invoke());
+    }
+
     protected override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        _activeUIStack.Clear(); // 씬이 로드되면 스택 초기화
+        _activeUIStack.Clear();
         CloseAllGlobalPopups();
 
+        _isCurrentSceneGame = scene.name == Constants.ESceneType.PrototypeGame.ToString();
         if (fadeCanvasGroup == null)
         {
-            //fadeCanvasGroup파괴 방어 코드 추가
             fadeCanvasGroup = FindFirstObjectByType<CanvasGroup>(FindObjectsInactive.Include);
         }
 
@@ -495,10 +504,12 @@ public class UIManager : Singleton<UIManager>
         {
             pauseMenuPanel.SetActive(false);
         }
+        if (gameOverPanel != null)
+        {
+            gameOverPanel.SetActive(false);
+        }
 
-        bool isGameScene = scene.name == Constants.ESceneType.PrototypeGame.ToString();
-        Time.timeScale = 1f;
-        if (isGameScene)
+        if (_isCurrentSceneGame)
         {
             UpdateCursorState();
         }
@@ -513,6 +524,9 @@ public class UIManager : Singleton<UIManager>
             if (SoundManager.Instance != null)
                 SoundManager.Instance.PlaySceneBGM(scene.name);
         });
+
+        GraphicOptions graphicOpt = FindFirstObjectByType<GraphicOptions>(FindObjectsInactive.Include);
+        if (graphicOpt != null) graphicOpt.ApplySavedBrightnessToCurrentScene();
     }
 
     private void InitializeInGameUI()
@@ -521,30 +535,11 @@ public class UIManager : Singleton<UIManager>
         if (_hudController != null) _hudController.InitHUD();
     }
 
-    public void FadeIn(float duration = 0.5f, Action onComplete = null)
-    {
-        fadeCanvasGroup.alpha = 1f;
-        fadeCanvasGroup.gameObject.SetActive(true);
-        fadeCanvasGroup.DOFade(0f, duration).SetUpdate(true).OnComplete(() =>
-        {
-            fadeCanvasGroup.gameObject.SetActive(false);
-            onComplete?.Invoke();
-        });
-    }
-
-    public void FadeOut(float duration = 0.5f, Action onComplete = null)
-    {
-        fadeCanvasGroup.alpha = 0f;
-        fadeCanvasGroup.gameObject.SetActive(true);
-        fadeCanvasGroup.DOFade(1f, duration).SetUpdate(true).OnComplete(() => onComplete?.Invoke());
-    }
-
     private void OnApplicationFocus(bool focus)
     {
         if (focus)
         {
-            string currentScene = SceneManager.GetActiveScene().name;
-            if (currentScene == Constants.ESceneType.PrototypeGame.ToString())
+            if (_isCurrentSceneGame)
             {
                 UpdateCursorState();
             }
@@ -580,25 +575,4 @@ public class UIManager : Singleton<UIManager>
         }
         return KeyCode.None;
     }
-#if UNITY_EDITOR
-    // 화면 좌측 상단에 현재 스택의 상태를 실시간으로 그린다.
-    private void OnGUI()
-    {
-        if (_activeUIStack.Count > 0)
-        {
-            GUI.color = Color.red;
-            GUI.Label(new Rect(10, 10, 500, 20), "현재 스택에 남은 UI 수: " + _activeUIStack.Count);
-            for (int i = 0; i < _activeUIStack.Count; i++)
-            {
-                if (_activeUIStack[i] != null)
-                    GUI.Label(new Rect(10, 30 + (i * 20), 500, 20), "- " + _activeUIStack[i].name);
-            }
-        }
-        else
-        {
-            GUI.color = Color.green;
-            GUI.Label(new Rect(10, 10, 500, 20), "스택 비어있음 (이 상태에서 커서가 보이면 유니티 에디터 버그임)");
-        }
-    }
-#endif
 }

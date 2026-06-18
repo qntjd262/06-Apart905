@@ -37,6 +37,7 @@ public class MoveChecker : MonoBehaviour
                     {
                         moveLevel.check = false;
                         moveLevel.MoveUp();
+                        moveLevel.state = MoveLevel.PlayerState.MoveDown;
                     }
                 }
                 else if (isUp)
@@ -50,6 +51,7 @@ public class MoveChecker : MonoBehaviour
                     {
                         moveLevel.check = false;
                         moveLevel.MoveDown();
+                        moveLevel.state = MoveLevel.PlayerState.MoveUp;
                     }
                 }
             }

@@ -10,6 +10,9 @@ public class PlayerQuickSlotUI : MonoBehaviour
 
     private SlotUI[] uiSlots;
     private Tween fadeTween;
+    
+    // [추가] 장착 명령을 내릴 PlayerEquip을 캐싱해둡니다.
+    private PlayerEquip playerEquip; 
 
     void Awake()
     {
@@ -25,12 +28,15 @@ public class PlayerQuickSlotUI : MonoBehaviour
 
     void Start()
     {
+        playerEquip = FindFirstObjectByType<PlayerEquip>(); // 플레이어 장비 스크립트 찾기
+
         if (InventoryManager.Instance != null)
         {
             InventoryManager.Instance.OnQuickSlotUpdated += OnQuickSlotUpdatedCallback;
             RefreshUI(false);
         }
     }
+
     void Update()
     {
         if (UIManager.Instance.IsAnyPopupOpen) return;
@@ -46,7 +52,6 @@ public class PlayerQuickSlotUI : MonoBehaviour
 
     private void OnDestroy()
     {
-        // 씬이 전환되거나 오브젝트가 파괴될 때 싱글톤 매니저에 등록된 이벤트를 확실히 끊어준다.
         if (InventoryManager.Instance != null)
         {
             InventoryManager.Instance.OnQuickSlotUpdated -= OnQuickSlotUpdatedCallback;
@@ -56,14 +61,18 @@ public class PlayerQuickSlotUI : MonoBehaviour
     private void OnQuickSlotUpdatedCallback()
     {
         if (this == null || canvasGroup == null) return;
-
         RefreshUI(true);
     }
+    
     private void HandleQuickSlotInput(int index)
     {
-        InventoryManager.Instance.UseItem(index, true, InventoryManager.Instance.Player);
+        // [수정] UseItem 대신 단축키 번호에 맞춰 플레이어에게 장비를 장착시킵니다.
+        if (playerEquip != null)
+        {
+            playerEquip.EquipFromQuickSlot(index);
+        }
 
-        // [수정 4] 단축키를 누른 퀵슬롯의 외곽선 하이라이트 켜기
+        // 단축키를 누른 퀵슬롯의 외곽선 하이라이트 켜기
         if (index < uiSlots.Length)
         {
             uiSlots[index].SelectSlot();
@@ -75,12 +84,11 @@ public class PlayerQuickSlotUI : MonoBehaviour
     public void TriggerShow()
     {
         fadeTween?.Kill();
-
-        canvasGroup.alpha = 1f; // 즉시 나타나게 함 (혹은 .DOFade(1f, 0.2f)로 부드럽게 등장 가능)
+        canvasGroup.alpha = 1f;
 
         fadeTween = canvasGroup.DOFade(0f, fadeDuration)
-            .SetDelay(displayDuration) // 설정한 시간만큼 버틴 후
-            .SetEase(Ease.InQuad);    // 서서히 사라지는 가속도 설정
+            .SetDelay(displayDuration)
+            .SetEase(Ease.InQuad);
     }
 
     private void RefreshUI(bool showEffect = true)

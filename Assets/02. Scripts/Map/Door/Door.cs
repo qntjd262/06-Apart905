@@ -7,19 +7,20 @@ public class Door : MonoBehaviour, IInteractable
     /* 구현된 3개 층의 문에 할당하는 스크립트
      */
 
-    [SerializeField] private Vector3 openRotation;     // 문이 열렸을 때의 회전값
-    [SerializeField] private Vector3 closedRotation;   // 문이 닫혔을 때의 회전값
-    [SerializeField] private float animDuration = 0.5f; // 애니메이션 재생 시간(초)
-    [SerializeField] private AnimationCurve animCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f); // 이징 커브
+    [SerializeField] private GameObject Hinge;                  // 문의 회전축이 되는 오브젝트
+    [SerializeField] private DoorManager _doorManager;
+    [SerializeField] private Vector3 openRotation;              // 문이 열렸을 때의 회전값
+    [SerializeField] private Vector3 closedRotation;            // 문이 닫혔을 때의 회전값
+    [SerializeField] private float animDuration = 0.5f;         // 애니메이션 재생 시간(초)
 
-    public int localFloorOffset; // 3개 층 중 몇 번째 층인지 (0,1,2)
+    public int realFloor;
     public bool isLeft;
     public int doorNum;
 
     private bool isOpen = false;
     private bool isAnimating = false;   // 애니메이션 진행 중 중복 입력 방지
-    private Coroutine _animCoroutine;
-    private DoorManager _doorManager;
+    private Coroutine _animCoroutine;    
+    private AnimationCurve animCurve = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f); // 이징 커브
 
     public string GetInteractText()
     {
@@ -55,7 +56,7 @@ public class Door : MonoBehaviour, IInteractable
         }
 
         isOpen = open;
-        transform.rotation = Quaternion.Euler(open ? openRotation : closedRotation);
+        Hinge.transform.localRotation = Quaternion.Euler(open ? openRotation : closedRotation);
     }
 
     private void PlayDoorAnimation(bool open)
@@ -70,7 +71,7 @@ public class Door : MonoBehaviour, IInteractable
     {
         isAnimating = true;
 
-        Quaternion from = transform.rotation;
+        Quaternion from = Hinge.transform.localRotation;
         Quaternion to = Quaternion.Euler(open ? openRotation : closedRotation);
 
         float elapsed = 0f;
@@ -81,18 +82,19 @@ public class Door : MonoBehaviour, IInteractable
             float t = Mathf.Clamp01(elapsed / animDuration);
             float curvedT = animCurve.Evaluate(t);
 
-            transform.rotation = Quaternion.Lerp(from, to, curvedT);
+            Hinge.transform.localRotation = Quaternion.Lerp(from, to, curvedT);
             yield return null;
         }
 
-        transform.rotation = to;
-
+        Hinge.transform.localRotation = to;
         isAnimating = false;
         _animCoroutine = null;
+        Debug.Log($"[Door] 애니메이션 완료: {(open ? "열림" : "닫힘")}");
     }
 
     private DoorInfo GetInfo() => new DoorInfo
     {
+        floor = realFloor,
         isLeft = isLeft,
         doorNum = doorNum
     };
