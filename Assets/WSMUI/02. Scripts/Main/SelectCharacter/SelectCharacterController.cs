@@ -35,13 +35,14 @@ public class SelectCharacterController : MonoBehaviour
     private int currentIndex = 0;
     private int totalCount;
     private Transform[] cards;
-    private CharacterCard[] cardScripts; // 추가
+    private CharacterCard[] cardScripts;
 
     private void OnEnable()
     {
         if (UIManager.Instance != null)
             UIManager.Instance.OpenPopupWithEffects("캐릭터 선택");
         currentIndex = 0;
+        UpdateUI(true);
     }
 
     private void OnDisable()
@@ -62,13 +63,13 @@ public class SelectCharacterController : MonoBehaviour
         }
         */
 
-        if(CharacterDataManager.Instance == null)
+        if (CharacterDataManager.Instance == null)
         {
             Debug.LogError("CharacterDataManager 인스턴스가 존재하지 않습니다!");
             return;
         }
 
-        if(CharacterDataManager.Instance.IsDataLoaded)
+        if (CharacterDataManager.Instance.IsDataLoaded)
         {
             InitializeUI();
         }
@@ -77,14 +78,14 @@ public class SelectCharacterController : MonoBehaviour
             Debug.Log("캐릭터 데이터 대기 중");
             CharacterDataManager.Instance.OnDataLoaded += OnDataLoadedCallback;
         }
-        
+
     }
 
     private void OnDataLoadedCallback()
     {
         Debug.Log("데이터 수신 완료 UI 출력 시작");
 
-        if(CharacterDataManager.Instance != null)
+        if (CharacterDataManager.Instance != null)
         {
             CharacterDataManager.Instance.OnDataLoaded -= OnDataLoadedCallback;
         }
@@ -122,12 +123,12 @@ public class SelectCharacterController : MonoBehaviour
 
 
         UpdateUI(true);
-        
+
     }
 
     private void OnDestroy()
     {
-        if(CharacterDataManager.Instance != null)
+        if (CharacterDataManager.Instance != null)
         {
             CharacterDataManager.Instance.OnDataLoaded -= OnDataLoadedCallback;
         }
@@ -225,5 +226,9 @@ public class SelectCharacterController : MonoBehaviour
             UIManager.Instance.LoadScene(Constants.ESceneType.PrototypeGame);
         }
 
+    }
+    public void OnClickBackButton()
+    {
+        UIManager.Instance.CloseSelectCharacterPanel();
     }
 }
