@@ -1277,7 +1277,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 183fbd0379e8fb742ae4b2d62fc9b13c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerStat: {fileID: 0}
+  playerStat: {fileID: 2754259696746578997}
   postProcessVolume: {fileID: 2130546214}
 --- !u!1001 &1112776160
 PrefabInstance:
@@ -1989,6 +1989,10 @@ PrefabInstance:
     - target: {fileID: 6693885897241388227, guid: c45edc97c8848b6438e7cc1c9bca687e, type: 3}
       propertyPath: m_Name
       value: Player1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7428833028604922658, guid: c45edc97c8848b6438e7cc1c9bca687e, type: 3}
+      propertyPath: obstacleLayer.m_Bits
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
