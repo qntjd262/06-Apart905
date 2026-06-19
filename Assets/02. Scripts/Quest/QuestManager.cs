@@ -1,27 +1,45 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 public class QuestManager : MonoBehaviour
 {
-    public static QuestManager Instance;
+    public static QuestManager Instance { get; private set; }
     public QuestUI questUI;
     public List<Quest> activeQuests = new List<Quest>();
-
     public List<string> completedQuestNames = new List<string>();
 
     private Quest pendingQuest;
-
     private PlayerStat pendingPlayer;
-
     public Quest trackingQuest; // 현재 메인 트래커에 표시될 퀘스트
+
+    [Header("모든 퀘스트 데이터베이스")]
+    public List<Quest> allQuests = new List<Quest>();
+
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    private void Start()
+    {
+        CheckAndAutoAcceptQuests();
+    }
 
     public bool IsQuestAvailable(Quest quest)
     {
         if (quest == null) return false;
-
         if (completedQuestNames.Contains(quest.questName)) return false;
-
         if (activeQuests.Exists(q => q.questName == quest.questName)) return false;
+
+        if (pendingQuest != null && pendingQuest.questName == quest.questName) return false;
 
         if (quest.prevQuest != null)
         {
@@ -37,22 +55,28 @@ public class QuestManager : MonoBehaviour
     {
         trackingQuest = quest;
 
-        // 메인 트래커 갱신
         if (UIManager.Instance != null && UIManager.Instance.MainTracker != null && quest != null)
         {
             UIManager.Instance.MainTracker.Setup(quest);
         }
     }
 
-    void Awake()
+    public void CheckAndAutoAcceptQuests()
     {
-        if (Instance == null)
+        PlayerStat player = FindFirstObjectByType<PlayerStat>(); 
+
+        foreach (var quest in allQuests)
         {
-            Instance = this;
-        }
-        else
-        {
-            Destroy(gameObject);
+            if (!quest.isCompleted && 
+                !activeQuests.Exists(q => q.questName == quest.questName) && 
+                quest.isAutoAccept && 
+                IsQuestAvailable(quest))
+            {
+                AcceptQuest(quest, player);
+                Debug.Log($"[자동 수락 감지] '{quest.questName}' 퀘스트 팝업을 요청합니다.");
+                
+                break; 
+            }
         }
     }
 
@@ -62,24 +86,30 @@ public class QuestManager : MonoBehaviour
         {
             Debug.Log($"[{newQuest.questName}]은 이미 진행 중인 퀘스트입니다.");
             if (player != null) player.isInteracting = false;
-
             if (DialogueManager.Instance != null) DialogueManager.Instance.EndDialogue();
             return;
         }
 
         pendingQuest = newQuest;
-        pendingPlayer = player;
+        pendingPlayer = player; // 자동 수락일 경우 null일 수 있음
 
+        // 자동 수락이든 NPC 수락이든 팝업창 띄움
         if (QuestNotifyUI.Instance != null)
         {
             QuestNotifyUI.Instance.ShowNotice(newQuest);
+            
+            if (newQuest.isAutoAccept && pendingPlayer != null)
+            {
+                pendingPlayer.isInteracting = true;
+            }
         }
         else
         {
-            Debug.LogError("씬에 오브젝트를 찾을수 없습니다");
+            Debug.LogError("씬에 QuestNotifyUI 오브젝트를 찾을수 없습니다");
             if (pendingPlayer != null) pendingPlayer.isInteracting = false;
             if (DialogueManager.Instance != null) DialogueManager.Instance.EndDialogue();
         }
+        
         if (trackingQuest == null) SetTrackingQuest(newQuest);
     }
 
@@ -96,11 +126,13 @@ public class QuestManager : MonoBehaviour
             }
         }
 
-        activeQuests.Add(pendingQuest);
-        Debug.Log($"{pendingQuest.questName} 퀘스트를 수락하였습니다.");
+        Quest acceptedQuest = pendingQuest; 
+        activeQuests.Add(acceptedQuest);
+        Debug.Log($"{acceptedQuest.questName} 퀘스트를 수락하였습니다.");
 
         pendingQuest = null;
 
+        // 대화 중이거나 자동 수락으로 묶여있던 플레이어 상태 해제
         if (pendingPlayer != null)
         {
             pendingPlayer.isInteracting = false;
@@ -112,66 +144,44 @@ public class QuestManager : MonoBehaviour
             DialogueManager.Instance.EndDialogue();
         }
 
-        NPC[] allNPCs = FindObjectsByType<NPC>(FindObjectsInactive.Include, FindObjectsSortMode.None);
-        foreach (NPC npc in allNPCs)
-        {
-            npc.UpdateOutlineColor();
-        }
+        UpdateAllNPCOutlines();
+        RefreshQuestUIs();
 
-        if (questUI != null) questUI.RefreshQuestList();
+        if (acceptedQuest.currentAmount >= acceptedQuest.goalAmount && acceptedQuest.isAutoComplete)
+        {
+            CompleteQuestInstantly(acceptedQuest);
+        }
         else
         {
-            QuestUI ui = FindAnyObjectByType<QuestUI>(FindObjectsInactive.Include);
-            if (ui != null) ui.RefreshQuestList();
+            CheckAndAutoAcceptQuests();
         }
     }
 
     public void CancelQuest()
     {
         Debug.Log("퀘스트 수락을 거절했습니다.");
-        pendingQuest = null; //대기 중인 퀘스트 취소
+        pendingQuest = null; 
 
         if (pendingPlayer != null)
         {
             pendingPlayer.isInteracting = false;
             pendingPlayer = null;
-
         }
         if (DialogueManager.Instance != null)
         {
             DialogueManager.Instance.EndDialogue();
         }
+        
+        CheckAndAutoAcceptQuests();
     }
-
-    // public void NotifyEvent(QuestType type, string id, int amount)
-    // {
-    //     foreach (var quest in activeQuests)
-    //     {
-    //         if (quest.type == type)
-    //         {
-    //             quest.UpdateProgress(id, amount);
-    //         }
-    //     }
-    //     //UI용 추가
-    //     QuestTrackerUI[] trackers = FindObjectsOfType<QuestTrackerUI>();
-    //     foreach (var tracker in trackers)
-    //     {
-    //         tracker.UpdateProgress();
-    //     }
-
-    //     if (questUI != null && questUI.gameObject.activeSelf)
-    //     {
-    //         questUI.RefreshQuestList();
-    //     }
-    // }
 
     public void NotifyEvent(QuestType type, string id, int amount)
     {
-        foreach (var quest in activeQuests)
+        for (int i = activeQuests.Count - 1; i >= 0; i--)
         {
-            if (quest.type == type)
+            if (activeQuests[i].type == type)
             {
-                quest.UpdateProgress(id, amount);
+                activeQuests[i].UpdateProgress(type, id, amount);
             }
         }
 
@@ -180,6 +190,66 @@ public class QuestManager : MonoBehaviour
             UIManager.Instance.MainTracker.UpdateProgress();
         }
 
+        RefreshQuestUIs();
+    }
+
+    public void CompleteQuestInstantly(Quest quest)
+    {
+        if (quest.isCompleted) return;
+
+        quest.isCompleted = true;
+
+        if (!completedQuestNames.Contains(quest.questName))
+        {
+            completedQuestNames.Add(quest.questName);
+        }
+
+        if (quest.type == QuestType.ItemCollection && InventoryManager.Instance != null)
+        {
+            InventoryManager.Instance.RemoveItem(quest.targetID, quest.goalAmount);
+        }
+
+        if (quest.rewardItemID != null && InventoryManager.Instance != null)
+        {
+            bool isSuccess = InventoryManager.Instance.AddItem(quest.rewardItemID);
+            Debug.Log($"[즉시 완료 보상] {quest.rewardItemID.itemName}를 획득하였습니다!");
+        }
+
+        activeQuests.RemoveAll(q => q.questName == quest.questName);
+
+        if (trackingQuest != null && trackingQuest.questName == quest.questName)
+        {
+            trackingQuest = null;
+
+            if (activeQuests.Count > 0)
+            {
+                SetTrackingQuest(activeQuests[0]);
+            }
+            else
+            {
+                // 트래커 UI 숨기기 등
+            }
+        }
+
+        UpdateAllNPCOutlines();
+        RefreshQuestUIs();
+
+        Debug.Log($"[즉시 완료] {quest.questName} 퀘스트가 조건을 만족하여 즉시 완료되었습니다.");
+
+        CheckAndAutoAcceptQuests();
+    }
+
+    private void UpdateAllNPCOutlines()
+    {
+        NPC[] allNPCs = FindObjectsByType<NPC>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        foreach (NPC npc in allNPCs)
+        {
+            npc.UpdateOutlineColor();
+        }
+    }
+
+    private void RefreshQuestUIs()
+    {
         if (questUI != null && questUI.gameObject.activeSelf)
         {
             questUI.RefreshQuestList();
@@ -191,13 +261,13 @@ public class QuestManager : MonoBehaviour
         }
     }
 
-    public void OnPickUp()
+    public void OnPickUp(string itemName, int amount)
     {
-
+        NotifyEvent(QuestType.ItemCollection, itemName, amount);
     }
 
-    public void OnKill()
+    public void OnKill(string zombieID, int amount)
     {
-
+        NotifyEvent(QuestType.ZombieHunt, zombieID, amount);
     }
 }

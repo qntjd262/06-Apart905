@@ -58,6 +58,16 @@ public class PlayerController : MonoBehaviour
         //     Cursor.visible = false;
         // }
 
+        if (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive)
+        {
+            return; // 공격 불가
+        }
+        if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+        {
+            return; // UI 클릭 중이면 공격 불가
+        }
+
+
 
 
         //플레이어 회전 + 카메라

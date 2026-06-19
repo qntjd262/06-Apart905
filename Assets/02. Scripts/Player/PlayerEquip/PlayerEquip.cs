@@ -143,6 +143,11 @@ public class PlayerEquip : MonoBehaviour
             {
                 headlightSystem.AcquireHeadlight();
             }
+
+            if(QuestManager.Instance != null)
+            {
+                QuestManager.Instance.OnPickUp(itemData.Name, 1);
+            }
             return true;
         }
 

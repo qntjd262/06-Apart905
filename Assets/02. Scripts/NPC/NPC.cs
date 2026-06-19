@@ -32,7 +32,6 @@ public class NPC : MonoBehaviour, IInteractable
         Color targetColor = Color.red;
         string status = "";
 
-        //퀘스트 완료 시
         if(myQuest.isCompleted)
         {
             targetColor = Color.red;
@@ -47,29 +46,26 @@ public class NPC : MonoBehaviour, IInteractable
             }
             else
             {
-            
-            bool isActive = QuestManager.Instance.activeQuests.Exists(q => q.questName == myQuest.questName);
+                bool isActive = QuestManager.Instance.activeQuests.Exists(q => q.questName == myQuest.questName);
 
-            if(isActive)
-            {
-                //목표 아이템을 다 모았나?
-                if(myQuest.currentAmount >= myQuest.goalAmount)
+                if(isActive)
                 {
-                    targetColor = Color.green;
-                    status = "목표달성";
+                    if(myQuest.currentAmount >= myQuest.goalAmount)
+                    {
+                        targetColor = Color.green;
+                        status = "목표달성";
+                    }
+                    else
+                    {
+                        targetColor = Color.red;
+                        status = "목표치 부족";
+                    }
                 }
                 else
                 {
-                    targetColor = Color.red;
-                    status = "목표치 부족";
+                    targetColor = Color.green;
+                    status = "수락 전(보유중)";
                 }
-            }
-            else
-            {
-                //퀘스트가 수락 가능한 상태인가?
-                targetColor = Color.green;
-                status = "수락 전(보유중)";
-            }
             }
         }
         Debug.Log($"{gameObject.name}의 퀘스트 상태: {status} / 설정 색상: {targetColor}");
@@ -99,7 +95,6 @@ public class NPC : MonoBehaviour, IInteractable
         if (myQuest != null && !QuestManager.Instance.IsQuestAvailable(myQuest) && !QuestManager.Instance.activeQuests.Exists(q => q.questName == myQuest.questName))
         {
             Debug.Log($"{gameObject.name}: 선행 퀘스트를 완료하지 않아 퀘스트를 줄 수 없습니다.");
-            // 여기에 선행 퀘스트가 막혔을 때 NPC가 던질 대사 등 추가 가능
             return; 
         }
 
@@ -110,54 +105,60 @@ public class NPC : MonoBehaviour, IInteractable
 
         if (player.isInteracting || myQuest == null) return;
 
-        // 현재 인벤토리 수량을 퀘스트 데이터에 동기화
-        int currentBagCount = InventoryManager.Instance.GetItemCount(myQuest.targetID);
-        myQuest.ForceSyncProgress(currentBagCount);
+        if (myQuest.type == QuestType.ItemCollection)
+        {
+            int currentBagCount = InventoryManager.Instance.GetItemCount(myQuest.targetID);
+            myQuest.ForceSyncProgress(currentBagCount);
+        }
+        else if (myQuest.type == QuestType.Interact && QuestManager.Instance.activeQuests.Exists(q => q.questName == myQuest.questName))
+        {
+            if (npcData != null && myQuest.targetID == npcData.NpcID)
+            {
+                myQuest.ForceSyncProgress(myQuest.goalAmount);
+            }
+        }
 
         string[] currentDialogues;
-
-        // [중요] Contains 대신 Exists를 사용하여 현재 퀘스트가 리스트에 있는지 확인
         bool isAlreadyActive = QuestManager.Instance.activeQuests.Exists(q => q.questName == myQuest.questName);
 
-        // 상태에 따른 대사 결정
         if (!isAlreadyActive && !myQuest.isCompleted)
         {
-            // 아직 수락하지 않은 상태
             currentDialogues = myQuest.beforeAcceptDialogues;
         }
         else if (myQuest.currentAmount >= myQuest.goalAmount && !myQuest.isCompleted)
         {
-            // 목표 달성, 완료 대기 상태
             currentDialogues = myQuest.completeDialogues;
         }
         else
         {
-            // 이미 수락했으나 아직 진행 중인 상태
             currentDialogues = myQuest.duringAcceptDialogues;
         }
 
         player.isInteracting = true; 
         
         DialogueManager.Instance.StartDialogue(npcData, currentDialogues, () => {
-            //player.isInteracting = false; 
 
+            if (myQuest.type == QuestType.ItemCollection)
+            {
+                int finalCheckCount = InventoryManager.Instance.GetItemCount(myQuest.targetID);
+                myQuest.ForceSyncProgress(finalCheckCount);
+            }
 
-            int finalCheckCount = InventoryManager.Instance.GetItemCount(myQuest.targetID);
-            myQuest.ForceSyncProgress(finalCheckCount);
-
-            // 다시 한번 현재 리스트에 있는지 확인
             bool stillActive = QuestManager.Instance.activeQuests.Exists(q => q.questName == myQuest.questName);
 
             if (!stillActive && !myQuest.isCompleted)
             {
                 QuestManager.Instance.AcceptQuest(myQuest, player);
-
+                
+                if (myQuest.type == QuestType.Interact && npcData != null && myQuest.targetID == npcData.NpcID)
+                {
+                    myQuest.ForceSyncProgress(myQuest.goalAmount);
+                }
             }
             else
             {
                 if(myQuest.currentAmount >= myQuest.goalAmount && !myQuest.isCompleted)
                 {
-                    // 퀘스트 완료 처리
                     CompleteQuest();         
                 }
                 player.isInteracting = false; 
@@ -166,7 +167,7 @@ public class NPC : MonoBehaviour, IInteractable
                     DialogueManager.Instance.EndDialogue();
                 }
             }
-                UpdateOutlineColor();
+            UpdateOutlineColor();
         });
     }
 
@@ -179,22 +180,20 @@ public class NPC : MonoBehaviour, IInteractable
             QuestManager.Instance.completedQuestNames.Add(myQuest.questName);
         }
 
-        //퀘스트 완료 시 목표 아이템 제거
         if (myQuest.type == QuestType.ItemCollection)
         {
             InventoryManager.Instance.RemoveItem(myQuest.targetID, myQuest.goalAmount);
         }
 
-        //보상 아이템 지급
         if (myQuest.rewardItemID != null)
-            {
-                bool isSuccess = InventoryManager.Instance.AddItem(myQuest.rewardItemID);
-                Debug.Log($"{myQuest.rewardItemID.itemName}를 획득하였습니다!");
-            }
+        {
+            bool isSuccess = InventoryManager.Instance.AddItem(myQuest.rewardItemID);
+            Debug.Log($"{myQuest.rewardItemID.itemName}를 획득하였습니다!");
+        }
 
         QuestManager.Instance.activeQuests.RemoveAll(q => q.questName == myQuest.questName);
 
-         if (QuestManager.Instance.trackingQuest != null && QuestManager.Instance.trackingQuest.questName == myQuest.questName)
+        if (QuestManager.Instance.trackingQuest != null && QuestManager.Instance.trackingQuest.questName == myQuest.questName)
         {
             QuestManager.Instance.trackingQuest = null;
 
@@ -235,7 +234,7 @@ public class NPC : MonoBehaviour, IInteractable
 
     void RefreshStatus()
     {
-        if(myQuest != null)
+        if(myQuest != null && myQuest.type == QuestType.ItemCollection)
         {
             int count = InventoryManager.Instance.GetItemCount(myQuest.targetID);
             myQuest.ForceSyncProgress(count);

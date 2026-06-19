@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public enum QuestType { ItemCollection, ZombieHunt }
+public enum QuestType { ItemCollection, ZombieHunt, Interact}
 
 [CreateAssetMenu(fileName = "New Quest", menuName = "QuestSystem/Quest")]
 public class Quest : ScriptableObject
@@ -15,10 +15,14 @@ public class Quest : ScriptableObject
     
     public string questGoal; //목표 설명
     public QuestType type;
-    public string targetID; //필요 아이템의 이름
+    public string targetID; //필요 아이템의 이름 | type이 Interact일 시 상호작용 npc ID
     public int goalAmount; //필요 갯수
     public int currentAmount;
     public bool isMainQuest;//UI용 추가
+
+    [Header("Quest Options")]
+    public bool isAutoAccept;
+    public bool isAutoComplete;
 
     [Header("Reward")]
     public ItemData rewardItemID; //보상 아이템의 이름
@@ -30,17 +34,22 @@ public class Quest : ScriptableObject
 
     public bool isCompleted;
 
-    public void UpdateProgress(string id, int amount)
+    public void UpdateProgress(QuestType eventType, string id, int amount)
     {
         if(isCompleted) return;
 
-        if(targetID == id)
+        if(this.type == eventType && targetID == id)
         {
             currentAmount += amount;
             if(currentAmount >= goalAmount)
             {
                 currentAmount = goalAmount;
                 Debug.Log($"{questName} 목표 달성");
+
+                if(isAutoComplete)
+                {
+                    QuestManager.Instance.CompleteQuestInstantly(this);
+                }
             }
         }
     }
@@ -53,6 +62,11 @@ public class Quest : ScriptableObject
     if (currentAmount >= goalAmount)
     {
         currentAmount = goalAmount;
+
+        if(isAutoComplete && QuestManager.Instance.activeQuests.Exists(q => q.questName == this.questName))
+            {
+                QuestManager.Instance.CompleteQuestInstantly(this);
+            }
     }
 }
 }

@@ -3,6 +3,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class DialogueManager : Singleton<DialogueManager>
 {
@@ -26,6 +27,9 @@ public class DialogueManager : Singleton<DialogueManager>
 
     public TextMeshProUGUI nameText;       // NPC 이름 표시용
     public Image npcPortrait;              // NPC 이미지 표시용
+
+    [Header("대화 종료 후 딜레이")]
+    [SerializeField] private float blockDuration = 0.3f;
 
     void Start()
     {
@@ -99,7 +103,7 @@ public class DialogueManager : Singleton<DialogueManager>
             yield return null;
             yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0));
         }
-        EndDialogue(onComplete);
+        StartCoroutine(EndDialogueRoutine(onComplete));
     }
 
 
@@ -128,8 +132,27 @@ public class DialogueManager : Singleton<DialogueManager>
         onComplete?.Invoke();
     }
 
+    private IEnumerator EndDialogueRoutine(System.Action onComplete)
+    {
+        if (dialoguePanel != null)
+        {
+            dialoguePanel.SetActive(false);
+        }
+
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.UpdateCursorState();
+        }
+
+        onComplete?.Invoke();
+
+        yield return new WaitForSeconds(blockDuration);
+
+        IsDialogueActive = false; // 0.3초가 지나서야 플레이어 행동 가능
+    }
+
     public void EndDialogue()
     {
-        EndDialogue(null);
+        StartCoroutine(EndDialogueRoutine(null));
     }
 }
