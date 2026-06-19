@@ -1,81 +1,143 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using UnityEngine.SceneManagement;
 
-public class ItemMenuUI : Singleton<ItemMenuUI>
+public class ItemMenuUI : MonoBehaviour
 {
+    public static ItemMenuUI Instance { get; private set; }
+
     [SerializeField] private GameObject menuPanel;
     [SerializeField] private TextMeshProUGUI actionButtonText;
     [SerializeField] private Button actionButton;
     [SerializeField] private Button discardButton;
 
+    private float _openTime;
     private int _targetSlotIndex;
     private bool _isTargetQuickSlot;
+    private bool _initialized;
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
-        menuPanel.SetActive(false);
+        Initialize();
+    }
+
+    private void Initialize()
+    {
+        Instance = this;
+
+        if (menuPanel == null)
+        {
+            menuPanel = gameObject;
+        }
+
+        _initialized = true;
     }
 
     public void ShowMenu(SlotUI slot, InventorySlot slotData)
     {
-        Canvas mainCanvas = UnityEngine.Object.FindAnyObjectByType<Canvas>();
-        if (mainCanvas != null)
+        if (!_initialized)
         {
-            transform.SetParent(mainCanvas.transform, false);
+            Initialize();
         }
+
+        if (slot == null || slotData == null || slotData.item == null)
+        {
+            return;
+        }
+
+        if (menuPanel == null || actionButtonText == null || actionButton == null || discardButton == null)
+        {
+            Debug.LogError("ItemMenuUI has missing UI references.", this);
+            return;
+        }
+
+        InventoryUI inventoryUI = slot.GetComponentInParent<InventoryUI>();
+        RectTransform boundaryRect = inventoryUI != null ? inventoryUI.transform as RectTransform : null;
+
+        Canvas targetCanvas = slot.GetComponentInParent<Canvas>();
+        UIManager uiManager = FindFirstObjectByType<UIManager>();
+        if (targetCanvas == null && uiManager != null)
+        {
+            targetCanvas = uiManager.CurrentCanvas;
+        }
+        if (targetCanvas == null)
+        {
+            targetCanvas = FindFirstObjectByType<Canvas>();
+        }
+
+        if (boundaryRect == null && targetCanvas != null)
+        {
+            boundaryRect = targetCanvas.transform as RectTransform;
+        }
+
+        if (boundaryRect != null)
+        {
+            transform.SetParent(boundaryRect, false);
+        }
+
+        menuPanel.SetActive(true);
         transform.SetAsLastSibling();
 
         _targetSlotIndex = slot.SlotIndex;
         _isTargetQuickSlot = slot.IsQuickSlot;
 
-        // 버튼 텍스트 설정
         if (slotData.item.itemType == ItemType.Eatable)
+        {
             actionButtonText.text = "사용하기";
+        }
         else if (slotData.item.itemType == ItemType.Equipable)
+        {
             actionButtonText.text = "장착하기";
+        }
 
-        // 메뉴 위치를 마우스 위치로 이동
-        menuPanel.transform.position = Input.mousePosition;
+        MoveToMousePosition(targetCanvas, boundaryRect);
+        FixMenuPosition(boundaryRect);
 
-        // 2. 화면 밖으로 나가는 현상 방지 (Clamp)
-        FixMenuPosition();
-        menuPanel.SetActive(true);
+        _openTime = Time.unscaledTime;
 
-        // 버튼 이벤트 초기화 및 등록
         actionButton.onClick.RemoveAllListeners();
-        actionButton.onClick.AddListener(() => OnActionClicked());
+        actionButton.onClick.AddListener(OnActionClicked);
 
         discardButton.onClick.RemoveAllListeners();
-        discardButton.onClick.AddListener(() => OnDiscardClicked());
+        discardButton.onClick.AddListener(OnDiscardClicked);
     }
 
-    private void FixMenuPosition()
+    private void MoveToMousePosition(Canvas targetCanvas, RectTransform boundaryRect)
     {
-        // RectTransform을 사용하여 메뉴가 화면을 벗어나지 않게 조정
-        RectTransform rect = menuPanel.GetComponent<RectTransform>();
+        RectTransform menuRect = menuPanel.GetComponent<RectTransform>();
 
-        // 화면 크기 가져오기
-        Vector2 screenBounds = new Vector2(Screen.width, Screen.height);
+        if (menuRect != null && boundaryRect != null)
+        {
+            Camera eventCamera = targetCanvas == null || targetCanvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : targetCanvas.worldCamera;
+            if (RectTransformUtility.ScreenPointToWorldPointInRectangle(boundaryRect, Input.mousePosition, eventCamera, out Vector3 worldPoint))
+            {
+                menuRect.position = worldPoint;
+                return;
+            }
+        }
 
-        // 현재 패널의 월드 위치를 기반으로 캔버스 내 좌표 계산
-        Vector3 pos = menuPanel.transform.position;
+        menuPanel.transform.position = Input.mousePosition;
+    }
 
-        // 메뉴의 크기만큼 여유 공간 계산 (Pivot이 좌상단(0, 1)일 때 기준)
-        float menuWidth = rect.rect.width;
-        float menuHeight = rect.rect.height;
+    private void FixMenuPosition(RectTransform boundaryRect)
+    {
+        RectTransform menuRect = menuPanel.GetComponent<RectTransform>();
+        if (menuRect == null || boundaryRect == null) return;
 
-        // 오른쪽 화면 밖으로 나가는 경우
-        if (pos.x + menuWidth > screenBounds.x)
-            pos.x -= menuWidth;
+        Canvas.ForceUpdateCanvases();
 
-        // 아래쪽 화면 밖으로 나가는 경우
-        if (pos.y - menuHeight < 0)
-            pos.y += menuHeight;
+        Vector3[] menuCorners = new Vector3[4];
+        Vector3[] boundaryCorners = new Vector3[4];
+        menuRect.GetWorldCorners(menuCorners);
+        boundaryRect.GetWorldCorners(boundaryCorners);
 
-        menuPanel.transform.position = pos;
+        Vector3 offset = Vector3.zero;
+        if (menuCorners[2].x > boundaryCorners[2].x) offset.x = boundaryCorners[2].x - menuCorners[2].x;
+        if (menuCorners[0].x < boundaryCorners[0].x) offset.x = boundaryCorners[0].x - menuCorners[0].x;
+        if (menuCorners[2].y > boundaryCorners[2].y) offset.y = boundaryCorners[2].y - menuCorners[2].y;
+        if (menuCorners[0].y < boundaryCorners[0].y) offset.y = boundaryCorners[0].y - menuCorners[0].y;
+
+        menuRect.position += offset;
     }
 
     private void OnActionClicked()
@@ -91,20 +153,24 @@ public class ItemMenuUI : Singleton<ItemMenuUI>
         CloseMenu();
     }
 
-    public void CloseMenu() => menuPanel.SetActive(false);
+    public void CloseMenu()
+    {
+        if (menuPanel != null)
+        {
+            menuPanel.SetActive(false);
+        }
+    }
 
     private void Update()
     {
-        if (!menuPanel.activeSelf) return;
+        if (menuPanel == null || !menuPanel.activeSelf) return;
+        if (Time.unscaledTime - _openTime < 0.1f) return;
 
         if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
         {
             RectTransform panelRect = menuPanel.GetComponent<RectTransform>();
-
-            // 현재 마우스 위치가 메뉴 패널(panelRect) 영역 안에 포함되어 있는지 검사
             bool isMouseInsideMenu = RectTransformUtility.RectangleContainsScreenPoint(panelRect, Input.mousePosition);
 
-            // 마우스가 메뉴 바깥을 클릭했을 때만 창을 닫음
             if (!isMouseInsideMenu)
             {
                 CloseMenu();
@@ -112,13 +178,11 @@ public class ItemMenuUI : Singleton<ItemMenuUI>
         }
     }
 
-    protected override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    private void OnDestroy()
     {
-
-    }
-
-    protected override void OnSceneUnloaded(Scene scene)
-    {
-
+        if (Instance == this)
+        {
+            Instance = null;
+        }
     }
 }
