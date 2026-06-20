@@ -14,7 +14,6 @@ public class QuestSelectorUI : MonoBehaviour
 
     void OnEnable()
     {
-        // 인벤토리 열릴 때 현재 추적 중인 퀘스트의 인덱스를 먼저 찾음
         UpdateIndexToTrackingQuest();
         RefreshDisplay();
     }
@@ -37,25 +36,21 @@ public class QuestSelectorUI : MonoBehaviour
 
         RefreshDisplay();
 
-        // [핵심] 여기서 바꾼 퀘스트를 바로 메인 트래커 추적 대상으로 설정
         QuestManager.Instance.SetTrackingQuest(quests[currentIndex]);
     }
 
     public void RefreshDisplay()
     {
-        // 1. UI 컴포넌트 자체가 인스펙터에서 할당 안 됐을 경우 방어
         if (titleText == null || goalText == null)
         {
             Debug.LogWarning("QuestSelectorUI: UI Text 컴포넌트가 할당되지 않았습니다.");
             return;
         }
 
-        // 2. QuestManager 인스턴스 확인
         if (QuestManager.Instance == null) return;
 
         var quests = QuestManager.Instance.activeQuests;
 
-        // 3. 리스트가 비어있을 때 처리
         if (quests == null || quests.Count == 0)
         {
             titleText.text = "진행 중인 퀘스트 없음";
@@ -63,17 +58,34 @@ public class QuestSelectorUI : MonoBehaviour
             return;
         }
 
-        // 4. 인덱스 범위 안전성 확인
         if (currentIndex < 0 || currentIndex >= quests.Count) currentIndex = 0;
 
         Quest q = quests[currentIndex];
 
-        // 5. 퀘스트 데이터 자체가 null인지 확인
         if (q != null)
         {
             titleText.text = q.questName;
             titleText.color = q.isMainQuest ? new Color(0.8f, 0.4f, 0f) : Color.green;
-            goalText.text = $"{q.targetID} ({q.currentAmount}/{q.goalAmount})";
+            
+            if (q.type == QuestType.ItemCollection)
+            {
+                string progressDisplay = "";
+                for (int i = 0; i < q.objectives.Count; i++)
+                {
+                    var obj = q.objectives[i];
+                    progressDisplay += $"{obj.targetID} ({obj.currentAmount}/{obj.goalAmount})";
+
+                    if (i < q.objectives.Count - 1)
+                    {
+                        progressDisplay += "\n";
+                    }
+                }
+                goalText.text = progressDisplay;
+            }
+            else
+            {
+                goalText.text = q.questGoal;
+            }
         }
     }
 

@@ -54,11 +54,9 @@ public class QuestTrackerUI : MonoBehaviour
 
         effectPlayed = false;
 
-        // 1. 제목 색상 설정 (메인/일반)
         titleText.text = quest.questName;
         titleText.color = quest.isMainQuest ? mainQuestColor : subQuestColor;
 
-        // 2. 취소선 초기화
         strikeLine.rectTransform.localScale = new Vector3(0, 1, 1);
         progressText.color = Color.white;
         UpdateProgress();
@@ -68,9 +66,23 @@ public class QuestTrackerUI : MonoBehaviour
     {
         if (targetQuest == null) return;
 
-        progressText.text = $"ㆍ {targetQuest.targetID} ({targetQuest.currentAmount}/{targetQuest.goalAmount})";
+        string progressDisplay = "";
+        
+        for (int i = 0; i < targetQuest.objectives.Count; i++)
+        {
+            var obj = targetQuest.objectives[i];
+            
+            progressDisplay += $"ㆍ {obj.targetID} ({obj.currentAmount}/{obj.goalAmount})";
+            
+            if (i < targetQuest.objectives.Count - 1)
+            {
+                progressDisplay += "\n";
+            }
+        }
 
-        if (targetQuest.currentAmount >= targetQuest.goalAmount && !effectPlayed)
+        progressText.text = progressDisplay;
+
+        if (targetQuest.IsAllObjectivesComplete() && !effectPlayed)
         {
             PlayCompleteEffect();
         }

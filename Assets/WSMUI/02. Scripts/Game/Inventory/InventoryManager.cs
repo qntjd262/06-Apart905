@@ -80,18 +80,28 @@ public class InventoryManager : Singleton<InventoryManager>
     }
 
     private void UpdateAllNPCOutlines()
-    {
-        NPC[] allNPCs = FindObjectsOfType<NPC>();
-        foreach (NPC npc in allNPCs)
         {
-            if (npc.myQuest != null)
+            NPC[] allNPCs = FindObjectsByType<NPC>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            
+            for (int i = 0; i < allNPCs.Length; i++)
             {
-                int count = GetItemCount(npc.myQuest.targetID);
-                npc.myQuest.ForceSyncProgress(count);
-                npc.UpdateOutlineColor();
+                NPC npc = allNPCs[i];
+                
+                if (npc != null && npc.myQuest != null)
+                {
+                    if (npc.myQuest.type == QuestType.ItemCollection)
+                    {
+                        for (int j = 0; j < npc.myQuest.objectives.Count; j++)
+                        {
+                            var obj = npc.myQuest.objectives[j];
+                            int count = GetItemCount(obj.targetID);   
+                            npc.myQuest.ForceSyncProgress(obj.targetID, count);
+                        }
+                    }
+                    npc.UpdateOutlineColor();
+                }
             }
         }
-    }
 
     public int GetItemCount(string itemName)
     {
@@ -323,17 +333,27 @@ public class InventoryManager : Singleton<InventoryManager>
     }
 
     private void SyncQuestAndUI(string itemName)
-    {
-        if (QuestManager.Instance != null)
         {
-            int currentCount = GetItemCount(itemName);
-            var targetQuest = QuestManager.Instance.activeQuests.Find(q => q.targetID == itemName);
-            if (targetQuest != null) targetQuest.ForceSyncProgress(currentCount);
+            if (QuestManager.Instance != null)
+            {
+                int currentCount = GetItemCount(itemName);
+                
+                var activeQuests = QuestManager.Instance.activeQuests;
+                for (int i = activeQuests.Count - 1; i >= 0; i--)
+                {
+                    if (i >= activeQuests.Count) continue; 
+                    
+                    Quest quest = activeQuests[i];
+                    if (quest != null && quest.type == QuestType.ItemCollection)
+                    {
+                        quest.ForceSyncProgress(itemName, currentCount);
+                    }
+                }
 
-            QuestUI ui = FindObjectOfType<QuestUI>(true);
-            if (ui != null) ui.RefreshQuestList();
+                QuestUI ui = FindFirstObjectByType<QuestUI>(FindObjectsInactive.Include);
+                if (ui != null) ui.RefreshQuestList();
+            }
         }
-    }
 
     public void MoveItemStorageToBag(int storageIndex)
     {

@@ -117,12 +117,14 @@ public class QuestManager : MonoBehaviour
     {
         if (pendingQuest == null) return;
 
-        if (pendingQuest.type == QuestType.ItemCollection)
+        // [수정] 퀘스트가 가진 모든 목표 아이템의 현재 인벤토리 수량을 각각 동기화합니다.
+        if (pendingQuest.type == QuestType.ItemCollection && InventoryManager.Instance != null)
         {
-            if (InventoryManager.Instance != null)
+            for (int i = 0; i < pendingQuest.objectives.Count; i++)
             {
-                int alreadyHaveCount = InventoryManager.Instance.GetItemCount(pendingQuest.targetID);
-                pendingQuest.currentAmount = alreadyHaveCount;
+                string targetID = pendingQuest.objectives[i].targetID;
+                int alreadyHaveCount = InventoryManager.Instance.GetItemCount(targetID);
+                pendingQuest.ForceSyncProgress(targetID, alreadyHaveCount);
             }
         }
 
@@ -147,7 +149,7 @@ public class QuestManager : MonoBehaviour
         UpdateAllNPCOutlines();
         RefreshQuestUIs();
 
-        if (acceptedQuest.currentAmount >= acceptedQuest.goalAmount && acceptedQuest.isAutoComplete)
+        if (acceptedQuest.IsAllObjectivesComplete() && acceptedQuest.isAutoComplete)
         {
             CompleteQuestInstantly(acceptedQuest);
         }
@@ -206,12 +208,15 @@ public class QuestManager : MonoBehaviour
 
         if (quest.type == QuestType.ItemCollection && InventoryManager.Instance != null)
         {
-            InventoryManager.Instance.RemoveItem(quest.targetID, quest.goalAmount);
+            foreach (var obj in quest.objectives)
+            {
+                InventoryManager.Instance.RemoveItem(obj.targetID, obj.goalAmount);
+            }
         }
 
         if (quest.rewardItemID != null && InventoryManager.Instance != null)
         {
-            bool isSuccess = InventoryManager.Instance.AddItem(quest.rewardItemID);
+            InventoryManager.Instance.AddItem(quest.rewardItemID);
             Debug.Log($"[즉시 완료 보상] {quest.rewardItemID.itemName}를 획득하였습니다!");
         }
 

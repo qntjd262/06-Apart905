@@ -50,7 +50,7 @@ public class NPC : MonoBehaviour, IInteractable
 
                 if(isActive)
                 {
-                    if(myQuest.currentAmount >= myQuest.goalAmount)
+                    if(myQuest.IsAllObjectivesComplete())
                     {
                         targetColor = Color.green;
                         status = "목표달성";
@@ -107,14 +107,25 @@ public class NPC : MonoBehaviour, IInteractable
 
         if (myQuest.type == QuestType.ItemCollection)
         {
-            int currentBagCount = InventoryManager.Instance.GetItemCount(myQuest.targetID);
-            myQuest.ForceSyncProgress(currentBagCount);
+            for (int i = 0; i < myQuest.objectives.Count; i++)
+            {
+                var obj = myQuest.objectives[i];
+                int currentBagCount = InventoryManager.Instance.GetItemCount(obj.targetID);
+                myQuest.ForceSyncProgress(obj.targetID, currentBagCount);
+            }
         }
         else if (myQuest.type == QuestType.Interact && QuestManager.Instance.activeQuests.Exists(q => q.questName == myQuest.questName))
         {
-            if (npcData != null && myQuest.targetID == npcData.NpcID)
+            if (npcData != null)
             {
-                myQuest.ForceSyncProgress(myQuest.goalAmount);
+                for (int i = 0; i < myQuest.objectives.Count; i++)
+                {
+                    var obj = myQuest.objectives[i];
+                    if (obj.targetID == npcData.NpcID)
+                    {
+                        myQuest.ForceSyncProgress(obj.targetID, obj.goalAmount);
+                    }
+                }
             }
         }
 
@@ -125,7 +136,7 @@ public class NPC : MonoBehaviour, IInteractable
         {
             currentDialogues = myQuest.beforeAcceptDialogues;
         }
-        else if (myQuest.currentAmount >= myQuest.goalAmount && !myQuest.isCompleted)
+        else if (myQuest.IsAllObjectivesComplete() && !myQuest.isCompleted)
         {
             currentDialogues = myQuest.completeDialogues;
         }
@@ -140,8 +151,12 @@ public class NPC : MonoBehaviour, IInteractable
 
             if (myQuest.type == QuestType.ItemCollection)
             {
-                int finalCheckCount = InventoryManager.Instance.GetItemCount(myQuest.targetID);
-                myQuest.ForceSyncProgress(finalCheckCount);
+                for (int i = 0; i < myQuest.objectives.Count; i++)
+                {
+                    var obj = myQuest.objectives[i];
+                    int finalCheckCount = InventoryManager.Instance.GetItemCount(obj.targetID);
+                    myQuest.ForceSyncProgress(obj.targetID, finalCheckCount);
+                }
             }
 
             bool stillActive = QuestManager.Instance.activeQuests.Exists(q => q.questName == myQuest.questName);
@@ -150,14 +165,21 @@ public class NPC : MonoBehaviour, IInteractable
             {
                 QuestManager.Instance.AcceptQuest(myQuest, player);
                 
-                if (myQuest.type == QuestType.Interact && npcData != null && myQuest.targetID == npcData.NpcID)
+                if (myQuest.type == QuestType.Interact && npcData != null)
                 {
-                    myQuest.ForceSyncProgress(myQuest.goalAmount);
+                    for (int i = 0; i < myQuest.objectives.Count; i++)
+                    {
+                        var obj = myQuest.objectives[i];
+                        if (obj.targetID == npcData.NpcID)
+                        {
+                            myQuest.ForceSyncProgress(obj.targetID, obj.goalAmount);
+                        }
+                    }
                 }
             }
             else
             {
-                if(myQuest.currentAmount >= myQuest.goalAmount && !myQuest.isCompleted)
+                if(myQuest.IsAllObjectivesComplete() && !myQuest.isCompleted)
                 {
                     CompleteQuest();         
                 }
@@ -182,7 +204,10 @@ public class NPC : MonoBehaviour, IInteractable
 
         if (myQuest.type == QuestType.ItemCollection)
         {
-            InventoryManager.Instance.RemoveItem(myQuest.targetID, myQuest.goalAmount);
+            foreach (var obj in myQuest.objectives)
+            {
+                InventoryManager.Instance.RemoveItem(obj.targetID, obj.goalAmount);
+            }
         }
 
         if (myQuest.rewardItemID != null)
@@ -220,6 +245,11 @@ public class NPC : MonoBehaviour, IInteractable
 
         QuestUI ui = FindAnyObjectByType<QuestUI>(FindObjectsInactive.Include);
         if (ui != null) ui.RefreshQuestList();
+
+        if (QuestManager.Instance != null)
+        {
+            QuestManager.Instance.CheckAndAutoAcceptQuests();
+        }
     }
 
     void OnEnable()
@@ -236,8 +266,12 @@ public class NPC : MonoBehaviour, IInteractable
     {
         if(myQuest != null && myQuest.type == QuestType.ItemCollection)
         {
-            int count = InventoryManager.Instance.GetItemCount(myQuest.targetID);
-            myQuest.ForceSyncProgress(count);
+            for (int i = 0; i < myQuest.objectives.Count; i++)
+            {
+                var obj = myQuest.objectives[i];
+                int count = InventoryManager.Instance.GetItemCount(obj.targetID);
+                myQuest.ForceSyncProgress(obj.targetID, count);
+            }
             UpdateOutlineColor();
         }
     }
