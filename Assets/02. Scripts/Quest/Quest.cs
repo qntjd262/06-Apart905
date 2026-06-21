@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using System.ComponentModel;
+using Unity.Collections;
 using UnityEngine;
 
-public enum QuestType { ItemCollection, ZombieHunt, Interact}
+public enum QuestType { ItemCollection, ZombieHunt, Interact, TimeWait}
 
 [CreateAssetMenu(fileName = "New Quest", menuName = "QuestSystem/Quest")]
 public class Quest : ScriptableObject
@@ -23,6 +25,9 @@ public class Quest : ScriptableObject
     public string questGoal; //목표 설명
     public QuestType type;
     public bool isMainQuest;//UI용 추가
+
+    [Header("Time Wait Option")]
+    public int acceptDay;
 
     [Header("Quest Objectives")]
     public List<QuestObjective> objectives = new List<QuestObjective>();
@@ -98,7 +103,8 @@ public class Quest : ScriptableObject
             }
         }
 
-        if (IsAllObjectivesComplete() && isAutoComplete && QuestManager.Instance.activeQuests.Contains(this))
+        if (IsAllObjectivesComplete() && isAutoComplete && 
+            QuestManager.Instance != null && QuestManager.Instance.activeQuests.Contains(this))
         {
             QuestManager.Instance.CompleteQuestInstantly(this);
         }

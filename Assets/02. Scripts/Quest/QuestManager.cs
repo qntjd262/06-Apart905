@@ -21,11 +21,22 @@ public class QuestManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
+            ResetAllQuests();
         }
         else
         {
             Destroy(gameObject);
         }
+    }
+
+    private void OnEnable()
+    {
+        TimeFlow.OnDayChanged += HandleDayChanged;
+    }
+
+    private void OnDisable()
+    {
+        TimeFlow.OnDayChanged -= HandleDayChanged;
     }
 
     private void Start()
@@ -91,9 +102,8 @@ public class QuestManager : MonoBehaviour
         }
 
         pendingQuest = newQuest;
-        pendingPlayer = player; // 자동 수락일 경우 null일 수 있음
+        pendingPlayer = player; 
 
-        // 자동 수락이든 NPC 수락이든 팝업창 띄움
         if (QuestNotifyUI.Instance != null)
         {
             QuestNotifyUI.Instance.ShowNotice(newQuest);
@@ -117,7 +127,6 @@ public class QuestManager : MonoBehaviour
     {
         if (pendingQuest == null) return;
 
-        // [수정] 퀘스트가 가진 모든 목표 아이템의 현재 인벤토리 수량을 각각 동기화합니다.
         if (pendingQuest.type == QuestType.ItemCollection && InventoryManager.Instance != null)
         {
             for (int i = 0; i < pendingQuest.objectives.Count; i++)
@@ -128,13 +137,21 @@ public class QuestManager : MonoBehaviour
             }
         }
 
+        if (pendingQuest.type == QuestType.TimeWait)
+        {
+            if (TimeFlow.Instance != null)
+            {
+                pendingQuest.acceptDay = TimeFlow.Instance.Days;
+            }
+            pendingQuest.ForceSyncProgress("Day", 0);
+        }
+
         Quest acceptedQuest = pendingQuest; 
         activeQuests.Add(acceptedQuest);
         Debug.Log($"{acceptedQuest.questName} 퀘스트를 수락하였습니다.");
 
         pendingQuest = null;
 
-        // 대화 중이거나 자동 수락으로 묶여있던 플레이어 상태 해제
         if (pendingPlayer != null)
         {
             pendingPlayer.isInteracting = false;
@@ -187,6 +204,31 @@ public class QuestManager : MonoBehaviour
             }
         }
 
+        if (UIManager.Instance != null && UIManager.Instance.MainTracker != null)
+        {
+            UIManager.Instance.MainTracker.UpdateProgress();
+        }
+
+        RefreshQuestUIs();
+    }
+
+    // TimeFlow에서 날짜가 변경될 때 호출되는 함수
+    private void HandleDayChanged(int currentDay)
+    {
+        for (int i = activeQuests.Count - 1; i >= 0; i--)
+        {
+            Quest quest = activeQuests[i];
+
+            if (quest.type == QuestType.TimeWait)
+            {
+                int elapsedDays = currentDay - quest.acceptDay;
+
+                quest.ForceSyncProgress("Day", elapsedDays);
+                Debug.Log($"[{quest.questName}] 날짜 변경 감지 -> 경과일: {elapsedDays}일차");
+            }
+        }
+
+        // 메인 트래커 화면 글자 갱신
         if (UIManager.Instance != null && UIManager.Instance.MainTracker != null)
         {
             UIManager.Instance.MainTracker.UpdateProgress();
@@ -274,5 +316,28 @@ public class QuestManager : MonoBehaviour
     public void OnKill(string zombieID, int amount)
     {
         NotifyEvent(QuestType.ZombieHunt, zombieID, amount);
+    }
+
+    private void ResetAllQuests()
+    {
+    if (allQuests == null) return;
+
+    foreach (Quest quest in allQuests)
+    {
+        if (quest == null) continue;
+
+        quest.isCompleted = false;
+        
+        quest.acceptDay = 0;
+
+        for (int i = 0; i < quest.objectives.Count; i++)
+        {
+            var obj = quest.objectives[i];
+            obj.currentAmount = 0;
+            quest.objectives[i] = obj; 
+        }
+
+        Debug.Log($"[퀘스트 초기화] '{quest.questName}' 데이터가 초기화되었습니다.");
+    }
     }
 }

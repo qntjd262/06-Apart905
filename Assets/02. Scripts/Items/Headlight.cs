@@ -11,7 +11,7 @@ public class Headlight : MonoBehaviour
 
     void Awake()
     {
-        if(spotLight == null)
+        if (spotLight == null)
         {
             Light[] allLights = transform.root.GetComponentsInChildren<Light>(true);
 
@@ -25,7 +25,7 @@ public class Headlight : MonoBehaviour
             }
         }
 
-        if(spotLight == null)
+        if (spotLight == null)
         {
             Debug.Log("Spotlight 컴포넌트를 찾을수가 없음");
         }
@@ -38,23 +38,23 @@ public class Headlight : MonoBehaviour
         isOn = false;
         if (spotLight != null)
         {
-            spotLight.gameObject.SetActive(false); 
+            spotLight.gameObject.SetActive(true); 
+            spotLight.enabled = false;           
         }
     }
 
-void Update()
-{
-    if (Input.GetKeyDown(KeyCode.F))
+    void Update()
     {
-        Debug.LogWarning($"=== [Headlight] 키보드 F 입력 확인됨! 현재 hasHeadlight 상태: {hasHeadlight} ===");
-    }
+        if (Input.GetKeyDown(KeyCode.F))
+        {
+            Debug.LogWarning($"=== [Headlight] 키보드 F 입력 확인됨! 현재 hasHeadlight 상태: {hasHeadlight} ===");
+        }
 
-    // 기존 작동 로직
-    if (hasHeadlight && Input.GetKeyDown(toggleKey))
-    {
-        ToggleFlashlight();
+        if (hasHeadlight && Input.GetKeyDown(toggleKey))
+        {
+            ToggleFlashlight();
+        }
     }
-}
 
     public void AcquireHeadlight()
     {
@@ -62,27 +62,27 @@ void Update()
         Debug.Log("헤드라이트를 획득했습니다! 이제 단축키로 라이트를 켤 수 있습니다.");
     }
 
-private void ToggleFlashlight()
-{
-    isOn = !isOn;
+    private void ToggleFlashlight()
+    {
+        isOn = !isOn;
 
-    if (spotLight != null)
-    {
-        spotLight.gameObject.SetActive(isOn);
-        
-        Debug.Log($"불빛 상태 변경됨 -> 오브젝트 활성화: {isOn}");
+        if (spotLight != null)
+        {
+            spotLight.enabled = isOn;
+            
+            Debug.Log($"불빛 상태 변경됨 -> 라이트 컴포넌트 활성화: {isOn}");
+        }
+        else
+        {
+            Debug.LogError("Spot Light 오브젝트가 인스펙터에 연결되지 않았습니다!");
+        }
     }
-    else
-    {
-        Debug.LogError("Spot Light 오브젝트가 인스펙터에 연결되지 않았습니다!");
-    }
-}
 
     public void ForceTurnOff()
     {
         isOn = false;
 
-        if(spotLight != null)
+        if (spotLight != null)
         {
             spotLight.enabled = false;
         }
