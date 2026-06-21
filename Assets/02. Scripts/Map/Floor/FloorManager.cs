@@ -22,10 +22,10 @@ public class FloorManager : MonoBehaviour
     [SerializeField] private GameObject _Presets_Ingame;
 
     [Header("**퀘스트 아이템**")]
-    [SerializeField] private GameObject[] _QuestItems = new GameObject[6];          // 사용되는 퀘스트 아이템들(손전등, 부품, 부서진 라디오, 배터리 팩, 열쇠, 휘발유)
+    [SerializeField] private GameObject[] _QuestItems = new GameObject[5];          // 사용되는 퀘스트 아이템들(손전등, 부품, 부서진 라디오, 배터리 팩, 열쇠, 휘발유)
 
     [Header("**퀘스트 NPC**")]
-    [SerializeField] private GameObject[] _QuestNPCs = new GameObject[4];           // 고정 출현 퀘스트 NPC들(친한 형, 이상한 여자, 충격먹은 청년, 좀비가 된 경비원)
+    [SerializeField] private GameObject[] _QuestNPCs = new GameObject[3];           // 고정 출현 퀘스트 NPC들(친한 형, 이상한 여자, 충격먹은 청년, 좀비가 된 경비원)
 
     [Header("**각 층에 배치된 좀비 스포너들**")]
     [SerializeField] private GameObject[] _ZombieSpawners = new GameObject[8];      // 2, 3, 6, 8, 9, 12, 14, 17 층의 스포너
@@ -211,20 +211,47 @@ public class FloorManager : MonoBehaviour
     {
         foreach (var qNPCs in _QuestNPCs)
             qNPCs.SetActive(false);
+        foreach (var qItems in _QuestItems)
+            if(qItems != null)
+                qItems.SetActive(false);
 
         switch (_currLevel) 
         {
+            case 2:
+                if (_QuestItems[1] != null)
+                    _QuestItems[1].SetActive(true);
+                break;
+
             case 3:
                 _QuestNPCs[1].SetActive(true);
+                break;
+
+            case 6:
+                if (_QuestItems[2] != null)
+                    _QuestItems[2].SetActive(true);
                 break;
 
             case 8:
                 _QuestNPCs[0].SetActive(true);
                 break;
 
+            case 9:
+                if (_QuestItems[0] != null)
+                    _QuestItems[0].SetActive(true);
+                break;
+
+            case 12:
+                if (_QuestItems[3] != null)
+                    _QuestItems[3].SetActive(true);
+                break;
+
             case 14:
                 _QuestNPCs[2].SetActive(true);
-                _QuestNPCs[3].SetActive(true);
+                break;
+
+            case 17:
+                if (_QuestItems[4] != null)
+                    _QuestItems[4].SetActive(true);
                 break;
         }    
     }
