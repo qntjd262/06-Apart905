@@ -1,3 +1,4 @@
+using Mono.Cecil;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -228,20 +229,44 @@ public class FloorManager : MonoBehaviour
                 break;
         }    
     }
+
+    
     public void SetZombies(int _currLevel)
     {
-        foreach (var zSpawners in _ZombieSpawners)
-            zSpawners.SetActive(false);
+        //foreach (var zSpawners in _ZombieSpawners)
+        //    zSpawners.SetActive(false);
 
-        // 현재 층 포함 위아래 층까지의 스포너를 활성화
-        for (int i = -2; i <= 0; i++)
+        // 윗층, 현재층, 아래층
+        int downstairs  = _currLevel - 2;
+        int currFloor   = _currLevel - 1;
+        int upstairs    = _currLevel;
+
+        // 윗층, 현재층, 아래층의 스포너는 켜고, 나머지는 끈다
+        for (int i = 0; i < _ZombieSpawners.Length; i++)
         {
-            int targetLevel = _currLevel + i;
-            if (targetLevel >= 0 && targetLevel < _ZombieSpawners.Length)
+            // 윗층, 현재층, 아래층일 때
+            if (i >= downstairs && i <= upstairs) 
             {
-                _ZombieSpawners[targetLevel].SetActive(true);
+                if (!_ZombieSpawners[i].activeSelf)
+                    _ZombieSpawners[i].SetActive(true);
+            }
+            // 아닐 때
+            else
+            {
+                if (_ZombieSpawners[i].activeSelf)
+                    _ZombieSpawners[i].SetActive(false);
             }
         }
+
+        // 현재 층 포함 위아래 층까지의 스포너를 활성화
+        //for (int i = -2; i <= 0; i++)
+        //{
+        //    int targetLevel = _currLevel + i;
+        //    if (targetLevel >= 0 && targetLevel < _ZombieSpawners.Length)
+        //    {
+        //        _ZombieSpawners[targetLevel].SetActive(true);
+        //    }
+        //}
 
 
         //switch (_currLevel) // 2, 3, 6, 8, 9, 12, 14, 17
