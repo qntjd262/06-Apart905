@@ -58,6 +58,16 @@ public class PlayerController : MonoBehaviour
         //     Cursor.visible = false;
         // }
 
+        if (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive)
+        {
+            return; // 공격 불가
+        }
+        if (UnityEngine.EventSystems.EventSystem.current.IsPointerOverGameObject())
+        {
+            return; // UI 클릭 중이면 공격 불가
+        }
+
+
 
 
         //플레이어 회전 + 카메라
@@ -67,12 +77,16 @@ public class PlayerController : MonoBehaviour
         playerLook.Look(mouseX, mouseY);
 
         //플레이어 움직임
+        float h = 0f;
+        if (InputManager.Instance.GetKey(EKeyAction.MoveRight)) h += 1f;
+        if (InputManager.Instance.GetKey(EKeyAction.MoveLeft)) h -= 1f;
 
-        float h = Input.GetAxisRaw("Horizontal");
-        float v = Input.GetAxisRaw("Vertical");
-
-        bool isRunning = Input.GetKey(KeyCode.LeftShift);
-        bool isCrouch = Input.GetKey(KeyCode.LeftControl);
+        float v = 0f;
+        if (InputManager.Instance.GetKey(EKeyAction.MoveUp)) v += 1f;
+        if (InputManager.Instance.GetKey(EKeyAction.MoveDown)) v -= 1f;
+        
+        bool isRunning = InputManager.Instance.GetKey(EKeyAction.Sprint);;
+        bool isCrouch = InputManager.Instance.GetKey(EKeyAction.Crouch);
 
 
         playerMove.Move(h, v, isRunning, isCrouch);
@@ -80,7 +94,7 @@ public class PlayerController : MonoBehaviour
         HandleQuickSlotItemEquip();
 
         //플레이어 공격
-        if (Input.GetMouseButtonDown(0))
+        if (InputManager.Instance.GetKeyDown(EKeyAction.Attack))
         {
             //TODO : 공격 애니메이션을 통해 해당 애니메이션 지점에서 Attack()함수 실행하기
             playerEquip.UseCurrentItem();
@@ -92,11 +106,11 @@ public class PlayerController : MonoBehaviour
     {
         if(playerEquip == null) return;
 
-        if(Input.GetKeyDown(KeyCode.Alpha1)) playerEquip.EquipFromQuickSlot(0);
-        else if(Input.GetKeyDown(KeyCode.Alpha2)) playerEquip.EquipFromQuickSlot(1);
-        else if(Input.GetKeyDown(KeyCode.Alpha3)) playerEquip.EquipFromQuickSlot(2);
-        else if(Input.GetKeyDown(KeyCode.Alpha4)) playerEquip.EquipFromQuickSlot(3);
-        else if(Input.GetKeyDown(KeyCode.Alpha5)) playerEquip.EquipFromQuickSlot(4);
+        if(InputManager.Instance.GetKeyDown(EKeyAction.QuickSlot1)) playerEquip.EquipFromQuickSlot(0);
+        else if(InputManager.Instance.GetKeyDown(EKeyAction.QuickSlot2)) playerEquip.EquipFromQuickSlot(1);
+        else if(InputManager.Instance.GetKeyDown(EKeyAction.QuickSlot3)) playerEquip.EquipFromQuickSlot(2);
+        else if(InputManager.Instance.GetKeyDown(EKeyAction.QuickSlot4)) playerEquip.EquipFromQuickSlot(3);
+        else if(InputManager.Instance.GetKeyDown(EKeyAction.QuickSlot5)) playerEquip.EquipFromQuickSlot(4);
     }
     
 }

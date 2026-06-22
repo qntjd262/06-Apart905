@@ -39,11 +39,18 @@ public class PlayerLook : MonoBehaviour
         if (playerStat.isInteracting) return;
 
         // 좌우 회전: 플레이어 몸체 회전
-        transform.Rotate(0f, mouseX * mouseSensitivity, 0f);
+        float sensH = InputManager.Instance.MouseSensH;
+        float senV = InputManager.Instance.MouseSensV;
 
-        // 상하 회전: cameraPos 회전
-        currentVerticalRotation -= mouseY * mouseSensitivity;
-        currentVerticalRotation = Mathf.Clamp(currentVerticalRotation, -upDownRange, upDownRange);
+        transform.Rotate(0f, mouseX * sensH, 0f);
+        
+        currentVerticalRotation -= mouseY * senV;
+
+        // transform.Rotate(0f, mouseX * mouseSensitivity, 0f);
+
+        // currentVerticalRotation -= mouseY * mouseSensitivity;
+
+        // currentVerticalRotation = Mathf.Clamp(currentVerticalRotation, -upDownRange, upDownRange);
 
         if (cameraPos != null)
         {
@@ -72,4 +79,17 @@ public class PlayerLook : MonoBehaviour
             mainCam.transform.localPosition = camLocalPos;
         }
     }
+
+    /* 해당 부분 카메라가 플레이어 Head 오브젝트의 자식으로 부착되어있기 때문에 필요 X
+    public void SetCameraHeight(bool isCrouch)
+    {
+        if(cameraPos != null)
+        {
+            Vector3 newPos = cameraPos.localPosition;
+            newPos.y = isCrouch ? 0.8f : 1.6f;
+            newPos.z = isCrouch ? cameraForwardOffset : 0f;
+
+        }
+    }
+    */
 }

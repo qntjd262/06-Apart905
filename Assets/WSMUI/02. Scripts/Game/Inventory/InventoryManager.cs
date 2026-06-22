@@ -37,8 +37,25 @@ public class InventoryManager : Singleton<InventoryManager>
         for (int i = 0; i < quickSlotSize; i++) QuickSlots[i] = new InventorySlot();
     }
 
+    // [루팅 및 맵에서 획득] 필드 아이템 추가 함수
     public bool AddItem(ItemData itemToAdd)
     {
+        if (itemToAdd == null) return false;
+
+        if (itemToAdd.itemName == "Headlight" || itemToAdd.itemName == "헤드라이트")
+        {
+            PlayerEquip playerEquip = FindObjectOfType<PlayerEquip>();
+            if (playerEquip != null)
+            {
+                playerEquip.TryAcquireHeadlight(itemToAdd);
+            }
+
+            if (NotificationManager.Instance != null)
+                NotificationManager.Instance.ShowNotification(itemToAdd.itemName, 1);
+
+            return true; 
+        }
+
         for (int i = 0; i < bagSize; i++)
         {
             if (BagSlots[i].item == null)
@@ -49,9 +66,12 @@ public class InventoryManager : Singleton<InventoryManager>
                     QuestManager.Instance.NotifyEvent(QuestType.ItemCollection, itemToAdd.itemName, 1);
 
                 SyncQuestAndUI(itemToAdd.itemName);
-
                 UpdateAllNPCOutlines();
                 OnBagUpdated?.Invoke();
+
+                if (NotificationManager.Instance != null)
+                    NotificationManager.Instance.ShowNotification(itemToAdd.itemName, 1);
+
                 return true;
             }
         }
@@ -60,23 +80,32 @@ public class InventoryManager : Singleton<InventoryManager>
     }
 
     private void UpdateAllNPCOutlines()
-    {
-        NPC[] allNPCs = FindObjectsOfType<NPC>();
-        foreach (NPC npc in allNPCs)
         {
-            if (npc.myQuest != null)
+            NPC[] allNPCs = FindObjectsByType<NPC>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            
+            for (int i = 0; i < allNPCs.Length; i++)
             {
-                int count = GetItemCount(npc.myQuest.targetID);
-                npc.myQuest.ForceSyncProgress(count);
-                npc.UpdateOutlineColor();
+                NPC npc = allNPCs[i];
+                
+                if (npc != null && npc.myQuest != null)
+                {
+                    if (npc.myQuest.type == QuestType.ItemCollection)
+                    {
+                        for (int j = 0; j < npc.myQuest.objectives.Count; j++)
+                        {
+                            var obj = npc.myQuest.objectives[j];
+                            int count = GetItemCount(obj.targetID);   
+                            npc.myQuest.ForceSyncProgress(obj.targetID, count);
+                        }
+                    }
+                    npc.UpdateOutlineColor();
+                }
             }
         }
-    }
 
     public int GetItemCount(string itemName)
     {
         int count = 0;
-        // [수정] 아이템이 퀵슬롯으로 완전히 넘어갔으므로, 퀵슬롯의 아이템 개수도 합산해야 합니다.
         foreach (var slot in BagSlots)
         {
             if (slot.item != null && slot.item.itemName == itemName) count++;
@@ -111,7 +140,6 @@ public class InventoryManager : Singleton<InventoryManager>
         }
         else if (item.itemType == ItemType.Equipable)
         {
-            // 우클릭으로 퀵슬롯에 장착할 때 처리
             if (!isQuickSlot) EquipToQuickSlot(index);
         }
     }
@@ -120,7 +148,6 @@ public class InventoryManager : Singleton<InventoryManager>
     {
         int removedCount = 0;
 
-        // 1. 가방에서 먼저 삭제
         for (int i = 0; i < bagSize; i++)
         {
             if (BagSlots[i].item != null && BagSlots[i].item.itemName == itemName)
@@ -131,7 +158,6 @@ public class InventoryManager : Singleton<InventoryManager>
             }
         }
 
-        // 2. 가방에서 다 못 지웠다면 퀵슬롯도 검사하여 삭제
         if (removedCount < countToRemove)
         {
             for (int i = 0; i < quickSlotSize; i++)
@@ -164,7 +190,6 @@ public class InventoryManager : Singleton<InventoryManager>
 
         if (emptyIndex != -1)
         {
-            // [수정] 참조만 하는게 아니라 퀵슬롯으로 완전히 '이동'시키고 가방은 비웁니다.
             QuickSlots[emptyIndex].item = BagSlots[bagIndex].item;
             BagSlots[bagIndex].item = null; 
             
@@ -177,32 +202,27 @@ public class InventoryManager : Singleton<InventoryManager>
         }
     }
 
-    // 드래그 앤 드롭으로 장착할 때 호출
     public void AssignToQuickSlot(int bagIndex, int quickIndex)
     {
         if (bagIndex < 0 || bagIndex >= bagSize) return;
         if (quickIndex < 0 || quickIndex >= quickSlotSize) return;
 
-        // 가방에 있는 아이템이 퀵슬롯에 들어갈 수 없는 타입인지 체크 (가방 슬롯이 비어있으면 스왑을 위해 통과)
         if (!BagSlots[bagIndex].IsEmpty && BagSlots[bagIndex].item.itemType != ItemType.Equipable)
         {
             Debug.Log("이 아이템은 퀵슬롯에 장착할 수 없습니다.");
             return;
         }
 
-        // [수정] 퀵슬롯과 가방 슬롯의 아이템을 서로 '스왑'합니다. (기존 퀵슬롯 아이템은 가방으로 돌아감)
         SwapSlots(BagSlots[bagIndex], QuickSlots[quickIndex]);
         
         OnBagUpdated?.Invoke();
         OnQuickSlotUpdated?.Invoke();
     }
 
-    // 더블클릭 등으로 퀵슬롯에서 장착 해제할 때
     public void ClearQuickSlot(int quickIndex)
     {
         if (QuickSlots[quickIndex].IsEmpty) return;
 
-        // [수정] 아이템을 삭제(null)하는게 아니라 가방의 빈 슬롯을 찾아 다시 넣어줍니다.
         for (int i = 0; i < bagSize; i++)
         {
             if (BagSlots[i].IsEmpty)
@@ -238,14 +258,43 @@ public class InventoryManager : Singleton<InventoryManager>
         if (storageIndex < 0 || storageIndex >= CurrentStorageSlots.Length) return;
         if (bagIndex < 0 || bagIndex >= bagSize) return;
 
+        ItemData movingItem = CurrentStorageSlots[storageIndex].item;
+        if (movingItem != null && (movingItem.itemName == "Headlight" || movingItem.itemName == "헤드라이트"))
+        {
+            PlayerEquip playerEquip = FindObjectOfType<PlayerEquip>();
+            if (playerEquip != null)
+            {
+                playerEquip.TryAcquireHeadlight(movingItem);
+            }
+            
+            if (NotificationManager.Instance != null)
+                NotificationManager.Instance.ShowNotification(movingItem.itemName, 1);
+
+            CurrentStorageSlots[storageIndex].item = null; 
+            OnStorageUpdated?.Invoke();
+            return;
+        }
+
         SwapSlots(CurrentStorageSlots[storageIndex], BagSlots[bagIndex]);
+        
         OnStorageUpdated?.Invoke();
         OnBagUpdated?.Invoke();
 
-        if(BagSlots[bagIndex].item != null)
+        if (BagSlots[bagIndex].item != null)
         {
-            SyncQuestAndUI(BagSlots[bagIndex].item.itemName);
+            ItemData finalItem = BagSlots[bagIndex].item;
+
+            string finalItemName = !string.IsNullOrEmpty(finalItem.itemName) ? finalItem.itemName : 
+                              (!string.IsNullOrEmpty(finalItem.Name) ? finalItem.Name : finalItem.name);
+
+            SyncQuestAndUI(finalItemName);
+
+            if (NotificationManager.Instance != null && !string.IsNullOrEmpty(finalItemName))
+            {
+                NotificationManager.Instance.ShowNotification(finalItemName, 1);
+            }
         }
+        
         UpdateAllNPCOutlines();
     }
 
@@ -268,9 +317,7 @@ public class InventoryManager : Singleton<InventoryManager>
         if (targetSlot.item != null)
         {
             string itemName = targetSlot.item.itemName;
-
             targetSlot.item = null;
-
             SyncQuestAndUI(itemName);
 
             if (isQuickSlot) OnQuickSlotUpdated?.Invoke();
@@ -286,21 +333,49 @@ public class InventoryManager : Singleton<InventoryManager>
     }
 
     private void SyncQuestAndUI(string itemName)
-    {
-        if (QuestManager.Instance != null)
         {
-            int currentCount = GetItemCount(itemName);
-            var targetQuest = QuestManager.Instance.activeQuests.Find(q => q.targetID == itemName);
-            if (targetQuest != null) targetQuest.ForceSyncProgress(currentCount);
+            if (QuestManager.Instance != null)
+            {
+                int currentCount = GetItemCount(itemName);
+                
+                var activeQuests = QuestManager.Instance.activeQuests;
+                for (int i = activeQuests.Count - 1; i >= 0; i--)
+                {
+                    if (i >= activeQuests.Count) continue; 
+                    
+                    Quest quest = activeQuests[i];
+                    if (quest != null && quest.type == QuestType.ItemCollection)
+                    {
+                        quest.ForceSyncProgress(itemName, currentCount);
+                    }
+                }
 
-            QuestUI ui = FindObjectOfType<QuestUI>(true);
-            if (ui != null) ui.RefreshQuestList();
+                QuestUI ui = FindFirstObjectByType<QuestUI>(FindObjectsInactive.Include);
+                if (ui != null) ui.RefreshQuestList();
+            }
         }
-    }
 
     public void MoveItemStorageToBag(int storageIndex)
     {
         if (CurrentStorageSlots == null || CurrentStorageSlots[storageIndex].IsEmpty) return;
+
+        ItemData targetItem = CurrentStorageSlots[storageIndex].item;
+
+        if (targetItem.itemName == "Headlight" || targetItem.itemName == "헤드라이트")
+        {
+            PlayerEquip playerEquip = FindObjectOfType<PlayerEquip>();
+            if (playerEquip != null)
+            {
+                playerEquip.TryAcquireHeadlight(targetItem);
+            }
+
+            if (NotificationManager.Instance != null)
+                NotificationManager.Instance.ShowNotification(targetItem.itemName, 1);
+
+            CurrentStorageSlots[storageIndex].item = null;
+            OnStorageUpdated?.Invoke();
+            return;
+        }
 
         for (int i = 0; i < BagSlots.Length; i++)
         {
@@ -314,6 +389,10 @@ public class InventoryManager : Singleton<InventoryManager>
 
                 SyncQuestAndUI(movedItemName);
                 UpdateAllNPCOutlines();
+
+                if (NotificationManager.Instance != null)
+                    NotificationManager.Instance.ShowNotification(movedItemName, 1);
+
                 return;
             }
         }
