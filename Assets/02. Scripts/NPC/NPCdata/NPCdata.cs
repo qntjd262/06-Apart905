@@ -6,4 +6,5 @@ public class NPCdata : ScriptableObject
     [Header("기본 정보")]
     public Sprite NpcImage;
     public string NpcName;
+    public string NpcID;
 }

@@ -4,22 +4,42 @@ using UnityEngine.Rendering;
 
 public class TimeFlow : MonoBehaviour
 {
-    /* ½Ã°£ÀÇ Èå¸§¿¡ µû¶ó Directional LightÀÇ È¸Àü°ú »ö±òÀÌ ¹Ù²î´Â ½ºÅ©¸³Æ®
-     * ½ÇÁ¦ ½Ã°£ 1ºÐ = °ÔÀÓ ½Ã°£ 1½Ã°£
-     * xÃàÀº 90µµ, yÃàÀº 0µµÀÏ ¶§°¡ 12½Ã
-     * ½Ã°£¿¡ µû¶ó Environment ReflectionÀÇ Intensity Multiplierµµ º¯°æ
+    /* ì¸ê²Œìž„ ì‹œê°„ì´ íë¦„ì— ë”°ë¼ Directional Lightì˜ íšŒì „ì„ ë°”ê¾¸ëŠ” ìŠ¤í¬ë¦½íŠ¸
+     * í˜„ì‹¤ ì‹œê°„ 1ë¶„ = ê²Œìž„ ì‹œê°„ 1ì‹œê°„
+     * Xì¶• 90ë„, Yì¶• 0ë„ ì¼ ë•Œê°€ ë‚® 12ì‹œ ì •ì˜¤
+     * ì‹œê°„ì— ë”°ë¼ Environment Reflectionì˜ Intensity Multiplier ê°’ì„ ë™ì ìœ¼ë¡œ ë³€ê²½
      */
+    public static TimeFlow Instance {get; private set;}
 
-    [Header("¾À¿¡ ¹èÄ¡µÈ Directional Light ÇÒ´ç ÇÊ¿ä")]
+    [Header("ì§„í–‰ëœ ë‚ ì§œ")]
+    [SerializeField] private int days = 1;
+    public int Days => days;
+
+    public static Action<int> OnDayChanged;
+
+    [Header("ë‚®ê³¼ ë°¤ì„ í‘œí˜„í•  Directional Light ì˜¤ë¸Œì íŠ¸ í• ë‹¹")]
     [SerializeField] private GameObject directionalLight;
 
-    [Header("ÇöÀç ½Ã°£ (Çö½Ç 1ºÐ = °ÔÀÓ 1½Ã°£)")]
+    [Header("ê²Œìž„ ë‚´ í˜„ìž¬ ì‹œê°„ ì„¤ì • (í˜„ì‹¤ 1ë¶„ = ê²Œìž„ 1ì‹œê°„)")]
     [SerializeField] private int hours;
     [SerializeField] private float minutes;
 
-    [Header("ÇöÀç ½Ã°£ (Çö½Ç 1ºÐ = °ÔÀÓ 1½Ã°£)")]
+    [Header("ì‹œê°„ëŒ€ë³„ í•˜ëŠ˜ê³¼ ë¹›ì˜ ìƒ‰ìƒ ì„¤ì •")]
     [SerializeField] private Color dayColor = new Color(0.8f, 0.8f, 0.8f);
     [SerializeField] private Color nightColor = new Color(0.2f, 0.2f, 0.2f);
+
+    private void Awake()
+    {
+        if(Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     private void LateUpdate()
     {
@@ -30,21 +50,28 @@ public class TimeFlow : MonoBehaviour
             minutes = 0f;
 
             if (hours >= 24)
+            {
                 hours = 0;
+                days++;
+                
+                OnDayChanged?.Invoke(days);
+
+                Debug.Log($"ê²Œìž„ ì† í•˜ë£¨ê°€ ì§€ë‚˜ ë‚ ì§œê°€ ë³€ê²½ë˜ì—ˆìŠµë‹ˆë‹¤! í˜„ìž¬: {days}ì¼ì°¨");
+            }
         }
 
         RotateLight();
         ChangeLightColor();
     }
 
-    private void RotateLight()      // Directional Light È¸Àü
+    private void RotateLight()      // Directional Light È¸ï¿½ï¿½
     {
         float rotationXY = (hours + (minutes / 60f)) / 24f * 360;
 
         directionalLight.transform.rotation = Quaternion.Euler(rotationXY - 90f, rotationXY - 180f, 0f);
     }
 
-    private void ChangeLightColor()     // Directional Light »ö±ò º¯°æ
+    private void ChangeLightColor()     // Directional Light ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     {
         if (hours >= 5 && hours <= 8)
         {

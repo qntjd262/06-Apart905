@@ -58,20 +58,25 @@ public class StorageUI : MonoBehaviour
     // 슬롯에서 클릭했을 때 호출할 함수
     public void ShowItemInfo(InventorySlot slotData)
     {
-        // 클릭한 슬롯 데이터를 기억해둔다.
-        currentDisplayedSlot = slotData;
-
-        if (slotData == null || slotData.IsEmpty)
+        if (slotData == null || slotData.IsEmpty || slotData.item == null)
         {
             if (infoPanel != null) infoPanel.SetActive(false);
             return;
         }
 
         if (infoPanel != null) infoPanel.SetActive(true);
-        if (itemNameText != null) itemNameText.text = slotData.item.Name;
-        if (itemDescText != null) itemDescText.text = slotData.item.description;
+        
+        string displayName = !string.IsNullOrEmpty(slotData.item.Name) ? slotData.item.Name : 
+                            (!string.IsNullOrEmpty(slotData.item.itemName) ? slotData.item.itemName : slotData.item.name);
+
+        string displayDesc = !string.IsNullOrEmpty(slotData.item.description) ? slotData.item.description : "";
+
+        // UI에 안전하게 대입
+        if (itemNameText != null) itemNameText.text = displayName;
+        if (itemDescText != null) itemDescText.text = displayDesc;
         if (itemIconImage != null) itemIconImage.sprite = slotData.item.icon;
-        Debug.Log($"선택한 아이템: {slotData.item.Name}, 설명 텍스트: {slotData.item.description}", slotData.item);
+        
+        Debug.Log($"선택한 아이템: {displayName}, 설명 텍스트: {displayDesc}", slotData.item);
     }
 
     private void OnDisable()

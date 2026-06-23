@@ -109,6 +109,8 @@ public class ItemDataManager : MonoBehaviour
 
             newItem.ID = currentItemID;
             newItem.Name = row[1].Trim();
+
+            newItem.itemName = row[1].Trim();
             if(int.TryParse(row[2].Trim(), out int spawnCount)) newItem.SpawnCount = spawnCount;
             newItem.itemType = type;
 

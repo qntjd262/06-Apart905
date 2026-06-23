@@ -17,14 +17,34 @@ public class QuestUIText : MonoBehaviour
 
     public void UpdatePrograssUI()
     {
-        if(targetQuest == null) return;
+        if (targetQuest == null) return;
 
-        if(targetQuest.type == QuestType.ItemCollection)
+        if (targetQuest.type == QuestType.ItemCollection)
         {
-            questPrograssText.text = $"{targetQuest.targetID} ({targetQuest.currentAmount}/{targetQuest.goalAmount})";
-            
+            string progressDisplay = "";
+
+            for (int i = 0; i < targetQuest.objectives.Count; i++)
+            {
+                var obj = targetQuest.objectives[i];
+                
+                progressDisplay += $"{obj.targetID} ({obj.currentAmount}/{obj.goalAmount})";
+
+                if (i < targetQuest.objectives.Count - 1)
+                {
+                    progressDisplay += "\n";
+                }
+            }
+
+            questPrograssText.text = progressDisplay;
+        }
+        else if (targetQuest.type == QuestType.Interact)
+        {
+            if (targetQuest.isCompleted)
+                questPrograssText.text = "완료됨";
+            else if (targetQuest.IsAllObjectivesComplete())
+                questPrograssText.text = "NPC에게 보고하기";
+            else
+                questPrograssText.text = targetQuest.questGoal;
         }
     }
-
-
 }
