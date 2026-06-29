@@ -83,6 +83,38 @@ public class QuestManager : MonoBehaviour
                 quest.isAutoAccept && 
                 IsQuestAvailable(quest))
             {
+                bool hasDialogues = quest.beforeAcceptDialogues != null && quest.beforeAcceptDialogues.Length > 0;
+                bool hasNoInfo = string.IsNullOrEmpty(quest.questDiscrip) && (quest.objectives == null || quest.objectives.Count == 0);
+
+                if (hasDialogues && hasNoInfo && quest.isAutoComplete)
+                {
+                    Debug.Log($"[특수 연출] '{quest.questName}' 대사 전용 자동 수락/완료 퀘스트 감지.");
+                    
+                    if (player != null) player.isInteracting = true;
+
+                    activeQuests.Add(quest); 
+
+                    if (DialogueManager.Instance != null)
+                    {
+                        DialogueManager.Instance.StartDialogue(null, quest.beforeAcceptDialogues, () => 
+                        {
+                            Debug.Log($"[특수 연출 완료] '{quest.questName}' 대사 종료 -> 즉시 완료 처리 진입.");
+
+                            if (player != null) player.isInteracting = false;
+                            
+                            CompleteQuestInstantly(quest);
+                        });
+                    }
+                    else
+                    {
+                        Debug.LogError("DialogueManager가 씬에 없습니다. 특수 퀘스트를 강제 완료 처리합니다.");
+                        if (player != null) player.isInteracting = false;
+                        CompleteQuestInstantly(quest);
+                    }
+
+                    break; 
+                }
+
                 AcceptQuest(quest, player);
                 Debug.Log($"[자동 수락 감지] '{quest.questName}' 퀘스트 팝업을 요청합니다.");
                 

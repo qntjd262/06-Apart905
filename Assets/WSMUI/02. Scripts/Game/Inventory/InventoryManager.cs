@@ -80,28 +80,47 @@ public class InventoryManager : Singleton<InventoryManager>
     }
 
     private void UpdateAllNPCOutlines()
+    {
+        NPC[] allNPCs = FindObjectsByType<NPC>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+        
+        for (int i = 0; i < allNPCs.Length; i++)
         {
-            NPC[] allNPCs = FindObjectsByType<NPC>(FindObjectsInactive.Include, FindObjectsSortMode.None);
+            NPC npc = allNPCs[i];
             
-            for (int i = 0; i < allNPCs.Length; i++)
+            if (npc != null)
             {
-                NPC npc = allNPCs[i];
-                
-                if (npc != null && npc.myQuest != null)
+                if (npc.startQuests != null)
                 {
-                    if (npc.myQuest.type == QuestType.ItemCollection)
+                    foreach (var q in npc.startQuests)
                     {
-                        for (int j = 0; j < npc.myQuest.objectives.Count; j++)
-                        {
-                            var obj = npc.myQuest.objectives[j];
-                            int count = GetItemCount(obj.targetID);   
-                            npc.myQuest.ForceSyncProgress(obj.targetID, count);
-                        }
+                        if (q != null) SyncQuestItems(q);
                     }
-                    npc.UpdateOutlineColor();
                 }
+
+                if (npc.completeQuests != null)
+                {
+                    foreach (var q in npc.completeQuests)
+                    {
+                        if (q != null) SyncQuestItems(q);
+                    }
+                }
+                npc.UpdateOutlineColor();
             }
         }
+    }
+
+    private void SyncQuestItems(Quest quest)
+    {
+        if (quest.type == QuestType.ItemCollection)
+        {
+            for (int j = 0; j < quest.objectives.Count; j++)
+            {
+                var obj = quest.objectives[j];
+                int count = GetItemCount(obj.targetID);   
+                quest.ForceSyncProgress(obj.targetID, count);
+            }
+        }
+    }
 
     public int GetItemCount(string itemName)
     {
@@ -441,5 +460,27 @@ public class InventoryManager : Singleton<InventoryManager>
         OnBagUpdated?.Invoke();
         OnQuickSlotUpdated?.Invoke();
         OnStorageUpdated?.Invoke();
+    }
+
+    public void ConsumeBatteryItem()
+    {
+        Headlight playerHeadlight = FindFirstObjectByType<Headlight>();
+
+        if (playerHeadlight != null)
+        {
+            if (playerHeadlight.hasHeadlight)
+            {
+                // 배터리를 최대치로 충전
+                playerHeadlight.UseBatteryItem(playerHeadlight.MaxBattery);
+                
+                RemoveItem("배터리", 1);
+
+                Debug.Log("배터리 1개를 소모하여 헤드라이트의 게이지가 채웠습니다.");
+            }
+            else
+            {
+                Debug.Log("헤드라이트를 먼저 획득해야 배터리를 사용할 수 있습니다.");
+            }
+        }
     }
 }

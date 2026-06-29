@@ -136,7 +136,6 @@ public class PlayerEquip : MonoBehaviour
 
     public bool TryAcquireHeadlight(ItemData itemData)
     {
-        // 아이템의 이름이나 ID로 헤드라이트인지 체크 (기획에 맞게 이름을 수정하세요)
         if (itemData.Name == "Headlight" || itemData.Name == "헤드라이트")
         {
             if (headlightSystem != null)
