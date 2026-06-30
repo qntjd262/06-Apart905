@@ -196,17 +196,31 @@ public class SlotUI : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, ID
 
     private void HandleRightClick()
     {
-        if (IsStorageSlot || icon.sprite == null || IsQuickSlot) return;
+        if (IsStorageSlot || IsQuickSlot) return;
+        if (SlotIndex < 0 || SlotIndex >= InventoryManager.Instance.BagSlots.Length) return;
 
         InventorySlot slotData = InventoryManager.Instance.BagSlots[SlotIndex];
         if (slotData != null && slotData.item != null)
         {
-            if (slotData.item.itemType == ItemType.Useable)
+            if (slotData.item.itemType != ItemType.Eatable && slotData.item.itemType != ItemType.Equipable)
             {
-                Debug.Log("퀘스트 아이템은 조작할 수 없습니다.");
+                Debug.Log("이 아이템은 메뉴에서 조작할 수 없습니다.");
                 return;
             }
-            ItemMenuUI.Instance.ShowMenu(this, slotData);
+
+            ItemMenuUI itemMenuUI = ItemMenuUI.Instance;
+            if (itemMenuUI == null)
+            {
+                itemMenuUI = FindFirstObjectByType<ItemMenuUI>(FindObjectsInactive.Include);
+            }
+
+            if (itemMenuUI == null)
+            {
+                Debug.LogError("ItemMenuUI를 찾을 수 없습니다. InventoryPanel 프리팹에 ItemMenuUI가 있는지 확인하세요.", this);
+                return;
+            }
+
+            itemMenuUI.ShowMenu(this, slotData);
         }
     }
 }

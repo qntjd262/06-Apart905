@@ -119,10 +119,7 @@ public class InventoryUI : MonoBehaviour
     {
         if (infoPanel != null) infoPanel.SetActive(false);
 
-        if (ItemMenuUI.Instance != null)
-        {
-            ItemMenuUI.Instance.CloseMenu();
-        }
+        if (ItemMenuUI.Instance != null) ItemMenuUI.Instance.CloseMenu();
     }
 
     public void SetQuestSelectorActive(bool isActive)

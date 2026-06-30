@@ -12,7 +12,7 @@ public class OptionsController : BasePopupUI
     [SerializeField] private Button resetButton;
 
     [Header("세부 옵션 컴포넌트 연결")]
-    [SerializeField] private GeneralOptions generalOptions;
+    //[SerializeField] private GeneralOptions generalOptions;
     [SerializeField] private SoundOptions soundOptions;
     [SerializeField] private GraphicOptions graphicOptions;
     [SerializeField] private ControlOptions controlOptions;
@@ -50,7 +50,7 @@ public class OptionsController : BasePopupUI
         if (soundOptions != null) soundOptions.Initialize();
         if (graphicOptions != null) graphicOptions.Initialize();
         if (controlOptions != null) controlOptions.Initialize();
-        if (generalOptions != null) generalOptions.Initialize();
+        // if (generalOptions != null) generalOptions.Initialize();
 
         if (tabPanels != null && tabPanels.Length > 0)
         {
@@ -89,16 +89,16 @@ public class OptionsController : BasePopupUI
     {
         switch (currentTabIndex)
         {
+            // case 0:
+            //     if (generalOptions != null) generalOptions.ResetToDefault();
+            //     break;
             case 0:
-                if (generalOptions != null) generalOptions.ResetToDefault();
-                break;
-            case 1:
                 if (graphicOptions != null) graphicOptions.ResetToDefault();
                 break;
-            case 2:
+            case 1:
                 if (soundOptions != null) soundOptions.ResetToDefault();
                 break;
-            case 3:
+            case 2:
                 if (controlOptions != null) controlOptions.ResetToDefault();
                 break;
         }
@@ -110,7 +110,7 @@ public class OptionsController : BasePopupUI
         if (soundOptions != null) soundOptions.SaveOptions();
         if (graphicOptions != null) graphicOptions.SaveOptions();
         if (controlOptions != null) controlOptions.SaveOptions(); // 추가
-        if (generalOptions != null) generalOptions.SaveOptions(); // 추가
+        //if (generalOptions != null) generalOptions.SaveOptions(); // 추가
 
         PlayerPrefs.Save();
         Debug.Log("OptionsController: 설정 데이터가 저장되었습니다.");
@@ -121,7 +121,7 @@ public class OptionsController : BasePopupUI
         if (soundOptions != null) soundOptions.RevertOptions();
         if (graphicOptions != null) graphicOptions.RevertOptions();
         if (controlOptions != null) controlOptions.RevertOptions(); // 추가
-        if (generalOptions != null) generalOptions.RevertOptions(); // 추가
+       // if (generalOptions != null) generalOptions.RevertOptions(); // 추가
 
         HidePanel();
     }
