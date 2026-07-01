@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("플레이어 상태")]
     public bool isDead = false;
+    public bool isCrouch = false;
 
     //[Header("인벤토리 세팅")]
 
@@ -86,7 +87,7 @@ public class PlayerController : MonoBehaviour
         if (InputManager.Instance.GetKey(EKeyAction.MoveDown)) v -= 1f;
         
         bool isRunning = InputManager.Instance.GetKey(EKeyAction.Sprint);;
-        bool isCrouch = InputManager.Instance.GetKey(EKeyAction.Crouch);
+        isCrouch = InputManager.Instance.GetKey(EKeyAction.Crouch);
 
 
         playerMove.Move(h, v, isRunning, isCrouch);
