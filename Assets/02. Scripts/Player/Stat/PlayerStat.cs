@@ -196,6 +196,14 @@ public class PlayerStat : MonoBehaviour
             playerController.isDead = true;
             playerController.enabled = false;
         }
+        
+        PlayerMove playerMove = GetComponent<PlayerMove>();
+        
+        if(playerMove != null)
+        {
+            playerMove.PausePlayer();
+        }
+        
         if (TryGetComponent<PlayerMove>(out var move)) move.enabled = false;
         if (TryGetComponent<PlayerEquip>(out var equip)) equip.enabled = false;
         if (TryGetComponent<PlayerAttack>(out var attack)) attack.enabled = false;

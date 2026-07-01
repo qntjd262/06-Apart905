@@ -23,7 +23,7 @@ public class PlayerMove : MonoBehaviour
     [Header("스태미나 세팅")]
     private PlayerStat playerStat;
     [SerializeField] private float staminaDecreaseRate = 10f;
-    [SerializeField] private float staminaRecoverRate = 0.01f;
+    [SerializeField] private float staminaRecoverRate = 0.05f;
     [SerializeField] private float recoveryDelay = 1f;
     public bool isExhausted = false;
 
