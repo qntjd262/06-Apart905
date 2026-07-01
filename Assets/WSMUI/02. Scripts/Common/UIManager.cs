@@ -230,10 +230,14 @@ public class UIManager : Singleton<UIManager>
         bool isNowActive = !inventoryPanel.activeSelf;
         inventoryPanel.SetActive(isNowActive);
 
+        PlayerMove playerMove = FindFirstObjectByType<PlayerMove>();
+
         if (isNowActive)
         {
             inventoryPanel.GetComponent<InventoryUI>().SetQuestSelectorActive(true);
             RegisterUI(inventoryPanel);
+            playerMove.PausePlayer();
+            Debug.Log("인벤 Open");
         }
         else
         {
@@ -253,6 +257,8 @@ public class UIManager : Singleton<UIManager>
         storagePanel.SetActive(isNowActive);
         inventoryPanel.SetActive(isNowActive);
 
+        PlayerMove playerMove = FindFirstObjectByType<PlayerMove>();
+
         if (isNowActive)
         {
             inventoryPanel.GetComponent<InventoryUI>().SetQuestSelectorActive(false);
@@ -260,6 +266,8 @@ public class UIManager : Singleton<UIManager>
             RegisterUI(storagePanel);
 
             if (slots != null) InventoryManager.Instance.OpenStorage(slots);
+            playerMove.PausePlayer();
+            Debug.Log("인벤 Open");
         }
         else
         {

@@ -18,12 +18,17 @@ public class PlayerLook : MonoBehaviour
     [SerializeField] private LayerMask blockLayer;
     [SerializeField] private float cameraRadius = 0.12f;
 
+    [Header("쪼그려 앉아있을때 카메라 세팅")]
+    [SerializeField] private float crouchZOffset = 0.2f;
+
     private PlayerStat playerStat;
+    private PlayerController playerController;
     private Camera mainCam;
 
     void Start()
     {
         playerStat = GetComponent<PlayerStat>();
+        playerController = GetComponent<PlayerController>();
         mainCam = Camera.main;
 
         if (mainCam != null && cameraPos != null)
@@ -36,7 +41,7 @@ public class PlayerLook : MonoBehaviour
 
     public void Look(float mouseX, float mouseY)
     {
-        if (playerStat.isInteracting) return;
+        if (playerStat.isInteracting || playerController.isDead) return;
 
         // 좌우 회전: 플레이어 몸체 회전
         float sensH = InputManager.Instance.MouseSensH;
@@ -45,12 +50,11 @@ public class PlayerLook : MonoBehaviour
         transform.Rotate(0f, mouseX * sensH, 0f);
         
         currentVerticalRotation -= mouseY * senV;
+        currentVerticalRotation = Mathf.Clamp(currentVerticalRotation, -upDownRange, upDownRange);
 
         // transform.Rotate(0f, mouseX * mouseSensitivity, 0f);
 
         // currentVerticalRotation -= mouseY * mouseSensitivity;
-
-        // currentVerticalRotation = Mathf.Clamp(currentVerticalRotation, -upDownRange, upDownRange);
 
         if (cameraPos != null)
         {
@@ -64,12 +68,29 @@ public class PlayerLook : MonoBehaviour
 
         cameraPos.position = cameraSocket.position;
 
+        if(playerController.isDead)
+        {
+            cameraPos.rotation = cameraSocket.rotation;
+        }
+
+        float targetZOffset = playerController.isCrouch ? crouchZOffset : 0f;
         float finalZOffset = 0f;
         RaycastHit hit;
 
-        if (Physics.SphereCast(cameraSocket.position - (cameraPos.forward * 0.2f), cameraRadius, cameraPos.forward, out hit, 0.2f, blockLayer))
+        float castDistance = Mathf.Abs(targetZOffset) + 0.1f;
+
+        if (Physics.SphereCast(cameraSocket.position - (cameraPos.forward * 0.2f), cameraRadius, cameraPos.forward, out hit, castDistance, blockLayer))
         {
-            finalZOffset = -0.1f;
+            finalZOffset = -(hit.distance - cameraRadius);
+
+            finalZOffset = Mathf.Min(finalZOffset, 0f);
+        }
+        else
+        {
+            if (Physics.SphereCast(cameraSocket.position - (cameraPos.forward * 0.2f), cameraRadius, cameraPos.forward, out hit, 0.2f, blockLayer))
+            {
+                finalZOffset = -0.1f;
+            }
         }
 
         if (mainCam != null)

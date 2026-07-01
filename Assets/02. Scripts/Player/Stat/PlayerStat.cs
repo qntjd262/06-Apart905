@@ -105,7 +105,10 @@ public class PlayerStat : MonoBehaviour
     //몬스터에게 피격당할 시 호출되는 함수
     public void TakeDamage(float damage)
     {
-        soundController.OnAttackedSound();  // 피격 사운드 호출 
+        if(hp.currentValue > 0)
+        {
+            soundController.OnAttackedSound();  // 피격 사운드 호출 
+        }
 
         hp.DecreaseStat(damage);
         OnHpChanged?.Invoke(hp.currentValue, hp.maxValue);
@@ -133,7 +136,7 @@ public class PlayerStat : MonoBehaviour
         Quaternion originalRot = Quaternion.identity; 
         Quaternion targetRot = Quaternion.Euler(0, 0, 4f); 
 
-        float duration = 0.15f; // 기울어지는 시간
+        float duration = 0.3f; // 기울어지는 시간
         float elapsed = 0f;
 
 
@@ -196,6 +199,14 @@ public class PlayerStat : MonoBehaviour
             playerController.isDead = true;
             playerController.enabled = false;
         }
+        
+        PlayerMove playerMove = GetComponent<PlayerMove>();
+        
+        if(playerMove != null)
+        {
+            playerMove.PausePlayer();
+        }
+        
         if (TryGetComponent<PlayerMove>(out var move)) move.enabled = false;
         if (TryGetComponent<PlayerEquip>(out var equip)) equip.enabled = false;
         if (TryGetComponent<PlayerAttack>(out var attack)) attack.enabled = false;
