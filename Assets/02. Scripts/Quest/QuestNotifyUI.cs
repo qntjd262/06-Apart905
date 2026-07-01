@@ -70,14 +70,12 @@ public class QuestNotifyUI : BasePopupUI
         popupPanel.transform.DOScale(0.9f, 0.15f).SetEase(Ease.InCubic).SetUpdate(true);
         canvasGroup.DOFade(0f, 0.15f).SetEase(Ease.InCubic).SetUpdate(true).OnComplete(() =>
         {
+            acceptButton.interactable = true;
             HidePanel();
-
             if (QuestManager.Instance != null)
             {
                 QuestManager.Instance.ConfirmAcceptQuest();
             }
-
-            acceptButton.interactable = true;
         });
     }
 }
