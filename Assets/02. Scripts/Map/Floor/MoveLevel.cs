@@ -1,4 +1,6 @@
-    using UnityEngine;
+using TMPro;
+using Unity.AI.Navigation;
+using UnityEngine;
 
 public class MoveLevel : MonoBehaviour
 {
@@ -26,6 +28,8 @@ public class MoveLevel : MonoBehaviour
         _LevelBott, _LevelMid, _LevelTop,           // �̵���ų 3���� ����
         _RoofTop, _Ground;                          // ����, 1�� �ٴ�
     [SerializeField] private int _currLevel = 9;             // ���� �� ��, ������ �� 9������ ����
+    [SerializeField] private NavMeshLink _link_01; 
+    [SerializeField] private NavMeshLink _link_12;
 
     // set�Ұ� get���� ������Ƽ, Ÿ Ŭ�������� �ҷ����� ��
     public int CurrLevel => _currLevel;
@@ -33,6 +37,10 @@ public class MoveLevel : MonoBehaviour
     public GameObject LevelMid { get{ return _LevelMid; }}
     public GameObject LevelTop { get{ return _LevelTop; }}
 
+    private void Start()
+    {
+        OnFloorShifted();
+    }
     public void MoveUp()
     {
         if (_currLevel >= 2 && _currLevel < 16)          // 18���� ���� ����
@@ -107,6 +115,9 @@ public class MoveLevel : MonoBehaviour
 
     public void OnFloorShifted()
     {
+        //LinkStair();
+        ChangeDoorNum();
+
         Door[] currDoors = _LevelMid.GetComponentsInChildren<Door>();
 
         foreach (Door door in currDoors)
@@ -121,7 +132,7 @@ public class MoveLevel : MonoBehaviour
             };
 
             bool checkOpen = _doorManager.IsDoorOpen(info);
-            Debug.Log($"{checkOpen}, {door.isLeft}, {door.doorNum}");
+
             door.SetStateImmediate(checkOpen);
         }
     }
@@ -131,8 +142,30 @@ public class MoveLevel : MonoBehaviour
         _floorManager.MonsterFloorMove(targetMonster, isUp);
     }
 
-    private void GetChangedCurrLv()
+    private void LinkStair()
     {
+        _link_01.startTransform = _LevelBott.transform.Find("Level/StairTop");
+        _link_01.endTransform = _LevelMid.transform.Find("Level/StairBottom");
 
+        _link_12.startTransform = _LevelMid.transform.Find("Level/StairTop");
+        _link_12.endTransform = _LevelTop.transform.Find("Level/StairBottom");
+
+        _link_01.UpdateLink();
+        _link_12.UpdateLink();
+    }
+
+    private void ChangeDoorNum()
+    {
+        TextMeshProUGUI[] doorNumText = _LevelMid.GetComponentsInChildren<TextMeshProUGUI>();
+
+        Debug.Log(doorNumText.Length);
+
+        if (doorNumText.Length >= 2)
+        {
+            doorNumText[0].text = $"{_currLevel}05";
+            doorNumText[1].text = $"{_currLevel}03";
+        }
+
+        Debug.Log(doorNumText[0].text + " / " + doorNumText[1].text);
     }
 }

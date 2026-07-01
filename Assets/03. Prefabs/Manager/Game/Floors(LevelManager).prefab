@@ -1042,6 +1042,10 @@ PrefabInstance:
       value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 4821726991305752054, guid: 0f36e76f539a9a74c8df676a4da91d54, type: 3}
+      propertyPath: _doorManager
+      value: 
+      objectReference: {fileID: 4754943216477785320}
+    - target: {fileID: 4821726991305752054, guid: 0f36e76f539a9a74c8df676a4da91d54, type: 3}
       propertyPath: _floorManager
       value: 
       objectReference: {fileID: 1048360342520591880}
@@ -1096,6 +1100,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8187276253953917822, guid: 0f36e76f539a9a74c8df676a4da91d54, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4754943216477785320}
+    - targetCorrespondingSourceObject: {fileID: 8187276253953917822, guid: 0f36e76f539a9a74c8df676a4da91d54, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1630488976282550709}
   m_SourcePrefab: {fileID: 100100000, guid: 0f36e76f539a9a74c8df676a4da91d54, type: 3}
 --- !u!114 &1048360342520591880 stripped
 MonoBehaviour:
@@ -1136,6 +1143,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: abb578d5b89d51b4ba12b1b5c2359bce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1630488976282550709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7565514295508575094}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eeb5dc026fdf4b488bc7ae0138ab719, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SerializedVersion: 1
+  m_AgentTypeID: 0
+  m_StartPoint: {x: 0, y: 0, z: -2.5}
+  m_EndPoint: {x: 0, y: 0, z: 2.5}
+  m_StartTransform: {fileID: 0}
+  m_EndTransform: {fileID: 0}
+  m_Activated: 1
+  m_Width: 3.35
+  m_CostModifier: 1
+  m_IsOverridingCost: 0
+  m_Bidirectional: 1
+  m_AutoUpdatePosition: 0
+  m_Area: 0
 --- !u!4 &8836841085530114038 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7188821774180427774, guid: 0f36e76f539a9a74c8df676a4da91d54, type: 3}
