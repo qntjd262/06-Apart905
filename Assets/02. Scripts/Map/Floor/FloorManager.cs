@@ -247,6 +247,8 @@ public class FloorManager : MonoBehaviour
 
             case 14:
                 _QuestNPCs[2].SetActive(true);
+                if (_QuestItems[5] != null)
+                    _QuestItems[5].SetActive(true);
                 break;
 
             case 17:
