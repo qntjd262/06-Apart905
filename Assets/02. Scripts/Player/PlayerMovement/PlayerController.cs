@@ -1,5 +1,6 @@
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class PlayerController : MonoBehaviour
 {
@@ -39,8 +40,7 @@ public class PlayerController : MonoBehaviour
         // {
         //     UIManager.Instance.ToggleInventory();
         // }
-        bool isUIOpen = (UIManager.Instance.inventoryPanel != null && UIManager.Instance.inventoryPanel.activeSelf)
-                            || UIManager.Instance.IsAnyPopupOpen;
+        bool isUIOpen = UIManager.Instance.IsAnyUIOpen;
 
         if (isUIOpen) return;
         // bool isInventoryOpen = UIManager.Instance.inventoryPanel.activeSelf;
@@ -97,6 +97,10 @@ public class PlayerController : MonoBehaviour
         if (InputManager.Instance.GetKeyDown(EKeyAction.Attack))
         {
             //TODO : 공격 애니메이션을 통해 해당 애니메이션 지점에서 Attack()함수 실행하기
+            if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
+            {
+                return;
+            }
             playerEquip.UseCurrentItem();
         }
 

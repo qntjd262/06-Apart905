@@ -38,18 +38,17 @@ public class GraphicOptions : MonoBehaviour
         brightnessSlider.minValue = 1;
         brightnessSlider.maxValue = 5;
 
-        // [수정] 볼륨을 찾고 밝기를 적용하는 로직을 별도 함수로 분리하여 호출
         ApplySavedBrightnessToCurrentScene();
 
         int savedBrightnessLevel = PlayerPrefs.GetInt("Graphic_Brightness_Level", 3);
         savedBrightnessLevel = Mathf.Clamp(savedBrightnessLevel, 1, 5);
 
-        brightnessSlider.value = savedBrightnessLevel;
-        UpdateBrightnessUI(savedBrightnessLevel);
-
         brightnessSlider.onValueChanged.RemoveAllListeners();
         brightnessSlider.onValueChanged.AddListener(SetBrightness);
 
+        brightnessSlider.value = savedBrightnessLevel;
+        SetBrightness(savedBrightnessLevel);
+        
         // --- 해상도 & 화면 모드 초기화 (기존 동일) ---
         systemResolutions.Clear();
         Resolution[] resolutions = Screen.resolutions;

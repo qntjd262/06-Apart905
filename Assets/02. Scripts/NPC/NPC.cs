@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEditor.PackageManager;
 using UnityEditor.ShaderGraph;
 using UnityEditor.ShaderGraph.Internal;
@@ -9,7 +10,13 @@ public class NPC : MonoBehaviour, IInteractable
     [Header("NPC Info")]
     public NPCdata npcData;
 
-    public Quest myQuest;
+    [Header("Quest Settings")]
+    [Tooltip("이 NPC에게서 '수락'할 수 있는 퀘스트 목록")]
+    public List<Quest> startQuests = new List<Quest>(); 
+    
+    [Tooltip("이 NPC에게서 '완료'할 수 있는 퀘스트 목록")]
+    public List<Quest> completeQuests = new List<Quest>();
+
     private Renderer myRenderer;
     private MaterialPropertyBlock PropertyBlock;
 
@@ -26,51 +33,71 @@ public class NPC : MonoBehaviour, IInteractable
 
     public void UpdateOutlineColor()
     {
-        if(myRenderer == null || myQuest == null) return;
+        if (myRenderer == null) return;
 
         myRenderer.GetPropertyBlock(PropertyBlock);
         Color targetColor = Color.red;
-        string status = "";
+        string status = "퀘스트 없음";
 
-        if(myQuest.isCompleted)
+        if (completeQuests != null && completeQuests.Count > 0)
         {
-            targetColor = Color.red;
-            status = "완료";
-        }
-        else
-        {
-            if(!QuestManager.Instance.IsQuestAvailable(myQuest) && !QuestManager.Instance.activeQuests.Exists(q => q.questName == myQuest.questName))
+            foreach (var q in completeQuests)
             {
-                targetColor = Color.red;
-                status = "선행 퀘스트 미완료(잠김)";
-            }
-            else
-            {
-                bool isActive = QuestManager.Instance.activeQuests.Exists(q => q.questName == myQuest.questName);
+                if (q == null || q.isCompleted) continue;
 
-                if(isActive)
+                bool isActive = QuestManager.Instance.activeQuests.Exists(activeQ => activeQ.questName == q.questName);
+                if (isActive)
                 {
-                    if(myQuest.IsAllObjectivesComplete())
+                    if (q.IsAllObjectivesComplete())
                     {
                         targetColor = Color.green;
-                        status = "목표달성";
+                        status = $"[{q.questName}] 목표달성 (완료 가능)";
+                        SetOutline(targetColor, status);
+                        return; 
                     }
                     else
                     {
                         targetColor = Color.red;
-                        status = "목표치 부족";
+                        status = $"[{q.questName}] 목표치 부족 (진행중)";
                     }
-                }
-                else
-                {
-                    targetColor = Color.green;
-                    status = "수락 전(보유중)";
                 }
             }
         }
-        Debug.Log($"{gameObject.name}의 퀘스트 상태: {status} / 설정 색상: {targetColor}");
 
-        PropertyBlock.SetColor("_Outline_color", targetColor);
+        if (startQuests != null && startQuests.Count > 0)
+        {
+            foreach (var q in startQuests)
+            {
+                if (q == null || q.isCompleted) continue;
+
+                bool isActive = QuestManager.Instance.activeQuests.Exists(activeQ => activeQ.questName == q.questName);
+                
+                if (!QuestManager.Instance.IsQuestAvailable(q) && !isActive)
+                {
+                    if (status == "퀘스트 없음") status = $"[{q.questName}] 선행 미완료";
+                }
+                else if (isActive)
+                {
+                    if (status == "퀘스트 없음") status = $"[{q.questName}] 이미 진행 중";
+                }
+                else
+                {
+                    // 받을 수 있는 퀘스트 발견!
+                    targetColor = Color.green;
+                    status = $"[{q.questName}] 수락 전(보유중)";
+                    SetOutline(targetColor, status);
+                    return; 
+                }
+            }
+        }
+
+        SetOutline(targetColor, status);
+    }
+
+    private void SetOutline(Color color, string status)
+    {
+        Debug.Log($"{gameObject.name}의 퀘스트 상태: {status} / 설정 색상: {color}");
+        PropertyBlock.SetColor("_Outline_color", color);
         myRenderer.SetPropertyBlock(PropertyBlock);
     }
 
@@ -86,105 +113,98 @@ public class NPC : MonoBehaviour, IInteractable
 
     public void Interact(PlayerStat player)
     {
-        if(myQuest != null && myQuest.isCompleted)
+        if (player.isInteracting) return;
+
+        Quest activeInteractionQuest = null;
+        bool isCompleteFlow = false;
+
+        if (completeQuests != null && completeQuests.Count > 0)
         {
-            Debug.Log($"{gameObject.name}: 이미 완료된 퀘스트입니다. ");
+            foreach (var q in completeQuests)
+            {
+                if (q != null && !q.isCompleted && QuestManager.Instance.activeQuests.Exists(activeQ => activeQ.questName == q.questName))
+                {
+                    activeInteractionQuest = q;
+                    isCompleteFlow = true;
+                    break; 
+                }
+            }
+        }
+
+        if (activeInteractionQuest == null && startQuests != null && startQuests.Count > 0)
+        {
+            foreach (var q in startQuests)
+            {
+                if (q != null && !q.isCompleted && QuestManager.Instance.IsQuestAvailable(q))
+                {
+                    activeInteractionQuest = q;
+                    isCompleteFlow = false;
+                    break; 
+                }
+            }
+        }
+
+        if (activeInteractionQuest == null)
+        {
+            if (npcData != null && NPCUIHandler.Instance != null)
+                NPCUIHandler.Instance.ShowNPC(npcData);
             return;
         }
 
-        if (myQuest != null && !QuestManager.Instance.IsQuestAvailable(myQuest) && !QuestManager.Instance.activeQuests.Exists(q => q.questName == myQuest.questName))
-        {
-            Debug.Log($"{gameObject.name}: 선행 퀘스트를 완료하지 않아 퀘스트를 줄 수 없습니다.");
-            return; 
-        }
-
-        if(npcData != null && NPCUIHandler.Instance != null)
+        if (npcData != null && NPCUIHandler.Instance != null)
         {
             NPCUIHandler.Instance.ShowNPC(npcData);
         }
 
-        if (player.isInteracting || myQuest == null) return;
-
-        if (myQuest.type == QuestType.ItemCollection)
-        {
-            for (int i = 0; i < myQuest.objectives.Count; i++)
-            {
-                var obj = myQuest.objectives[i];
-                int currentBagCount = InventoryManager.Instance.GetItemCount(obj.targetID);
-                myQuest.ForceSyncProgress(obj.targetID, currentBagCount);
-            }
-        }
-        else if (myQuest.type == QuestType.Interact && QuestManager.Instance.activeQuests.Exists(q => q.questName == myQuest.questName))
-        {
-            if (npcData != null)
-            {
-                for (int i = 0; i < myQuest.objectives.Count; i++)
-                {
-                    var obj = myQuest.objectives[i];
-                    if (obj.targetID == npcData.NpcID)
-                    {
-                        myQuest.ForceSyncProgress(obj.targetID, obj.goalAmount);
-                    }
-                }
-            }
-        }
+        SyncQuestObjectives(activeInteractionQuest);
 
         string[] currentDialogues;
-        bool isAlreadyActive = QuestManager.Instance.activeQuests.Exists(q => q.questName == myQuest.questName);
+        bool isAlreadyActive = QuestManager.Instance.activeQuests.Exists(q => q.questName == activeInteractionQuest.questName);
 
-        if (!isAlreadyActive && !myQuest.isCompleted)
+        if (!isAlreadyActive)
         {
-            currentDialogues = myQuest.beforeAcceptDialogues;
+            currentDialogues = activeInteractionQuest.beforeAcceptDialogues;
         }
-        else if (myQuest.IsAllObjectivesComplete() && !myQuest.isCompleted)
+        else if (activeInteractionQuest.IsAllObjectivesComplete())
         {
-            currentDialogues = myQuest.completeDialogues;
+            currentDialogues = activeInteractionQuest.completeDialogues;
         }
         else
         {
-            currentDialogues = myQuest.duringAcceptDialogues;
+            currentDialogues = activeInteractionQuest.duringAcceptDialogues;
         }
 
-        player.isInteracting = true; 
-        
+        player.isInteracting = true;
+
         DialogueManager.Instance.StartDialogue(npcData, currentDialogues, () => {
+            
+            SyncQuestObjectives(activeInteractionQuest);
+            bool stillActive = QuestManager.Instance.activeQuests.Exists(q => q.questName == activeInteractionQuest.questName);
 
-            if (myQuest.type == QuestType.ItemCollection)
+            if (!stillActive && !activeInteractionQuest.isCompleted && !isCompleteFlow)
             {
-                for (int i = 0; i < myQuest.objectives.Count; i++)
-                {
-                    var obj = myQuest.objectives[i];
-                    int finalCheckCount = InventoryManager.Instance.GetItemCount(obj.targetID);
-                    myQuest.ForceSyncProgress(obj.targetID, finalCheckCount);
-                }
-            }
-
-            bool stillActive = QuestManager.Instance.activeQuests.Exists(q => q.questName == myQuest.questName);
-
-            if (!stillActive && !myQuest.isCompleted)
-            {
-                QuestManager.Instance.AcceptQuest(myQuest, player);
+                QuestManager.Instance.AcceptQuest(activeInteractionQuest, player);
                 
-                if (myQuest.type == QuestType.Interact && npcData != null)
+                if (activeInteractionQuest.type == QuestType.Interact && npcData != null)
                 {
-                    for (int i = 0; i < myQuest.objectives.Count; i++)
+                    foreach (var obj in activeInteractionQuest.objectives)
                     {
-                        var obj = myQuest.objectives[i];
                         if (obj.targetID == npcData.NpcID)
                         {
-                            myQuest.ForceSyncProgress(obj.targetID, obj.goalAmount);
+                            activeInteractionQuest.ForceSyncProgress(obj.targetID, obj.goalAmount);
                         }
                     }
                 }
             }
             else
             {
-                if(myQuest.IsAllObjectivesComplete() && !myQuest.isCompleted)
+                if (activeInteractionQuest.IsAllObjectivesComplete() && !activeInteractionQuest.isCompleted && isCompleteFlow)
                 {
-                    CompleteQuest();         
+                    CompleteQuest(activeInteractionQuest);
                 }
-                player.isInteracting = false; 
-                if(DialogueManager.Instance != null)
+                
+                player.isInteracting = false;
+                if (DialogueManager.Instance != null)
                 {
                     DialogueManager.Instance.EndDialogue();
                 }
@@ -193,32 +213,61 @@ public class NPC : MonoBehaviour, IInteractable
         });
     }
 
-    void CompleteQuest()
+    private void SyncQuestObjectives(Quest quest)
     {
-        myQuest.isCompleted = true;
+        if (quest == null) return;
 
-        if(QuestManager.Instance != null && !QuestManager.Instance.completedQuestNames.Contains(myQuest.questName))
+        if (quest.type == QuestType.ItemCollection)
         {
-            QuestManager.Instance.completedQuestNames.Add(myQuest.questName);
+            for (int i = 0; i < quest.objectives.Count; i++)
+            {
+                var obj = quest.objectives[i];
+                int currentBagCount = InventoryManager.Instance.GetItemCount(obj.targetID);
+                quest.ForceSyncProgress(obj.targetID, currentBagCount);
+            }
+        }
+        else if (quest.type == QuestType.Interact && QuestManager.Instance.activeQuests.Exists(q => q.questName == quest.questName))
+        {
+            if (npcData != null)
+            {
+                for (int i = 0; i < quest.objectives.Count; i++)
+                {
+                    var obj = quest.objectives[i];
+                    if (obj.targetID == npcData.NpcID)
+                    {
+                        quest.ForceSyncProgress(obj.targetID, obj.goalAmount);
+                    }
+                }
+            }
+        }
+    }
+
+    void CompleteQuest(Quest targetQuest)
+    {
+        targetQuest.isCompleted = true;
+
+        if (QuestManager.Instance != null && !QuestManager.Instance.completedQuestNames.Contains(targetQuest.questName))
+        {
+            QuestManager.Instance.completedQuestNames.Add(targetQuest.questName);
         }
 
-        if (myQuest.type == QuestType.ItemCollection)
+        if (targetQuest.type == QuestType.ItemCollection)
         {
-            foreach (var obj in myQuest.objectives)
+            foreach (var obj in targetQuest.objectives)
             {
                 InventoryManager.Instance.RemoveItem(obj.targetID, obj.goalAmount);
             }
         }
 
-        if (myQuest.rewardItemID != null)
+        if (targetQuest.rewardItemID != null)
         {
-            bool isSuccess = InventoryManager.Instance.AddItem(myQuest.rewardItemID);
-            Debug.Log($"{myQuest.rewardItemID.itemName}를 획득하였습니다!");
+            InventoryManager.Instance.AddItem(targetQuest.rewardItemID);
+            Debug.Log($"{targetQuest.rewardItemID.itemName}를 획득하였습니다!");
         }
 
-        QuestManager.Instance.activeQuests.RemoveAll(q => q.questName == myQuest.questName);
+        QuestManager.Instance.activeQuests.RemoveAll(q => q.questName == targetQuest.questName);
 
-        if (QuestManager.Instance.trackingQuest != null && QuestManager.Instance.trackingQuest.questName == myQuest.questName)
+        if (QuestManager.Instance.trackingQuest != null && QuestManager.Instance.trackingQuest.questName == targetQuest.questName)
         {
             QuestManager.Instance.trackingQuest = null;
 
@@ -230,10 +279,7 @@ public class NPC : MonoBehaviour, IInteractable
             else
             {
                 QuestTrackerUI tracker = FindFirstObjectByType<QuestTrackerUI>(FindObjectsInactive.Include);
-                if (tracker != null)
-                {
-                    tracker.HideTracker();
-                }
+                if (tracker != null) tracker.HideTracker();
             }
         }
 
@@ -264,15 +310,14 @@ public class NPC : MonoBehaviour, IInteractable
 
     void RefreshStatus()
     {
-        if(myQuest != null && myQuest.type == QuestType.ItemCollection)
+        if (startQuests != null)
         {
-            for (int i = 0; i < myQuest.objectives.Count; i++)
-            {
-                var obj = myQuest.objectives[i];
-                int count = InventoryManager.Instance.GetItemCount(obj.targetID);
-                myQuest.ForceSyncProgress(obj.targetID, count);
-            }
-            UpdateOutlineColor();
+            foreach (var q in startQuests) SyncQuestObjectives(q);
         }
+        if (completeQuests != null)
+        {
+            foreach (var q in completeQuests) SyncQuestObjectives(q);
+        }
+        UpdateOutlineColor();
     }
 }
