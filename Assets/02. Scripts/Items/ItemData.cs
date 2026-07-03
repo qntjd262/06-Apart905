@@ -5,8 +5,10 @@ using UnityEngine;
 public enum ItemType
 {
     Equipable, // 장착 아이템 (무기, 손전등 등)
-    Eatable,   // 소모 아이템 (음식, 약 등)
-    Useable,   // 특수 아이템 (일반 열쇠, 건전지 등)
+    Eatable,   // 소모 아이템 (약, 배터리등 소모 가능)
+    Useable,   // 특수 아이템 (일반 열쇠 등)
+    Food,
+    Drink,
     Quest, // 퀘스트 아이템 (퀘스트 진행에 필요한 아이템)
     Key
 }
