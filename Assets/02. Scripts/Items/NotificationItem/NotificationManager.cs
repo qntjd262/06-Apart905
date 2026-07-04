@@ -29,4 +29,23 @@ public class NotificationManager : Singleton<NotificationManager>
             Debug.LogError("생성된 프리팹에서 'NotificationItem' 스크립트를 찾을 수 없습니다! 프리팹을 확인하세요.");
         }
     }
+
+    public void ShowQuestNotification(string questName)
+    {
+        if (container == null || itemPrefab == null) return;
+
+        GameObject popUp = Instantiate(itemPrefab, container);
+        popUp.transform.SetAsFirstSibling();
+
+        NotificationItem notificationScript = popUp.GetComponent<NotificationItem>();
+        
+        if (notificationScript != null)
+        {
+            notificationScript.Setup(questName, 0, NotificationType.QuestComplete); 
+        }
+        else
+        {
+            Debug.LogError("생성된 프리팹에서 'NotificationItem' 스크립트를 찾을 수 없습니다! 프리팹을 확인하세요.");
+        }
+    }
 }

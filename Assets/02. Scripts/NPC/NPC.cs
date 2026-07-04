@@ -282,6 +282,11 @@ public class NPC : MonoBehaviour, IInteractable
 
         QuestManager.Instance.activeQuests.RemoveAll(q => q.questName == targetQuest.questName);
 
+        if (NotificationManager.Instance != null)
+        {
+            NotificationManager.Instance.ShowQuestNotification(targetQuest.questName);
+        }
+
         if (startQuests != null)
         {
             foreach (var nextQ in startQuests)

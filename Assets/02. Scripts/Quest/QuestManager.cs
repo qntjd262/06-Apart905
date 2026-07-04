@@ -275,6 +275,11 @@ public class QuestManager : MonoBehaviour
 
         quest.isCompleted = true;
 
+        if(NotificationManager.Instance != null)
+        {
+            NotificationManager.Instance.ShowQuestNotification(quest.questName);
+        }
+
         if (!completedQuestNames.Contains(quest.questName))
         {
             completedQuestNames.Add(quest.questName);

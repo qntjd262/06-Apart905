@@ -2,19 +2,32 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 
+public enum NotificationType
+{
+    ItemGet,
+    QuestComplete
+}
+
 public class NotificationItem : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI itemText; 
     [SerializeField] private CanvasGroup canvasGroup; 
 
     [SerializeField] private float duration = 2.0f;     // 화면에 머무는 시간
-    [SerializeField] private float fadeSpeed = 1.0f;    // ★ 1.0으로 낮춰서 스르륵 사라지는 게 눈에 보이도록 수정
+    [SerializeField] private float fadeSpeed = 1.0f;    
 
-    public void Setup(string itemName, int count)
+    public void Setup(string itemName, int count, NotificationType type = NotificationType.ItemGet)
     {
         if (itemText != null)
         {
-            itemText.text = $"{itemName}을(를) 획득하였습니다.";
+            if(type == NotificationType.ItemGet)
+            {
+                itemText.text = $"{itemName}을(를) 획득하였습니다.";
+            }
+            else if(type == NotificationType.QuestComplete)
+            {
+                itemText.text = $"<color=#00FF00>[퀘스트 완료]</color> {itemName}";
+            }
         }
         else
         {
