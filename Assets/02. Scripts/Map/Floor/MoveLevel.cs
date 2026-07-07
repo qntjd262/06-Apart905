@@ -115,7 +115,7 @@ public class MoveLevel : MonoBehaviour
 
     public void OnFloorShifted()
     {
-        //LinkStair();
+        LinkStair();
         ChangeDoorNum();
 
         Door[] currDoors = _LevelMid.GetComponentsInChildren<Door>();
@@ -152,6 +152,8 @@ public class MoveLevel : MonoBehaviour
 
         _link_01.UpdateLink();
         _link_12.UpdateLink();
+
+        Debug.Log(_link_01);
     }
 
     private void ChangeDoorNum()
