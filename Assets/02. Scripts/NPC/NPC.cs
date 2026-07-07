@@ -1,9 +1,5 @@
 using System.Collections.Generic;
-using UnityEditor.PackageManager;
-using UnityEditor.ShaderGraph;
-using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class NPC : MonoBehaviour, IInteractable
 {
@@ -82,7 +78,6 @@ public class NPC : MonoBehaviour, IInteractable
                 }
                 else
                 {
-                    // 받을 수 있는 퀘스트 발견!
                     targetColor = Color.green;
                     status = $"[{q.questName}] 수락 전(보유중)";
                     SetOutline(targetColor, status);
@@ -158,7 +153,8 @@ public class NPC : MonoBehaviour, IInteractable
 
         SyncQuestObjectives(activeInteractionQuest);
 
-        string[] currentDialogues;
+        // 💡 [변경점]: string[]에서 교차 대화용 DialogueLine[] 타입으로 변경
+        DialogueLine[] currentDialogues;
         bool isAlreadyActive = QuestManager.Instance.activeQuests.Exists(q => q.questName == activeInteractionQuest.questName);
 
         if (!isAlreadyActive)
@@ -176,6 +172,7 @@ public class NPC : MonoBehaviour, IInteractable
 
         player.isInteracting = true;
 
+        // 💡 [변경점]: 구조체 대사 데이터 통째로 DialogueManager에 전달
         DialogueManager.Instance.StartDialogue(npcData, currentDialogues, () => {
             
             SyncQuestObjectives(activeInteractionQuest);
@@ -200,7 +197,8 @@ public class NPC : MonoBehaviour, IInteractable
             {
                 if (activeInteractionQuest.IsAllObjectivesComplete() && !activeInteractionQuest.isCompleted && isCompleteFlow)
                 {
-                    CompleteQuest(activeInteractionQuest);
+                    // 💡 [변경점]: 연쇄 수락 처리를 위해 player 인자 추가 넘김
+                    CompleteQuest(activeInteractionQuest, player);
                 }
                 
                 player.isInteracting = false;
@@ -222,8 +220,17 @@ public class NPC : MonoBehaviour, IInteractable
             for (int i = 0; i < quest.objectives.Count; i++)
             {
                 var obj = quest.objectives[i];
-                int currentBagCount = InventoryManager.Instance.GetItemCount(obj.targetID);
-                quest.ForceSyncProgress(obj.targetID, currentBagCount);
+                
+                if (System.Enum.TryParse(obj.targetID, out ItemType targetCategory))
+                {
+                    int categoryCount = InventoryManager.Instance.GetItemCountByType(targetCategory);
+                    quest.ForceSyncProgress(obj.targetID, categoryCount);
+                }
+                else
+                {
+                    int currentBagCount = InventoryManager.Instance.GetItemCount(obj.targetID);
+                    quest.ForceSyncProgress(obj.targetID, currentBagCount);
+                }
             }
         }
         else if (quest.type == QuestType.Interact && QuestManager.Instance.activeQuests.Exists(q => q.questName == quest.questName))
@@ -242,7 +249,8 @@ public class NPC : MonoBehaviour, IInteractable
         }
     }
 
-    void CompleteQuest(Quest targetQuest)
+
+    void CompleteQuest(Quest targetQuest, PlayerStat player)
     {
         targetQuest.isCompleted = true;
 
@@ -255,7 +263,14 @@ public class NPC : MonoBehaviour, IInteractable
         {
             foreach (var obj in targetQuest.objectives)
             {
-                InventoryManager.Instance.RemoveItem(obj.targetID, obj.goalAmount);
+                if (System.Enum.TryParse(obj.targetID, out ItemType targetType))
+                {
+                    InventoryManager.Instance.RemoveItemByType(targetType, obj.goalAmount);
+                }
+                else
+                {
+                    InventoryManager.Instance.RemoveItem(obj.targetID, obj.goalAmount);
+                }
             }
         }
 
@@ -266,6 +281,31 @@ public class NPC : MonoBehaviour, IInteractable
         }
 
         QuestManager.Instance.activeQuests.RemoveAll(q => q.questName == targetQuest.questName);
+
+        if (NotificationManager.Instance != null)
+        {
+            NotificationManager.Instance.ShowQuestNotification(targetQuest.questName);
+        }
+
+        if (startQuests != null)
+        {
+            foreach (var nextQ in startQuests)
+            {
+                if (nextQ != null && nextQ.prevQuest == targetQuest)
+                {
+                    if(nextQ.isAutoAccept)
+                    {
+                        QuestManager.Instance.AcceptQuest(nextQ, player);
+                        Debug.Log($"[연쇄 발동] 선행 퀘스트 완료 조건 만족: '{nextQ.questName}' 자동 시작!");
+                    }
+                    else
+                    {
+                        Debug.Log($"[연쇄 대기] '{nextQ.questName}'의 선행 조건은 만족했으나, 자동수락(isAutoAccept)이 꺼져 있어 대기합니다.");                    
+                    }
+                    break;
+                }
+            }
+        }
 
         if (QuestManager.Instance.trackingQuest != null && QuestManager.Instance.trackingQuest.questName == targetQuest.questName)
         {

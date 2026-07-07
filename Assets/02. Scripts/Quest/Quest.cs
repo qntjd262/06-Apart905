@@ -15,9 +15,9 @@ public class Quest : ScriptableObject
     [System.Serializable]
     public struct QuestObjective
     {
-    public string targetID; //필요 아이템의 이름 | type이 Interact일 시 상호작용 npc ID
-    public int goalAmount;     //필요 갯수
-    public int currentAmount;  //현재 갯수
+        public string targetID; //필요 아이템의 이름 | type이 Interact일 시 상호작용 npc ID
+        public int goalAmount;     //필요 갯수
+        public int currentAmount;  //현재 갯수
     }
 
     [TextArea(2, 5)]
@@ -40,21 +40,21 @@ public class Quest : ScriptableObject
     public ItemData rewardItemID; //보상 아이템의 이름
 
     [Header("Dialogues")]
-    [TextArea] public string[] beforeAcceptDialogues;
-    [TextArea] public string[] duringAcceptDialogues;
-    [TextArea] public string[] completeDialogues;
+    public DialogueLine[] beforeAcceptDialogues;
+    public DialogueLine[] duringAcceptDialogues;
+    public DialogueLine[] completeDialogues;
 
     public bool isCompleted;
 
     public bool IsAllObjectivesComplete()
+    {
+        foreach (var obj in objectives)
         {
-            foreach (var obj in objectives)
-            {
-                if (obj.currentAmount < obj.goalAmount)
-                    return false;
-            }
-            return true;
+            if (obj.currentAmount < obj.goalAmount)
+                return false;
         }
+        return true;
+    }
 
     public void UpdateProgress(QuestType eventType, string id, int amount)
     {

@@ -3,19 +3,11 @@ using System.Collections;
 using TMPro;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-using UnityEngine.EventSystems;
 
 public class DialogueManager : Singleton<DialogueManager>
 {
-    protected override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
-
-    }
-
-    protected override void OnSceneUnloaded(Scene scene)
-    {
-
-    }
+    protected override void OnSceneLoaded(Scene scene, LoadSceneMode mode) { }
+    protected override void OnSceneUnloaded(Scene scene) { }
 
     public GameObject dialoguePanel;
     public TextMeshProUGUI dialogueText;
@@ -25,8 +17,8 @@ public class DialogueManager : Singleton<DialogueManager>
     private bool skipRequested = false; // 타이핑 스킵용
     public bool IsDialogueActive { get; private set; }
 
-    public TextMeshProUGUI nameText;       // NPC 이름 표시용
-    public Image npcPortrait;              // NPC 이미지 표시용
+    public TextMeshProUGUI nameText;       // 대사마다 변경될 이름 표시용
+    public Image npcPortrait;              // 대사마다 변경될 이미지 표시용
 
     [Header("대화 종료 후 딜레이")]
     [SerializeField] private float blockDuration = 0.3f;
@@ -39,7 +31,7 @@ public class DialogueManager : Singleton<DialogueManager>
         }
     }
 
-    public void StartDialogue(NPCdata npcInfo, string[] lines, System.Action onComplete)
+    public void StartDialogue(NPCdata npcInfo, DialogueLine[] lines, System.Action onComplete)
     {
         if (lines == null || lines.Length == 0)
         {
@@ -48,50 +40,75 @@ public class DialogueManager : Singleton<DialogueManager>
             return;
         }
 
-        if (IsDialogueActive) return; // 이미 대화 중이면 중복 방지
+        if (IsDialogueActive) return; 
 
         IsDialogueActive = true;
         dialoguePanel.SetActive(true);
 
         if (npcInfo != null)
+        {
+            if (nameText != null) nameText.text = npcInfo.NpcName;
+            
+            if (npcPortrait != null)
+            {
+                if (npcInfo.NpcImage != null)
                 {
-                    if (nameText != null) nameText.text = npcInfo.NpcName;
-                    
-                    if (npcPortrait != null)
-                    {
-                        if (npcInfo.NpcImage != null)
-                        {
-                            npcPortrait.gameObject.SetActive(true);
-                            npcPortrait.sprite = npcInfo.NpcImage;
-                        }
-                        else
-                        {
-                            npcPortrait.gameObject.SetActive(false);
-                        }
-                    }
+                    npcPortrait.gameObject.SetActive(true);
+                    npcPortrait.sprite = npcInfo.NpcImage;
                 }
-
-                if (UIManager.Instance != null)
+                else
                 {
-                    UIManager.Instance.UpdateCursorState();
+                    npcPortrait.gameObject.SetActive(false);
                 }
+            }
+        }
 
-                StartCoroutine(PlayDialogue(lines, onComplete));
+        if (UIManager.Instance != null)
+        {
+            UIManager.Instance.UpdateCursorState();
+        }
+
+        // 대사 시퀀스 실행
+        StartCoroutine(PlayDialogue(lines, onComplete));
     }
 
-    private IEnumerator PlayDialogue(string[] lines, System.Action onComplete)
+    private IEnumerator PlayDialogue(DialogueLine[] lines, System.Action onComplete)
     {
-        foreach (string line in lines)
+        foreach (DialogueLine line in lines)
         {
+            if (line.speakerData != null)
+            {
+                if (nameText != null) 
+                    nameText.text = line.speakerData.NpcName;
+
+                if (npcPortrait != null)
+                {
+                    if (line.speakerData.NpcImage != null)
+                    {
+                        npcPortrait.gameObject.SetActive(true);
+                        npcPortrait.sprite = line.speakerData.NpcImage;
+                    }
+                    else
+                    {
+                        npcPortrait.gameObject.SetActive(false);
+                    }
+                }
+            }
+            else
+            {
+                if (nameText != null) nameText.text = "";
+                if (npcPortrait != null) npcPortrait.gameObject.SetActive(false);
+            }
+
             dialogueText.text = "";
             isTyping = true;
             skipRequested = false;
 
-            foreach (char letter in line.ToCharArray())
+            foreach (char letter in line.dialogueText.ToCharArray())
             {
                 if (skipRequested)
                 {
-                    dialogueText.text = line;
+                    dialogueText.text = line.dialogueText;
                     break;
                 }
                 dialogueText.text += letter;
@@ -103,6 +120,7 @@ public class DialogueManager : Singleton<DialogueManager>
             yield return null;
             yield return new WaitUntil(() => Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0));
         }
+
         StartCoroutine(EndDialogueRoutine(onComplete));
     }
 
@@ -118,13 +136,13 @@ public class DialogueManager : Singleton<DialogueManager>
 
     private void EndDialogue(System.Action onComplete)
     {
-        if(dialoguePanel != null)
+        if (dialoguePanel != null)
         {
             dialoguePanel.SetActive(false);
         }
         IsDialogueActive = false;
 
-        if(UIManager.Instance != null)
+        if (UIManager.Instance != null)
         {
             UIManager.Instance.UpdateCursorState();
         }

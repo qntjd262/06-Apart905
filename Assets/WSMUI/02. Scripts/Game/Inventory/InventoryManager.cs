@@ -110,17 +110,40 @@ public class InventoryManager : Singleton<InventoryManager>
     }
 
     private void SyncQuestItems(Quest quest)
-    {
-        if (quest.type == QuestType.ItemCollection)
         {
-            for (int j = 0; j < quest.objectives.Count; j++)
+            if (quest.type == QuestType.ItemCollection)
             {
-                var obj = quest.objectives[j];
-                int count = GetItemCount(obj.targetID);   
-                quest.ForceSyncProgress(obj.targetID, count);
+                for (int j = 0; j < quest.objectives.Count; j++)
+                {
+                    var obj = quest.objectives[j];
+                    
+                    if (System.Enum.TryParse(obj.targetID, out ItemType targetCategory))
+                    {
+                        int count = GetItemCountByType(targetCategory);
+                        quest.ForceSyncProgress(obj.targetID, count);
+                    }
+                    else
+                    {
+                        int count = GetItemCount(obj.targetID);   
+                        quest.ForceSyncProgress(obj.targetID, count);
+                    }
+                }
             }
         }
-    }
+
+    public int GetItemCountByType(ItemType type)
+        {
+            int count = 0;
+            foreach (var slot in BagSlots)
+            {
+                if (slot.item != null && slot.item.itemType == type) count++;
+            }
+            foreach (var slot in QuickSlots)
+            {
+                if (slot.item != null && slot.item.itemType == type) count++;
+            }
+            return count;
+        }
 
     public int GetItemCount(string itemName)
     {
@@ -191,6 +214,37 @@ public class InventoryManager : Singleton<InventoryManager>
         }
 
         SyncQuestAndUI(itemName);
+        OnBagUpdated?.Invoke();
+        OnQuickSlotUpdated?.Invoke();
+    }
+
+    public void RemoveItemByType(ItemType type, int countToRemove)
+    {
+        int removedCount = 0;
+
+        for (int i = 0; i < bagSize; i++)
+        {
+            if (BagSlots[i].item != null && BagSlots[i].item.itemType == type)
+            {
+                BagSlots[i].item = null;
+                removedCount++;
+                if (removedCount >= countToRemove) break;
+            }
+        }
+
+        if (removedCount < countToRemove)
+        {
+            for (int i = 0; i < quickSlotSize; i++)
+            {
+                if (QuickSlots[i].item != null && QuickSlots[i].item.itemType == type)
+                {
+                    QuickSlots[i].item = null;
+                    removedCount++;
+                    if (removedCount >= countToRemove) break;
+                }
+            }
+        }
+        SyncQuestAndUI(""); 
         OnBagUpdated?.Invoke();
         OnQuickSlotUpdated?.Invoke();
     }
@@ -355,8 +409,6 @@ public class InventoryManager : Singleton<InventoryManager>
         {
             if (QuestManager.Instance != null)
             {
-                int currentCount = GetItemCount(itemName);
-                
                 var activeQuests = QuestManager.Instance.activeQuests;
                 for (int i = activeQuests.Count - 1; i >= 0; i--)
                 {
@@ -365,7 +417,24 @@ public class InventoryManager : Singleton<InventoryManager>
                     Quest quest = activeQuests[i];
                     if (quest != null && quest.type == QuestType.ItemCollection)
                     {
-                        quest.ForceSyncProgress(itemName, currentCount);
+                        for (int j = 0; j < quest.objectives.Count; j++)
+                        {
+                            string targetID = quest.objectives[j].targetID;
+
+                            if (System.Enum.TryParse(targetID, out ItemType targetCategory))
+                            {
+                                int categoryCount = GetItemCountByType(targetCategory);
+                                quest.ForceSyncProgress(targetID, categoryCount);
+                            }
+                            else
+                            {
+                                if (targetID == itemName || string.IsNullOrEmpty(itemName))
+                                {
+                                    int currentCount = GetItemCount(targetID);
+                                    quest.ForceSyncProgress(targetID, currentCount);
+                                }
+                            }
+                        }
                     }
                 }
 
