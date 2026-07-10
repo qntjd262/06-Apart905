@@ -73,22 +73,23 @@ public class TimeFlow : MonoBehaviour
 
     private void ChangeLightColor()     // Directional Light ���� ����
     {
-        if (hours >= 5 && hours <= 8)
+        if (hours >= 5 && hours <= 9)
         {
             float t = (hours - 5) + (minutes / 60f);
             directionalLight.GetComponent<Light>().color = Color.Lerp(nightColor, dayColor, t / 3f);
+            directionalLight.GetComponent<Light>().color = Color.Lerp(nightColor, dayColor, t / 4f);
             RenderSettings.reflectionIntensity = 0.2f + t / 10f;
         }
-        else if (hours > 8 && hours < 16)
+        else if (hours > 9 && hours < 17)
         {
             directionalLight.GetComponent<Light>().color = dayColor;
-            RenderSettings.reflectionIntensity = 0.5f;
+            RenderSettings.reflectionIntensity = 0.66f;
         }   
-        else if (hours >= 16 && hours <= 20)
+        else if (hours >= 17 && hours <= 21)
         {
-           float t = (hours - 16) + (minutes / 60f);
+           float t = (hours - 17) + (minutes / 60f);
             directionalLight.GetComponent<Light>().color = Color.Lerp(dayColor, nightColor, t / 4f);
-            RenderSettings.reflectionIntensity = 0.5f - t / 11f;
+            RenderSettings.reflectionIntensity = 0.6f - t / 9.5f;
         }
         else
         {
