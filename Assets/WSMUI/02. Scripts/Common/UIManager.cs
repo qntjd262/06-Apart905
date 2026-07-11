@@ -562,7 +562,7 @@ public class UIManager : Singleton<UIManager>
         activeInteractUI.gameObject.SetActive(true);
 
         KeyCode currentKey = InputManager.Instance.GetKeyForAction(EKeyAction.Interact);
-        activeInteractUI.interactText.text = $"[{currentKey.ToString()}]를 눌러 {text}";
+        activeInteractUI.interactText.text = $"[{currentKey.ToString()}] {text}";
         activeInteractUI.iconImage.sprite = interactIcons[(int)type];
     }
     public void HideInteractUI() { if (activeInteractUI == null) return; activeInteractUI.gameObject.SetActive(false); }

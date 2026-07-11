@@ -26,6 +26,7 @@ public class SurvivalGauge : MonoBehaviour
     [SerializeField] private bool isHalfCircleGauge = false;
 
     private Tween sanityColorTween;
+    private readonly Color originalSanityColor = new Color(0.36f, 0.53f, 0.0f);
 
     // [핵심] 이전 타겟 값을 기억하기 위한 변수
     private float lastHunger = -1f;
@@ -93,7 +94,7 @@ public class SurvivalGauge : MonoBehaviour
                     {
                         sanityColorTween.Kill();
                         sanityColorTween = null;
-                        sanityGauge.color = Color.magenta;
+                        sanityGauge.color = originalSanityColor;
                     }
                 }
             }
