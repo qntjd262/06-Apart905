@@ -7,6 +7,8 @@ public class GlobalItemCountManager : MonoBehaviour
 
     private List<ItemData> ItemDeck = new List<ItemData>();
 
+    private List<ItemData> originItemList;
+
     void Awake()
     {
         Instance = this;
@@ -16,6 +18,8 @@ public class GlobalItemCountManager : MonoBehaviour
     //TODO : 생성된 아이템 인스펙터창에서 볼 수 있도록 설정하기
     public void InitializeItemDeck(List<ItemData> allItems)
     {
+        originItemList = allItems;
+
         ItemDeck.Clear();
         foreach(var item in allItems)
         {
@@ -35,5 +39,19 @@ public class GlobalItemCountManager : MonoBehaviour
         ItemData item = ItemDeck[idx];
         ItemDeck.RemoveAt(idx);
         return item;
+    }
+
+    public ItemData GetItemByName(string itemName)
+    {
+        if (string.IsNullOrEmpty(itemName) || originItemList == null) return null;
+
+        ItemData foundItem = originItemList.Find(x => x.itemName == itemName); 
+
+        if (foundItem == null)
+        {
+            Debug.LogWarning($"[GlobalItemCountManager] '{itemName}' 이름과 일치하는 원본 아이템을 찾을 수 없습니다.");
+        }
+
+        return foundItem;
     }
 }
