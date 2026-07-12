@@ -65,7 +65,7 @@ public class MoveChecker : MonoBehaviour
             if (isMid)
             {
                 float dir = targetMonster.transform.position.y - transform.position.y;
-                moveLevel.MonsterFloorMove(targetMonster, dir > 0);
+                moveLevel.MonsterFloorMove(targetMonster, dir < 0);
             }
         }
     }
