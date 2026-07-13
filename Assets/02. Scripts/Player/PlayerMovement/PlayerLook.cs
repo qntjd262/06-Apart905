@@ -10,7 +10,8 @@ public class PlayerLook : MonoBehaviour
     [SerializeField] private Transform cameraSocket;  
 
     // 상하 제한
-    [SerializeField] private float upDownRange = 80f;
+    [SerializeField] private float maxLookUp = -80f;
+    [SerializeField] private float maxLookDown = 50f;
     // 현재 카메라 상하각도 저장 변수
     private float currentVerticalRotation = 0f;
 
@@ -50,7 +51,7 @@ public class PlayerLook : MonoBehaviour
         transform.Rotate(0f, mouseX * sensH, 0f);
         
         currentVerticalRotation -= mouseY * senV;
-        currentVerticalRotation = Mathf.Clamp(currentVerticalRotation, -upDownRange, upDownRange);
+        currentVerticalRotation = Mathf.Clamp(currentVerticalRotation, maxLookUp, maxLookDown);
 
         // transform.Rotate(0f, mouseX * mouseSensitivity, 0f);
 
