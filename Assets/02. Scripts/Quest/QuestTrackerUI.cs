@@ -8,7 +8,7 @@ public class QuestTrackerUI : MonoBehaviour
     [Header("UI Components")]
     public TextMeshProUGUI titleText;
     public TextMeshProUGUI progressText;
-    public Image strikeLine;
+    //public Image strikeLine;
 
     [Header("Color Settings")]
     private Color mainQuestColor = new Color(0.8f, 0.4f, 0f); // 어두운 주황색
@@ -39,7 +39,7 @@ public class QuestTrackerUI : MonoBehaviour
     public void Setup(Quest quest)
     {
         progressText.DOKill();
-        strikeLine.rectTransform.DOKill();
+        //strikeLine.rectTransform.DOKill();
 
         targetQuest = quest;
 
@@ -59,9 +59,9 @@ public class QuestTrackerUI : MonoBehaviour
 
         // [수정] localScale뿐 아니라 sizeDelta도 함께 초기화.
         // 이전 퀘스트의 취소선 크기가 다음 퀘스트로 그대로 이어지는 것을 방지.
-        RectTransform lineRect = strikeLine.rectTransform;
-        lineRect.localScale = new Vector3(0, 1, 1);
-        lineRect.sizeDelta = new Vector2(0, lineRect.sizeDelta.y);
+        //RectTransform lineRect = strikeLine.rectTransform;
+        //lineRect.localScale = new Vector3(0, 1, 1);
+        //lineRect.sizeDelta = new Vector2(0, lineRect.sizeDelta.y);
 
         progressText.color = Color.white;
         UpdateProgress();
@@ -112,11 +112,11 @@ public class QuestTrackerUI : MonoBehaviour
         progressText.ForceMeshUpdate();
         float textWidth = progressText.preferredWidth;
 
-        RectTransform lineRect = strikeLine.rectTransform;
-        lineRect.sizeDelta = new Vector2(textWidth, lineRect.sizeDelta.y);
+        //RectTransform lineRect = strikeLine.rectTransform;
+        //lineRect.sizeDelta = new Vector2(textWidth, lineRect.sizeDelta.y);
 
-        lineRect.localScale = new Vector3(0, 1, 1);
-        lineRect.DOScaleX(0.6f, 0.5f).SetEase(Ease.OutQuad);
+        //lineRect.localScale = new Vector3(0, 1, 1);
+        //lineRect.DOScaleX(0.6f, 0.5f).SetEase(Ease.OutQuad);
 
         progressText.DOColor(Color.gray, 0.5f);
     }
@@ -124,7 +124,7 @@ public class QuestTrackerUI : MonoBehaviour
     public void HideTracker()
     {
         progressText.DOKill();
-        strikeLine.rectTransform.DOKill();
+        //strikeLine.rectTransform.DOKill();
 
         targetQuest = null;
         effectPlayed = false;

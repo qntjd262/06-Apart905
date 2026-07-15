@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class DialogueManager : Singleton<DialogueManager>
 {
-    protected override void OnSceneLoaded(Scene scene, LoadSceneMode mode) { }
     protected override void OnSceneUnloaded(Scene scene) { }
 
     public GameObject dialoguePanel;
@@ -40,7 +39,7 @@ public class DialogueManager : Singleton<DialogueManager>
             return;
         }
 
-        if (IsDialogueActive) return; 
+        if (IsDialogueActive) return;
 
         IsDialogueActive = true;
         dialoguePanel.SetActive(true);
@@ -48,7 +47,7 @@ public class DialogueManager : Singleton<DialogueManager>
         if (npcInfo != null)
         {
             if (nameText != null) nameText.text = npcInfo.NpcName;
-            
+
             if (npcPortrait != null)
             {
                 if (npcInfo.NpcImage != null)
@@ -78,7 +77,7 @@ public class DialogueManager : Singleton<DialogueManager>
         {
             if (line.speakerData != null)
             {
-                if (nameText != null) 
+                if (nameText != null)
                     nameText.text = line.speakerData.NpcName;
 
                 if (npcPortrait != null)
@@ -172,5 +171,21 @@ public class DialogueManager : Singleton<DialogueManager>
     public void EndDialogue()
     {
         StartCoroutine(EndDialogueRoutine(null));
+    }
+    protected override void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        StopAllCoroutines();
+        isTyping = false;
+        skipRequested = false;
+        IsDialogueActive = false;
+
+        var marker = FindAnyObjectByType<DialoguePanelMarker>(FindObjectsInactive.Include);
+        if (marker != null)
+        {
+            dialoguePanel = marker.gameObject;
+        }
+
+        if (dialoguePanel != null)
+            dialoguePanel.SetActive(false);
     }
 }
