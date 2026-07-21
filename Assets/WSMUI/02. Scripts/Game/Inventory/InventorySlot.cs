@@ -4,6 +4,7 @@ using System;
 public class InventorySlot
 {
     public ItemData item;
+    
     public bool IsEmpty => item == null;
 
     public Action OnSlotChanged;
@@ -12,7 +13,7 @@ public class InventorySlot
     {
         item = newItem;
 
-        OnSlotChanged.Invoke();
+        OnSlotChanged?.Invoke();
     }
     public void RemoveItem(int count)
     {
@@ -22,6 +23,6 @@ public class InventorySlot
     {
         item = null;
 
-        OnSlotChanged.Invoke();
+        OnSlotChanged?.Invoke();
     }
 }

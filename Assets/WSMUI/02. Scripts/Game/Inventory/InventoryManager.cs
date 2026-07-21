@@ -173,6 +173,21 @@ public class InventoryManager : Singleton<InventoryManager>
                 player.ApplyEatableEffect(eatItem.eatableType_1, eatItem.value_1);
             if (eatItem.eatableType_2 != EatableType.None)
                 player.ApplyEatableEffect(eatItem.eatableType_2, eatItem.value_2);
+
+            if(item.ID == "M003")
+            {
+                Headlight headlight = player.GetComponent<Headlight>();
+
+                if(headlight != null)
+                {
+                    headlight.UseBatteryItem(eatItem.value_1);
+                }
+                else
+                {
+                    Debug.LogWarning("플레이어에게서 Headlight 컴포넌트를 찾을 수 없습니다!");
+                }
+            }
+
             targetSlot.item = null;
 
             SyncQuestAndUI(item.itemName);

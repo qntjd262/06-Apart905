@@ -7,7 +7,10 @@ public class QuestTrackerUI : MonoBehaviour
 {
     [Header("UI Components")]
     public TextMeshProUGUI titleText;
+    public TextMeshProUGUI goalText;
     public TextMeshProUGUI progressText;
+
+    public Image GoalStrikeLine;
     public Image strikeLine;
 
     [Header("Color Settings")]
@@ -16,6 +19,7 @@ public class QuestTrackerUI : MonoBehaviour
 
     private Quest targetQuest;
     private bool effectPlayed = false;
+    private bool goalEffectPlayed = false;
 
     void Awake()
     {
@@ -39,7 +43,9 @@ public class QuestTrackerUI : MonoBehaviour
     public void Setup(Quest quest)
     {
         progressText.DOKill();
+        goalText.DOKill();
         strikeLine.rectTransform.DOKill();
+        if (GoalStrikeLine != null) GoalStrikeLine.rectTransform.DOKill();
 
         targetQuest = quest;
 
@@ -53,12 +59,22 @@ public class QuestTrackerUI : MonoBehaviour
         }
 
         effectPlayed = false;
+        goalEffectPlayed = false;
 
         titleText.text = quest.questName;
         titleText.color = quest.isMainQuest ? mainQuestColor : subQuestColor;
 
+        if (goalText != null)
+        {
+            goalText.text = quest.questGoal;
+            goalText.color = Color.white;
+        }       
+
         strikeLine.rectTransform.localScale = new Vector3(0, 1, 1);
+        if (GoalStrikeLine != null) GoalStrikeLine.rectTransform.localScale = new Vector3(0, 1, 1);
+
         progressText.color = Color.white;
+
         UpdateProgress();
     }
 
@@ -66,7 +82,7 @@ public class QuestTrackerUI : MonoBehaviour
     {
         if (targetQuest == null) return;
 
-        string progressDisplay = "";
+        string progressDisplay = ""; 
         
         for (int i = 0; i < targetQuest.objectives.Count; i++)
         {
@@ -82,9 +98,14 @@ public class QuestTrackerUI : MonoBehaviour
 
         progressText.text = progressDisplay;
 
-        if (targetQuest.IsAllObjectivesComplete() && !effectPlayed)
+        if (targetQuest.objectives.Count > 0 && targetQuest.IsAllObjectivesComplete() && !effectPlayed)
         {
             PlayCompleteEffect();
+        }
+
+        if (targetQuest.isCompleted && !goalEffectPlayed)
+        {
+            PlayGoalCompleteEffect();
         }
     }
 
@@ -102,14 +123,35 @@ public class QuestTrackerUI : MonoBehaviour
 
         progressText.DOColor(Color.gray, 0.5f);
     }
+    
+    public void PlayGoalCompleteEffect()
+    {
+        if (goalEffectPlayed) return;
+        goalEffectPlayed = true;
+
+        if (goalText != null && GoalStrikeLine != null)
+        {
+            float textWidth = goalText.preferredWidth;
+            RectTransform lineRect = GoalStrikeLine.rectTransform;
+            lineRect.sizeDelta = new Vector2(textWidth, lineRect.sizeDelta.y);
+
+            lineRect.localScale = new Vector3(0, 1, 1);
+            lineRect.DOScaleX(0.6f, 0.5f).SetEase(Ease.OutQuad);
+
+            goalText.DOColor(Color.gray, 0.5f);
+        }
+    }
 
     public void HideTracker()
     {
         progressText.DOKill();
+        goalText.DOKill();
         strikeLine.rectTransform.DOKill();
+        if (GoalStrikeLine != null) GoalStrikeLine.rectTransform.DOKill();
 
         targetQuest = null;
         effectPlayed = false;
+        goalEffectPlayed = false;
         this.gameObject.SetActive(false);
     }
 }

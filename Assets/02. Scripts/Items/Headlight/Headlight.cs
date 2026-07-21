@@ -15,7 +15,7 @@ public class Headlight : MonoBehaviour
     [Tooltip("현재 배터리 양")]
     private float currentBattery;
     [Tooltip("초당 배터리 소모량")]
-    [SerializeField] private float consumptionRate = 2f; 
+    [SerializeField] private float consumptionRate = 0.33f; 
 
     public float CurrentBattery => currentBattery;
     public float MaxBattery => maxBattery;

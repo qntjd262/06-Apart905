@@ -52,58 +52,69 @@ public class Shelf : MonoBehaviour, IInteractable
         UIManager.Instance.ToggleStorage(shelfSlots);
     }
 
-    private void GenerateRandomItem()
+private void GenerateRandomItem()
+{
+    foreach (var slot in shelfSlots)
     {
-        
-        // shelfInventory.Clear();
+        slot.item = null;
+    }
 
-        // for (int i = 0; i < itemCount; i++)
-        // {
-        //     //newitem에 아이템카운트매니저에서 랜덤으로 아이템 하나 뽑아서 넣기
-        //     //TODO : 아이템 드로우 시 선반에 아이템 그려주기
-        //     ItemData newItem = GlobalItemCountManager.Instance.DrawItem();
-        //     if (newItem != null)
-        //     {
-        //         shelfInventory.Add(newItem);
-        //     }
-        // }
-        //수정 부분
-        foreach (var slot in shelfSlots)
+    int currentSlotIndex = 0;
+
+    Debug.Log($"=== [Shelf] 파밍 생성 시작 ===");
+
+    // 고정 아이템 배치
+    if (fixedItems != null && fixedItems.Count > 0)
+    {
+        Debug.Log($"[Shelf] 고정 아이템 개수: {fixedItems.Count}개 감지됨.");
+        foreach (ItemData item in fixedItems)
         {
-            slot.item = null;
-        }
-
-        int currentSlotIndex = 0;
-
-        //고정아이템 슬롯에 먼저 배치
-        if(fixedItems != null && fixedItems.Count > 0)
-        {
-            foreach (ItemData item in fixedItems)
+            if (currentSlotIndex < shelfSlots.Length)
             {
-                if(currentSlotIndex < shelfSlots.Length)
+                if (item != null)
                 {
-                    shelfSlots[currentSlotIndex].item = item;
-                    currentSlotIndex ++;
+                    string searchName = item.itemName; 
+
+                    ItemData officialItem = GlobalItemCountManager.Instance.GetItemByName(searchName);
+
+                    if (officialItem != null)
+                    {
+                        shelfSlots[currentSlotIndex].AddItem(officialItem, 1);
+                        Debug.Log($"[Shelf] 고정 아이템 생성 성공: {officialItem.name} (슬롯 {currentSlotIndex})");
+                        currentSlotIndex++;
+                    }
+                    else
+                    {
+                        Debug.LogError($"[Shelf] 고정 아이템 생성 실패! 매니저에서 '{searchName}'을(를) 찾지 못함.");
+                    }
                 }
             }
         }
-        
-        int ranItemCount = UnityEngine.Random.Range(minItems, maxItems + 1);
+    }
+    
+    // 랜덤 아이템 배치
+    int ranItemCount = UnityEngine.Random.Range(minItems, maxItems + 1);
+    Debug.Log($"[Shelf] 랜덤 아이템 생성 시도 개수: {ranItemCount}개");
 
-        for (int i = 0; i < ranItemCount; i++)
+    for (int i = 0; i < ranItemCount; i++)
+    {
+        if (currentSlotIndex >= shelfSlots.Length) break;
+
+        ItemData newItem = GlobalItemCountManager.Instance.DrawItem();
+        if (newItem != null)
         {
-            if(currentSlotIndex >= shelfSlots.Length) break;
-
-            // GlobalItemCountManager에서 아이템 드로우
-            ItemData newItem = GlobalItemCountManager.Instance.DrawItem();
-            if (newItem != null)
-            {
-                // 생성된 개수만큼 앞에서부터 슬롯에 할당
-                shelfSlots[currentSlotIndex].item = newItem;
-                currentSlotIndex ++;
-            }
+            shelfSlots[currentSlotIndex].AddItem(newItem, 1);
+            Debug.Log($"[Shelf] 랜덤 아이템 생성 성공: {newItem.name} (슬롯 {currentSlotIndex})");
+            currentSlotIndex++;
+        }
+        else
+        {
+            Debug.LogWarning("[Shelf] 매니저의 ItemDeck이 비어있어 랜덤 아이템을 뽑지 못했습니다.");
         }
     }
+
+    Debug.Log($"=== [Shelf] 파밍 생성 종료 (총 배치된 아이템: {currentSlotIndex}개) ===");
+}
 
     //선반에서 아이템 획득 시 호출되는 메서드
     public void RemoveItem(ItemData itemToRemove)
@@ -118,7 +129,7 @@ public class Shelf : MonoBehaviour, IInteractable
         {
             if (shelfSlots[i].item == itemToRemove)
             {
-                shelfSlots[i].item = null;
+                shelfSlots[i].Clear();
                 Debug.Log($"선반 슬롯 {i}에서 {itemToRemove.Name}이 제거됨");
                 break;
             }
