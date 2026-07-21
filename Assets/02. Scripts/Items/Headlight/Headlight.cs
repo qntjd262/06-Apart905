@@ -77,7 +77,7 @@ public class Headlight : MonoBehaviour
 
         if (isOn)
         {
-            ConsumeBattery();
+           // ConsumeBattery();
         }
     }
 

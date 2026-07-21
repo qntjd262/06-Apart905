@@ -192,7 +192,7 @@ public class SelectCharacterController : MonoBehaviour
         CharacterStatSO data = characterDatas[currentIndex];
 
 
-        if (descriptionText != null) descriptionText.text = $"Description : {data.description}";
+        if (descriptionText != null) descriptionText.text = $"{data.description}";
 
 
         //data.뒤에 변수명 수정

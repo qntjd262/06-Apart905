@@ -218,7 +218,7 @@ public class PlayerStat : MonoBehaviour
 
     private IEnumerator DieRoutine()
     { 
-        yield return new WaitForSeconds(5.0f);
+        yield return new WaitForSeconds(2.0f);
 
         if (UIManager.Instance != null)
         {

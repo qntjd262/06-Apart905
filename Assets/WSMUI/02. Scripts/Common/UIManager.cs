@@ -25,7 +25,6 @@ public class UIManager : Singleton<UIManager>
     [SerializeField] public GameObject storagePanel;
     public GameObject pauseMenuPanel;
     public GameObject gameOverPanel;
-    public GameObject dialoguePanel;
 
     [Header("Global Popup Panels")]
     [SerializeField] private GameObject selectCharacterPanel;
@@ -93,7 +92,6 @@ public class UIManager : Singleton<UIManager>
                 else if (topUI == storagePanel) ToggleStorage();
                 else if (topUI == inventoryPanel) ToggleInventory();
                 else if (topUI == pauseMenuPanel) TogglePauseMenu();
-                else if (topUI == dialoguePanel) { }
                 else if (topUI == optionPanel)
                 {
                     topUI.GetComponent<OptionsController>().OnReturnClick();
@@ -562,7 +560,7 @@ public class UIManager : Singleton<UIManager>
         activeInteractUI.gameObject.SetActive(true);
 
         KeyCode currentKey = InputManager.Instance.GetKeyForAction(EKeyAction.Interact);
-        activeInteractUI.interactText.text = $"[{currentKey.ToString()}]를 눌러 {text}";
+        activeInteractUI.interactText.text = $"[{currentKey.ToString()}] {text}";
         activeInteractUI.iconImage.sprite = interactIcons[(int)type];
     }
     public void HideInteractUI() { if (activeInteractUI == null) return; activeInteractUI.gameObject.SetActive(false); }

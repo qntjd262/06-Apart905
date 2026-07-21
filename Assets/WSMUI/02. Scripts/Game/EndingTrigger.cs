@@ -13,7 +13,7 @@ public class EndingTrigger : MonoBehaviour, IInteractable
 
     public string GetInteractText()
     {
-        return $"{endingData.endingName} 확인하기"; 
+        return $"{endingData.endingName}"; 
     }
 
     public Constants.InteractType GetInteractType()
