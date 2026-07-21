@@ -28,6 +28,7 @@ public class TimeFlow : MonoBehaviour
     [SerializeField] private Color dayColor = new Color(0.8f, 0.8f, 0.8f);
     [SerializeField] private Color nightColor = new Color(0.2f, 0.2f, 0.2f);
 
+    /* 불러오기 오류로 비활성화
     private void Awake()
     {
         if(Instance == null)
@@ -39,7 +40,7 @@ public class TimeFlow : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }
+    }*/
 
     private void LateUpdate()
     {
