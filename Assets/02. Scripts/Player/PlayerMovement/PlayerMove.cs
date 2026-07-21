@@ -37,6 +37,11 @@ public class PlayerMove : MonoBehaviour
     [Header("인벤토리 상태")]
     public bool isInventoryOpen = false;
 
+    [Header("콜라이더 상태 설정")]
+    private float originalHeight;
+    private Vector3 originalCenter;
+    [SerializeField] private float crouchHeight = 1.0f;
+
     void Start()
     {
         controller = GetComponent<CharacterController>();
@@ -44,6 +49,12 @@ public class PlayerMove : MonoBehaviour
         playerStat = GetComponent<PlayerStat>();
 
         playerNoise = GetComponent<PlayerNoise>();
+
+        if(controller != null)
+        {
+            originalHeight = controller.height;
+            originalCenter = controller.center;
+        }
     }
 
     public void Move(float h, float v, bool isRunning, bool isCrouch)
@@ -109,6 +120,17 @@ public class PlayerMove : MonoBehaviour
         if(playerNoise != null)
         {
             playerNoise.SetNoiseRadius(noiseRadius);
+        }
+
+        if (isCrouch)
+        {
+            controller.height = crouchHeight;
+            controller.center = new Vector3(originalCenter.x, crouchHeight / 2f, originalCenter.z);
+        }
+        else
+        {
+            controller.height = originalHeight;
+            controller.center = originalCenter;
         }
         
 
