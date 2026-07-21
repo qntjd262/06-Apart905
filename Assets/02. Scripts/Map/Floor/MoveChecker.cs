@@ -55,27 +55,17 @@ public class MoveChecker : MonoBehaviour
                     }
                 }
             }
-
-            if (other.CompareTag("Monster"))
-            {
-                var targetMonster = other.GetComponent<MonsterController>();
-                if (isMid)
-                {
-                    float dir = targetMonster.transform.position.y - transform.position.y;
-                    Debug.Log(dir);
-                    moveLevel.MonsterFloorMove(targetMonster, dir > 0);
-                }
-            }
         }
 
+        // 몬스터일 때, 몬스터가 위층으로 가는지 아래로 가는지 판별
+        // 몬스터와 체크trigger의 y축 차이로 판별한다
         if (other.CompareTag("Monster"))
         {
             var targetMonster = other.GetComponent<MonsterController>();
             if (isMid)
             {
                 float dir = targetMonster.transform.position.y - transform.position.y;
-                Debug.Log(dir);
-                moveLevel.MonsterFloorMove(targetMonster, dir > 0);
+                moveLevel.MonsterFloorMove(targetMonster, dir < 0);
             }
         }
     }

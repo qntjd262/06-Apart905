@@ -138,8 +138,9 @@ public class MonsterController : MonoBehaviour
     // 사망 시 처리
     IEnumerator DeathAnim()
     {
+        // 사망 이후, 활성화 상태로 남아있는 시간
         float deathAnimTime = 0f;
-        float duration = 2.75f;
+        float duration = 10f;
 
         while (deathAnimTime <= duration)
         {
@@ -147,6 +148,7 @@ public class MonsterController : MonoBehaviour
             yield return null;
         }
 
+        // 사망 시, navmesh, AI, Collider 관련 끄기
         _navMeshAgent.velocity = Vector3.zero;
         _navMeshAgent.isStopped = true;
         _navMeshAgent.enabled = false;
@@ -160,7 +162,7 @@ public class MonsterController : MonoBehaviour
             StopCoroutine(_visionSensor);
             _visionSensor = null;
         }
-
+        
         // 사망한 좀비 처리에 따라 다르게 변경될 필요가 있음
         OnDied?.Invoke();
         MonsterSpawnManager.Instance.ReturnPoolObject(gameObject);
