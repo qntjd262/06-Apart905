@@ -1,5 +1,4 @@
 using System.Collections;
-using Unity.PlasticSCM.Editor.WebApi;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -59,7 +58,7 @@ public class PlayerMove : MonoBehaviour
 
     public void Move(float h, float v, bool isRunning, bool isCrouch)
     {   //npc와 대화 중 움직이지 않는 로직
-        if(playerStat != null && playerStat.isInteracting || isInventoryOpen)
+        if((playerStat != null && playerStat.isInteracting) || isInventoryOpen || DialogueManager.Instance.IsDialogueActive)
         {            
             PausePlayer();
             return;

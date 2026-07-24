@@ -44,6 +44,12 @@ public class DialogueManager : Singleton<DialogueManager>
         IsDialogueActive = true;
         dialoguePanel.SetActive(true);
 
+        PlayerMove playerMove = FindAnyObjectByType<PlayerMove>();
+        if(playerMove != null)
+        {
+            playerMove.PausePlayer();
+        }
+
         if (npcInfo != null)
         {
             if (nameText != null) nameText.text = npcInfo.NpcName;

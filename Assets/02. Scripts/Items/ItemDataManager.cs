@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem.iOS;
 using UnityEngine.Networking;
 
 public class ItemDataManager : MonoBehaviour
