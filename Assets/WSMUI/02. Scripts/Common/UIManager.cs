@@ -81,7 +81,7 @@ public class UIManager : Singleton<UIManager>
     {
         // [최적화] 매 프레임 스트링을 생성하던 무거운 코드를 단순 bool 체크로 변경
         if (!_isCurrentSceneGame) return;
-
+        if (gameOverPanel != null && gameOverPanel.activeSelf) return;
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (SlotUI.PickedSlot != null) SlotUI.PickedSlot.CancelPick();
@@ -412,6 +412,7 @@ public class UIManager : Singleton<UIManager>
         Time.timeScale = 1f;
         _isSceneLoading = true;
 
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
@@ -419,6 +420,7 @@ public class UIManager : Singleton<UIManager>
         SoundManager.Instance?.StopBGM();
         FadeOut(0.5f, () => fadeDone = true);
         yield return new WaitUntil(() => fadeDone);
+        ForceCloseAllPanelsImmediate();
 
         if (withLoadingPanel)
         {
@@ -539,6 +541,15 @@ public class UIManager : Singleton<UIManager>
     {
         if (_hudController == null) _hudController = FindFirstObjectByType<HUDController>();
         if (_hudController != null) _hudController.InitHUD();
+    }
+
+    private void ForceCloseAllPanelsImmediate()
+    {
+        if (pauseMenuPanel != null && pauseMenuPanel.activeSelf) { pauseMenuPanel.SetActive(false); UnregisterUI(pauseMenuPanel); }
+        if (gameOverPanel != null && gameOverPanel.activeSelf) { gameOverPanel.SetActive(false); UnregisterUI(gameOverPanel); }
+
+        // 전역 팝업들
+        CloseAllGlobalPopups();
     }
 
     private void OnApplicationFocus(bool focus)

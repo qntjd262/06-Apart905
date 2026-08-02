@@ -41,10 +41,10 @@ public class SaveLoadController : BasePopupUI
         this.gameObject.SetActive(true);
 
         // [핵심 추가] 게임오버 등에서 취소를 못 하게 막아야 한다면 버튼을 완전히 끈다.
-        if (returnButton != null)
-        {
-            returnButton.gameObject.SetActive(canReturn);
-        }
+        // if (returnButton != null)
+        // {
+        //     returnButton.gameObject.SetActive(canReturn);
+        // }
 
         if (!isInitialized || spawnedSlots == null || spawnedSlots.Length == 0 || spawnedSlots[0] == null)
         {
@@ -189,6 +189,12 @@ public class SaveLoadController : BasePopupUI
             UIManager.Instance.UnregisterUI(UIManager.Instance.pauseMenuPanel);
         }
 
+        if (UIManager.Instance != null && UIManager.Instance.gameOverPanel != null)
+        {
+            UIManager.Instance.gameOverPanel.SetActive(false);
+            UIManager.Instance.UnregisterUI(UIManager.Instance.gameOverPanel);
+        }
+
         Constants.ESceneType targetScene = Constants.ESceneType.PrototypeGame;
 
         HidePanel();
@@ -203,6 +209,9 @@ public class SaveLoadController : BasePopupUI
 
     private void OnReturnClick()
     {
+        System.Action closeAction = onCloseAction;
+        onCloseAction = null;
         HidePanel();
+        closeAction?.Invoke();
     }
 }

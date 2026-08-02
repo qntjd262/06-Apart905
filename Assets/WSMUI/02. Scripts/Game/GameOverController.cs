@@ -22,7 +22,7 @@ public class GameOverController : BasePopupUI
 
     public void Open()
     {
-        ShowPanel(); 
+        ShowPanel();
 
         PlayGameOverSequence();
     }
@@ -32,7 +32,7 @@ public class GameOverController : BasePopupUI
         if (buttonGroup != null) buttonGroup.SetActive(false);
     }
 
-   private void PlayGameOverSequence()
+    private void PlayGameOverSequence()
     {
         if (bloodSplatterEffect == null) return;
 
@@ -45,7 +45,7 @@ public class GameOverController : BasePopupUI
         // 1. 피가 천천히 번지는 연출 (크기가 커짐과 동시에 서서히 진해짐)
         // SetEase(Ease.OutCubic)을 사용하여 처음엔 확 퍼지다가 끝에서 끈적하게 느려지는 느낌을 줍니다.
         mainSeq.Append(bloodSplatterEffect.transform.DOScale(1.1f, 1.0f).SetEase(Ease.OutCubic).SetUpdate(true));
-        
+
         if (bloodImage != null)
         {
             mainSeq.Join(bloodImage.DOFade(1f, 1f).SetEase(Ease.OutCubic).SetUpdate(true));
@@ -69,12 +69,33 @@ public class GameOverController : BasePopupUI
         });
     }
 
+    private void ReopenAfterLoadCancel()
+    {
+        ShowPanel();
+
+        if (bloodSplatterEffect != null)
+        {
+            bloodSplatterEffect.transform.localScale = Vector3.one * 1.1f;
+            if (bloodImage != null) bloodImage.color = new Color(1, 1, 1, 1);
+        }
+
+        if (buttonGroup != null)
+        {
+            buttonGroup.SetActive(true);
+            buttonGroup.transform.localScale = Vector3.one;
+
+            CanvasGroup cg = buttonGroup.GetComponent<CanvasGroup>();
+            if (cg == null) cg = buttonGroup.AddComponent<CanvasGroup>();
+            cg.alpha = 1f;
+        }
+    }
+
     public void OnLoadClick()
     {
         if (UIManager.Instance != null && UIManager.Instance.saveLoadController != null)
         {
             HidePanel();
-            UIManager.Instance.saveLoadController.onCloseAction = null;
+            UIManager.Instance.saveLoadController.onCloseAction = ReopenAfterLoadCancel;
             UIManager.Instance.saveLoadController.Open(Constants.ESaveLoadType.Load, false);
         }
         else
@@ -84,7 +105,7 @@ public class GameOverController : BasePopupUI
         }
     }
 
-   public void OnMainMenuClick()
+    public void OnMainMenuClick()
     {
         if (buttonGroup != null) buttonGroup.SetActive(false);
 
@@ -94,13 +115,13 @@ public class GameOverController : BasePopupUI
         {
             // 1. 씬 로드 호출 (0.5초 동안 서서히 페이드 아웃 됨)
             UIManager.Instance.LoadScene(Constants.ESceneType.PrototypeMain, true);
-            
+
             // 2. 화면이 완전히 까매지는 타이밍(0.5초 뒤)에 맞춰 패널을 숨기고 스택에서 제거
-            DOVirtual.DelayedCall(0.5f, () => 
+            DOVirtual.DelayedCall(0.5f, () =>
             {
                 HidePanel();
             }).SetUpdate(true); // 타임스케일 영향을 받지 않도록 안전장치 추가
-            
+
             return;
         }
 

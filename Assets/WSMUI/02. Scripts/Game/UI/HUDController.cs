@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class HUDController : MonoBehaviour
@@ -8,12 +9,35 @@ public class HUDController : MonoBehaviour
     private bool isInitialized = false;
     private float initTime;
 
+    [SerializeField] private TextMeshProUGUI timeText;
+
     void Awake()
     {
         gauge = GetComponent<SurvivalGauge>();
     }
 
-   public void InitHUD()
+    private void OnEnable()
+    {
+        TimeFlow.OnTimeChanged += UpdateTimeText;
+
+        // [추가] 켜지는 시점에도 즉시 한 번 갱신 (구독 전에 이미 흐른 시간 반영)
+        if (TimeFlow.Instance != null)
+        {
+            UpdateTimeText(TimeFlow.Instance.Days, TimeFlow.Instance.Hours, TimeFlow.Instance.MinutesInt);
+        }
+    }
+
+    private void OnDisable()
+    {
+        TimeFlow.OnTimeChanged -= UpdateTimeText;
+    }
+
+    private void UpdateTimeText(int days, int hours, int minutes)
+    {
+        timeText.text = $"{days}일 {hours:00}:{minutes:00}";
+    }
+
+    public void InitHUD()
     {
         playerStat = FindFirstObjectByType<PlayerStat>();
         if (playerStat == null)
@@ -25,7 +49,7 @@ public class HUDController : MonoBehaviour
         UpdateGauges(false);
 
         isInitialized = true;
-        initTime = Time.time; 
+        initTime = Time.time;
     }
 
     void Update()
