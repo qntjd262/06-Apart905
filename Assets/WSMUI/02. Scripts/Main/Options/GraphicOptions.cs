@@ -30,6 +30,11 @@ public class GraphicOptions : MonoBehaviour
     private int currentResIndex = 0;
     private int currentModeIndex = 0;
 
+    private void Awake()
+    {
+        UIManager.Instance.RegisterGraphicOptions(this);
+    }
+
     public void Initialize()
     {
         this.gameObject.SetActive(true);
@@ -48,7 +53,7 @@ public class GraphicOptions : MonoBehaviour
 
         brightnessSlider.value = savedBrightnessLevel;
         SetBrightness(savedBrightnessLevel);
-        
+
         // --- 해상도 & 화면 모드 초기화 (기존 동일) ---
         systemResolutions.Clear();
         Resolution[] resolutions = Screen.resolutions;

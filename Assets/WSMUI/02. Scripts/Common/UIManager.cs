@@ -402,6 +402,23 @@ public class UIManager : Singleton<UIManager>
         if (globalWindowTitleText != null) globalWindowTitleText.text = string.Empty;
     }
 
+    public void RegisterInventoryPanel(GameObject panel)
+    {
+        inventoryPanel = panel;
+        if (inventoryPanel != null) inventoryPanel.SetActive(false);
+    }
+
+    public void RegisterStoragePanel(GameObject panel)
+    {
+        storagePanel = panel;
+        if (storagePanel != null) storagePanel.SetActive(false);
+    }
+
+    private GraphicOptions _cachedGraphicOptions;
+    public void RegisterGraphicOptions(GraphicOptions options)
+    {
+        _cachedGraphicOptions = options;
+    }
     public void LoadScene(Constants.ESceneType sceneType, bool withLoadingPanel = true)
     {
         StartCoroutine(LoadSceneAsync(sceneType, withLoadingPanel));
@@ -501,21 +518,8 @@ public class UIManager : Singleton<UIManager>
         GameObject sceneCanvasObj = GameObject.FindGameObjectWithTag("Canvas");
         if (sceneCanvasObj != null) hudCanvas = sceneCanvasObj.GetComponent<Canvas>();
 
-        InventoryUI invUI = GameObject.FindAnyObjectByType<InventoryUI>(FindObjectsInactive.Include);
-        if (invUI != null) inventoryPanel = invUI.gameObject;
-        if (inventoryPanel != null) inventoryPanel.SetActive(false);
-
-        StorageUI storUI = GameObject.FindAnyObjectByType<StorageUI>(FindObjectsInactive.Include);
-        if (storUI != null) storagePanel = storUI.gameObject;
-        if (storagePanel != null) storagePanel.SetActive(false);
-        if (pauseMenuPanel != null)
-        {
-            pauseMenuPanel.SetActive(false);
-        }
-        if (gameOverPanel != null)
-        {
-            gameOverPanel.SetActive(false);
-        }
+        if (pauseMenuPanel != null) pauseMenuPanel.SetActive(false);
+        if (gameOverPanel != null) gameOverPanel.SetActive(false);
 
         if (_isCurrentSceneGame)
         {
@@ -527,14 +531,16 @@ public class UIManager : Singleton<UIManager>
             Cursor.visible = true;
         }
 
-        FadeIn(1f, () =>
+        FadeIn(0.5f, () =>
         {
             if (SoundManager.Instance != null)
                 SoundManager.Instance.PlaySceneBGM(scene.name);
         });
 
-        GraphicOptions graphicOpt = FindFirstObjectByType<GraphicOptions>(FindObjectsInactive.Include);
-        if (graphicOpt != null) graphicOpt.ApplySavedBrightnessToCurrentScene();
+        if (_cachedGraphicOptions != null)
+        {
+            _cachedGraphicOptions.ApplySavedBrightnessToCurrentScene();
+        }
     }
 
     private void InitializeInGameUI()

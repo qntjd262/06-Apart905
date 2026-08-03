@@ -16,6 +16,11 @@ public class StorageUI : MonoBehaviour
     // [핵심 추가] 현재 정보창에 띄워둔 슬롯 데이터를 추적하기 위한 캐싱 변수
     private InventorySlot currentDisplayedSlot;
 
+    private void Awake()
+    {
+        UIManager.Instance.RegisterStoragePanel(this.gameObject);
+    }
+
     private void Start()
     {
         uiSlots = slotsParent.GetComponentsInChildren<SlotUI>();
@@ -65,8 +70,8 @@ public class StorageUI : MonoBehaviour
         }
 
         if (infoPanel != null) infoPanel.SetActive(true);
-        
-        string displayName = !string.IsNullOrEmpty(slotData.item.Name) ? slotData.item.Name : 
+
+        string displayName = !string.IsNullOrEmpty(slotData.item.Name) ? slotData.item.Name :
                             (!string.IsNullOrEmpty(slotData.item.itemName) ? slotData.item.itemName : slotData.item.name);
 
         string displayDesc = !string.IsNullOrEmpty(slotData.item.description) ? slotData.item.description : "";
@@ -75,7 +80,7 @@ public class StorageUI : MonoBehaviour
         if (itemNameText != null) itemNameText.text = displayName;
         if (itemDescText != null) itemDescText.text = displayDesc;
         if (itemIconImage != null) itemIconImage.sprite = slotData.item.icon;
-        
+
         Debug.Log($"선택한 아이템: {displayName}, 설명 텍스트: {displayDesc}", slotData.item);
     }
 

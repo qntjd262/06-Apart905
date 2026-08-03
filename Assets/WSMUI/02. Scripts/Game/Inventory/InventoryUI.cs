@@ -30,6 +30,7 @@ public class InventoryUI : MonoBehaviour
     private void Awake()
     {
         _canvasGroup = GetComponent<CanvasGroup>();
+        UIManager.Instance.RegisterInventoryPanel(this.gameObject);
     }
 
     private void OnEnable()
